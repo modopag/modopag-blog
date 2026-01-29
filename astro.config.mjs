@@ -10,6 +10,12 @@ export default defineConfig({
   adapter: vercel({
     maxDuration: 30,
   }),
+  prefetch: {
+    // Prefetch links on hover (fastest perceived performance)
+    defaultStrategy: 'hover',
+    // Also prefetch links when they enter viewport
+    prefetchAll: true,
+  },
   integrations: [tailwind(), react()],
   build: {
     assets: '_astro',
@@ -17,6 +23,10 @@ export default defineConfig({
   vite: {
     ssr: {
       noExternal: ['@supabase/supabase-js'],
+    },
+    build: {
+      cssMinify: true,
+      minify: 'esbuild',
     },
   },
 });

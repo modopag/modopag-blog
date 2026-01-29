@@ -2,6 +2,7 @@
 import { ViewTransitions } from 'astro:transitions';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import NavigationLoader from '@/components/NavigationLoader.astro';
 import '@/styles/global.css';
 
 interface Props {
@@ -41,10 +42,30 @@ const { class: className = '' } = Astro.props;
     <slot name="head" />
   </head>
   <body class="min-h-screen flex flex-col bg-white text-secondary-500">
+    <NavigationLoader />
     <Header />
     <main class:list={['flex-1', className]}>
       <slot />
     </main>
     <Footer />
+
+    <!-- Instant navigation on mousedown for faster perceived performance -->
+    <script>
+      function initInstantClick() {
+        document.addEventListener('mousedown', (e) => {
+          const link = (e.target as HTMLElement).closest('a[href]') as HTMLAnchorElement;
+          if (!link) return;
+
+          const href = link.getAttribute('href');
+          if (!href || href.startsWith('#') || href.startsWith('http') || link.hasAttribute('data-no-instant')) return;
+
+          // Navigate on mousedown instead of click for ~100ms faster response
+          e.preventDefault();
+          window.location.href = href;
+        }, { capture: true });
+      }
+
+      initInstantClick();
+    </script>
   </body>
 </html>

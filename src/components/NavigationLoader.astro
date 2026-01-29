@@ -1,0 +1,65 @@
+---
+// Navigation loading indicator for View Transitions
+---
+
+<div id="nav-loader" class="fixed top-0 left-0 w-full h-1 z-[9999] pointer-events-none opacity-0 transition-opacity duration-200">
+  <div class="loader-bar h-full bg-primary-500"></div>
+</div>
+
+<style>
+  @keyframes loading-bar {
+    0% { width: 0%; }
+    20% { width: 30%; }
+    50% { width: 60%; }
+    80% { width: 80%; }
+    100% { width: 95%; }
+  }
+
+  .loader-bar {
+    width: 0%;
+  }
+
+  #nav-loader.active .loader-bar {
+    animation: loading-bar 1s ease-out forwards;
+  }
+
+  #nav-loader.complete .loader-bar {
+    width: 100% !important;
+    transition: width 0.1s ease-out;
+  }
+
+  #nav-loader.active {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  function initNavLoader() {
+    const loader = document.getElementById('nav-loader');
+    if (!loader) return;
+
+    const bar = loader.querySelector('.loader-bar') as HTMLElement;
+
+    // Show loader when navigation starts
+    document.addEventListener('astro:before-preparation', () => {
+      loader.classList.add('active');
+      loader.classList.remove('complete');
+      // Reset animation
+      if (bar) {
+        bar.style.animation = 'none';
+        bar.offsetHeight; // Trigger reflow
+        bar.style.animation = '';
+      }
+    });
+
+    // Complete loader when page is ready
+    document.addEventListener('astro:after-swap', () => {
+      loader.classList.add('complete');
+      setTimeout(() => {
+        loader.classList.remove('active', 'complete');
+      }, 200);
+    });
+  }
+
+  initNavLoader();
+</script>
