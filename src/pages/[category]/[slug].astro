@@ -212,9 +212,6 @@ const breadcrumbItems = [
       </div>
     </header>
 
-    <!-- Table of Contents (Collapsible) -->
-    <TableOfContentsSidebar items={toc} />
-
     <!-- Featured Image (hidden for calculator posts and calculadoras category) -->
     {!shouldHideHeroImage && post.featured_image && (
       <figure class="mb-8 -mx-4 sm:mx-0">
@@ -237,6 +234,9 @@ const breadcrumbItems = [
         code={post.calculator_code}
       />
     )}
+
+    <!-- Table of Contents (Collapsible) - After cover image and calculator -->
+    <TableOfContentsSidebar items={toc} />
 
     <!-- Article Content -->
     {showCalculator && calculatorPosition === 'middle' ? (
