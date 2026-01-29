@@ -1,4 +1,6 @@
 ---
+import { BRAND } from '@/lib/images';
+
 interface Props {
   class?: string;
   variant?: 'dark' | 'yellow';
@@ -7,9 +9,7 @@ interface Props {
 
 const { class: className = '', variant = 'dark', size = 'md' } = Astro.props;
 
-const logoUrl = variant === 'yellow'
-  ? 'https://acxelejbtjjkttfwrdbi.supabase.co/storage/v1/object/public/blog-images/brand/modopag-logo-yellow.png'
-  : 'https://acxelejbtjjkttfwrdbi.supabase.co/storage/v1/object/public/blog-images/brand/modopag-logo-dark.png';
+const logoUrl = variant === 'yellow' ? BRAND.logoYellow : BRAND.logoDark;
 
 const sizeClasses = {
   sm: 'h-6',

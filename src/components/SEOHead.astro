@@ -1,4 +1,6 @@
 ---
+import { BRAND } from '@/lib/images';
+
 interface Props {
   title: string;
   description: string;
@@ -16,7 +18,7 @@ const {
   title,
   description,
   canonical,
-  ogImage = 'https://acxelejbtjjkttfwrdbi.supabase.co/storage/v1/object/public/blog-images/brand/modopag-logo-dark.png',
+  ogImage = BRAND.ogDefault,
   ogType = 'website',
   publishedTime,
   modifiedTime,
