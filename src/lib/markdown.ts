@@ -22,13 +22,25 @@ export async function parseMarkdown(content: string): Promise<string> {
       .replace(/\r\n/g, '\n')
       .replace(/\r/g, '\n');
 
+    // Debug: Log first 500 chars of input
+    console.log('=== MARKDOWN DEBUG ===');
+    console.log('Input (first 500 chars):', normalizedContent.substring(0, 500));
+
     const result = marked.parse(normalizedContent);
 
     // Handle both sync and async results
+    let htmlResult: string;
     if (result instanceof Promise) {
-      return await result;
+      htmlResult = await result;
+    } else {
+      htmlResult = result;
     }
-    return result;
+
+    // Debug: Log first 500 chars of output
+    console.log('Output (first 500 chars):', htmlResult.substring(0, 500));
+    console.log('=== END DEBUG ===');
+
+    return htmlResult;
   } catch (error) {
     console.error('Error parsing markdown:', error);
     return content;
