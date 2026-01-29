@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { Category, Post, PostFaq, GetPostsOptions } from './types';
+import type { Category, Post, PostFaq, GetPostsOptions, Comment, CreateCommentInput } from './types';
 
 /**
  * Fetch all categories
@@ -203,4 +203,84 @@ export async function getAllPostsForSitemap(): Promise<
   }
 
   return data || [];
+}
+
+/**
+ * Get approved comments for a post (with nested replies)
+ */
+export async function getCommentsByPostId(postId: string): Promise<Comment[]> {
+  const { data, error } = await supabase
+    .from('comments')
+    .select('*')
+    .eq('post_id', postId)
+    .eq('status', 'approved')
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching comments:', error);
+    return [];
+  }
+
+  // Organize into threaded structure
+  const comments = data || [];
+  const topLevel: Comment[] = [];
+  const byId: Record<string, Comment> = {};
+
+  // First pass: index by id
+  for (const comment of comments) {
+    byId[comment.id] = { ...comment, replies: [] };
+  }
+
+  // Second pass: build tree
+  for (const comment of comments) {
+    if (comment.parent_id && byId[comment.parent_id]) {
+      byId[comment.parent_id].replies!.push(byId[comment.id]);
+    } else {
+      topLevel.push(byId[comment.id]);
+    }
+  }
+
+  return topLevel;
+}
+
+/**
+ * Get comment count for a post
+ */
+export async function getCommentCount(postId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('comments')
+    .select('*', { count: 'exact', head: true })
+    .eq('post_id', postId)
+    .eq('status', 'approved');
+
+  if (error) {
+    console.error('Error fetching comment count:', error);
+    return 0;
+  }
+
+  return count || 0;
+}
+
+/**
+ * Create a new comment (goes to pending status)
+ */
+export async function createComment(input: CreateCommentInput): Promise<{ success: boolean; error?: string }> {
+  const { data, error } = await supabase
+    .from('comments')
+    .insert({
+      post_id: input.post_id,
+      parent_id: input.parent_id || null,
+      author_name: input.author_name.trim().slice(0, 100),
+      author_email: input.author_email.trim().toLowerCase(),
+      content: input.content.trim().slice(0, 2000),
+      user_agent: input.user_agent || null,
+      status: 'pending',
+    });
+
+  if (error) {
+    console.error('Error creating comment:', error);
+    return { success: false, error: 'Erro ao enviar comentário. Tente novamente.' };
+  }
+
+  return { success: true };
 }

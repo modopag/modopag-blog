@@ -17,7 +17,10 @@ import {
   getFaqsByPostId,
   getRelatedPosts,
   incrementViews,
+  getCommentsByPostId,
+  getCommentCount,
 } from '@/lib/database';
+import CommentSection from '@/components/CommentSection.astro';
 import {
   generateArticleSchema,
   generateFAQSchema,
@@ -60,6 +63,8 @@ incrementViews(post.id);
 
 const faqs = await getFaqsByPostId(post.id);
 const relatedPosts = await getRelatedPosts(post.category_id, post.id, 3);
+const comments = await getCommentsByPostId(post.id);
+const commentCount = await getCommentCount(post.id);
 
 // Process content: parse markdown to HTML, then add heading IDs
 const htmlContent = await parseMarkdown(post.content);
@@ -210,6 +215,13 @@ if (showInlineCTA) {
 
         <!-- Reading Time -->
         <span>{readingTime} min de leitura</span>
+
+        <span class="text-secondary-300 dark:text-secondary-500">•</span>
+
+        <!-- Comment Count -->
+        <a href="#comments" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+          {commentCount === 0 ? 'Comentar' : `${commentCount} ${commentCount === 1 ? 'comentário' : 'comentários'}`}
+        </a>
       </div>
     </header>
 
@@ -257,6 +269,9 @@ if (showInlineCTA) {
 
     <!-- CTA Box -->
     <CTABox />
+
+    <!-- Comment Section -->
+    <CommentSection postId={post.id} comments={comments} commentCount={commentCount} />
   </article>
 
   <!-- Back to Top Button -->

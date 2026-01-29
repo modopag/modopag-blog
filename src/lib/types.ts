@@ -58,3 +58,27 @@ export interface BreadcrumbItem {
   label: string;
   href?: string;
 }
+
+export interface Comment {
+  id: string;
+  post_id: string;
+  parent_id: string | null;
+  author_name: string;
+  author_email: string;
+  content: string;
+  status: 'pending' | 'approved' | 'rejected' | 'spam';
+  ip_address: string | null;
+  user_agent: string | null;
+  created_at: string;
+  approved_at: string | null;
+  replies?: Comment[];
+}
+
+export interface CreateCommentInput {
+  post_id: string;
+  parent_id?: string | null;
+  author_name: string;
+  author_email: string;
+  content: string;
+  user_agent?: string;
+}
