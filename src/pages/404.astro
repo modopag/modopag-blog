@@ -17,18 +17,24 @@ const popularPosts = await getPosts({ limit: 4, published: true, featured: true 
 
   <div class="min-h-[60vh] flex items-center justify-center px-4">
     <div class="max-w-2xl mx-auto text-center">
-      <!-- Fun illustration -->
-      <div class="text-8xl mb-6">🔍</div>
+      <!-- modoPAG icon -->
+      <img
+        src="https://acxelejbtjjkttfwrdbi.supabase.co/storage/v1/object/public/blog-images/brand/modopag-icon.png"
+        alt="modoPAG"
+        width="80"
+        height="80"
+        class="mx-auto mb-6"
+      />
 
       <!-- Error code -->
       <h1 class="text-6xl md:text-8xl font-bold text-primary-500 mb-4">404</h1>
 
       <!-- Message -->
-      <h2 class="text-2xl md:text-3xl font-semibold text-secondary-500 dark:text-white mb-4">
+      <h2 class="text-2xl md:text-3xl font-semibold text-secondary-500 mb-4">
         Ops! Página não encontrada
       </h2>
 
-      <p class="text-secondary-400 dark:text-secondary-300 mb-8 max-w-md mx-auto">
+      <p class="text-secondary-400 mb-8 max-w-md mx-auto">
         A página que você procura pode ter sido movida, removida ou nunca existiu.
         Mas não se preocupe, temos muito conteúdo útil para você!
       </p>
@@ -43,7 +49,7 @@ const popularPosts = await getPosts({ limit: 4, published: true, featured: true 
         </a>
         <a
           href="https://modopag.com.br"
-          class="px-6 py-3 bg-secondary-100 dark:bg-secondary-700 text-secondary-600 dark:text-secondary-200 rounded-lg font-medium hover:bg-secondary-200 dark:hover:bg-secondary-600 transition-colors"
+          class="px-6 py-3 bg-secondary-100 text-secondary-600 rounded-lg font-medium hover:bg-secondary-200 transition-colors"
         >
           Ir para modoPAG
         </a>
@@ -54,17 +60,17 @@ const popularPosts = await getPosts({ limit: 4, published: true, featured: true 
   <!-- Popular posts section -->
   {popularPosts.length > 0 && (
     <section class="max-w-7xl mx-auto px-4 pb-16">
-      <h3 class="text-xl font-semibold text-secondary-500 dark:text-white mb-6 text-center">
+      <h3 class="text-xl font-semibold text-secondary-500 mb-6 text-center">
         Conteúdos populares que você pode gostar
       </h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {popularPosts.map(post => (
           <a
             href={`/blog/${post.category?.slug}/${post.slug}/`}
-            class="block p-4 bg-white dark:bg-secondary-600 rounded-xl border border-secondary-100 dark:border-secondary-500 hover:shadow-lg transition-shadow"
+            class="block p-4 bg-white rounded-xl border border-secondary-100 hover:shadow-lg transition-shadow"
           >
             <div class="text-2xl mb-2">{post.category?.emoji || '📄'}</div>
-            <h4 class="font-medium text-secondary-500 dark:text-white line-clamp-2">
+            <h4 class="font-medium text-secondary-500 line-clamp-2">
               {post.title}
             </h4>
           </a>
@@ -76,14 +82,14 @@ const popularPosts = await getPosts({ limit: 4, published: true, featured: true 
   <!-- Categories -->
   {categories.length > 0 && (
     <section class="max-w-7xl mx-auto px-4 pb-16">
-      <h3 class="text-xl font-semibold text-secondary-500 dark:text-white mb-6 text-center">
+      <h3 class="text-xl font-semibold text-secondary-500 mb-6 text-center">
         Explore por categoria
       </h3>
       <div class="flex flex-wrap justify-center gap-3">
         {categories.map(cat => (
           <a
             href={`/blog/${cat.slug}/`}
-            class="px-4 py-2 bg-white dark:bg-secondary-600 border border-secondary-200 dark:border-secondary-500 rounded-full text-sm font-medium text-secondary-600 dark:text-secondary-200 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+            class="px-4 py-2 bg-white border border-secondary-200 rounded-full text-sm font-medium text-secondary-600 hover:border-primary-500 hover:text-primary-600 transition-colors"
           >
             {cat.emoji} {cat.name}
           </a>

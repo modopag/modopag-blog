@@ -104,12 +104,12 @@ const breadcrumbItems = [
 
 // Inline CTA HTML for insertion
 const inlineCtaHtml = `
-<aside class="my-8 p-5 bg-gradient-to-r from-primary-50 to-primary-100 dark:from-secondary-600 dark:to-secondary-700 rounded-xl border border-primary-200 dark:border-secondary-500">
+<aside class="my-8 p-5 bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl border border-primary-200">
   <a href="https://modopag.com.br/taxas" class="flex items-center justify-between group">
-    <span class="font-medium text-secondary-500 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+    <span class="font-medium text-secondary-500 group-hover:text-primary-600 transition-colors">
       Conheça as taxas da modoPAG
     </span>
-    <svg class="w-5 h-5 text-primary-600 dark:text-primary-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg class="w-5 h-5 text-primary-600 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
     </svg>
   </a>
@@ -173,28 +173,28 @@ if (showInlineCTA) {
       </div>
 
       <!-- Title -->
-      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-secondary-500 dark:text-white mb-4 text-balance leading-tight">
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-secondary-500 mb-4 text-balance leading-tight">
         {post.title}
       </h1>
 
       <!-- Description -->
       {post.description && (
-        <p class="text-lg text-secondary-400 dark:text-secondary-300 mb-6 leading-relaxed">
+        <p class="text-lg text-secondary-400 mb-6 leading-relaxed">
           {post.description}
         </p>
       )}
 
       <!-- Meta Info -->
-      <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-secondary-400 dark:text-secondary-400">
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-secondary-400">
         <!-- Author -->
         <div class="flex items-center gap-2">
           <div class="w-6 h-6 rounded-full bg-primary-500 flex items-center justify-center">
             <span class="text-xs font-bold text-secondary-500">EM</span>
           </div>
-          <span class="font-medium text-secondary-500 dark:text-secondary-200">{author.name}</span>
+          <span class="font-medium text-secondary-500">{author.name}</span>
         </div>
 
-        <span class="text-secondary-300 dark:text-secondary-500">•</span>
+        <span class="text-secondary-300">•</span>
 
         <!-- Published Date -->
         <time datetime={post.created_at}>
@@ -204,22 +204,22 @@ if (showInlineCTA) {
         <!-- Updated Date (if different) -->
         {wasUpdated && (
           <>
-            <span class="text-secondary-300 dark:text-secondary-500">•</span>
-            <time datetime={post.updated_at} class="text-primary-600 dark:text-primary-400">
+            <span class="text-secondary-300">•</span>
+            <time datetime={post.updated_at} class="text-primary-600">
               Atualizado em {formatDateShort(post.updated_at)}
             </time>
           </>
         )}
 
-        <span class="text-secondary-300 dark:text-secondary-500">•</span>
+        <span class="text-secondary-300">•</span>
 
         <!-- Reading Time -->
         <span>{readingTime} min de leitura</span>
 
-        <span class="text-secondary-300 dark:text-secondary-500">•</span>
+        <span class="text-secondary-300">•</span>
 
         <!-- Comment Count -->
-        <a href="#comments" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+        <a href="#comments" class="hover:text-primary-600 transition-colors">
           {commentCount === 0 ? 'Comentar' : `${commentCount} ${commentCount === 1 ? 'comentário' : 'comentários'}`}
         </a>
       </div>
@@ -246,7 +246,7 @@ if (showInlineCTA) {
 
     <!-- Article Content -->
     <div
-      class="prose prose-lg max-w-none dark:prose-invert prose-headings:scroll-mt-20"
+      class="prose prose-lg max-w-none prose-headings:scroll-mt-20"
       set:html={finalContent}
     />
 
@@ -260,7 +260,7 @@ if (showInlineCTA) {
     />
 
     <!-- Share Buttons -->
-    <div class="my-8 pt-8 border-t border-secondary-200 dark:border-secondary-600">
+    <div class="my-8 pt-8 border-t border-secondary-200">
       <ShareButtons url={postUrl} title={post.title} />
     </div>
 
