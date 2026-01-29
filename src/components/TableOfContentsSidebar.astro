@@ -15,8 +15,8 @@ const { items } = Astro.props;
       id="toc-sidebar"
       class="hidden lg:block fixed left-[max(1rem,calc(50%-42rem))] top-24 w-64 max-h-[calc(100vh-8rem)] overflow-y-auto"
     >
-      <nav class="bg-white dark:bg-secondary-600 rounded-xl border border-secondary-100 dark:border-secondary-500 p-5 shadow-sm">
-        <h2 class="text-sm font-semibold text-secondary-400 dark:text-secondary-300 uppercase tracking-wider mb-4">
+      <nav class="bg-white rounded-xl border border-secondary-100 p-5 shadow-sm">
+        <h2 class="text-sm font-semibold text-secondary-400 uppercase tracking-wider mb-4">
           Índice
         </h2>
         <ul class="space-y-2">
@@ -25,7 +25,7 @@ const { items } = Astro.props;
               <a
                 href={`#${item.id}`}
                 data-toc-link={item.id}
-                class="toc-link block text-sm py-1.5 px-3 rounded-lg text-secondary-500 dark:text-secondary-300 hover:bg-primary-50 dark:hover:bg-secondary-500 hover:text-primary-600 dark:hover:text-primary-400 transition-all border-l-2 border-transparent"
+                class="toc-link block text-sm py-1.5 px-3 rounded-lg text-secondary-500 hover:bg-primary-50 hover:text-primary-600 transition-all border-l-2 border-transparent"
               >
                 {item.text}
               </a>
@@ -37,9 +37,9 @@ const { items } = Astro.props;
 
     <!-- Mobile: Collapsible Box -->
     <div class="lg:hidden mb-8">
-      <details class="group bg-white dark:bg-secondary-600 rounded-xl border border-secondary-100 dark:border-secondary-500 overflow-hidden">
+      <details class="group bg-white rounded-xl border border-secondary-100 overflow-hidden">
         <summary class="flex items-center justify-between p-4 cursor-pointer list-none">
-          <span class="font-semibold text-secondary-500 dark:text-white">
+          <span class="font-semibold text-secondary-500">
             Índice do artigo
           </span>
           <svg
@@ -57,7 +57,7 @@ const { items } = Astro.props;
               <li class:list={[item.level === 3 && 'ml-3']}>
                 <a
                   href={`#${item.id}`}
-                  class="block text-sm py-2 px-3 rounded-lg text-secondary-500 dark:text-secondary-300 hover:bg-primary-50 dark:hover:bg-secondary-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                  class="block text-sm py-2 px-3 rounded-lg text-secondary-500 hover:bg-primary-50 hover:text-primary-600 transition-colors"
                 >
                   {item.text}
                 </a>
@@ -72,7 +72,7 @@ const { items } = Astro.props;
 
 <style>
   .toc-link.active {
-    @apply bg-primary-50 dark:bg-secondary-500 text-primary-600 dark:text-primary-400 border-l-primary-500 font-medium;
+    @apply bg-primary-50 text-primary-600 border-l-primary-500 font-medium;
   }
 </style>
 
@@ -120,26 +120,44 @@ const { items } = Astro.props;
   function initTocBoundary() {
     const toc = document.getElementById('toc-sidebar');
     const footer = document.querySelector('footer');
+    const article = document.querySelector('article');
 
     if (!toc || !footer) return;
+
+    let ticking = false;
 
     function updateTocPosition() {
       const footerRect = footer.getBoundingClientRect();
       const tocRect = toc.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
+      const articleRect = article?.getBoundingClientRect();
 
-      // If footer is visible and TOC would overlap
-      if (footerRect.top < windowHeight && footerRect.top < tocRect.bottom) {
-        const offset = tocRect.bottom - footerRect.top + 24; // 24px buffer
-        toc.style.transform = `translateY(-${offset}px)`;
-        toc.style.transition = 'transform 0.15s ease-out';
+      // Calculate stop point (whichever comes first: article end or footer)
+      let stopPoint = footerRect.top;
+      if (articleRect && articleRect.bottom < footerRect.top) {
+        stopPoint = articleRect.bottom;
+      }
+
+      // If TOC would overlap the stop point
+      if (tocRect.bottom > stopPoint - 24) {
+        const offset = tocRect.bottom - stopPoint + 24;
+        toc.style.transform = `translateY(-${Math.max(0, offset)}px)`;
       } else {
         toc.style.transform = 'translateY(0)';
-        toc.style.transition = 'transform 0.15s ease-out';
       }
     }
 
-    window.addEventListener('scroll', updateTocPosition, { passive: true });
+    // Throttled scroll handler using requestAnimationFrame
+    function onScroll() {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateTocPosition();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', updateTocPosition, { passive: true });
     updateTocPosition();
   }

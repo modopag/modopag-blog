@@ -1,12 +1,10 @@
-import { marked, type MarkedOptions } from 'marked';
+import { marked } from 'marked';
 
-// Configure marked options for GFM (GitHub Flavored Markdown)
-const options: MarkedOptions = {
-  gfm: true,
-  breaks: true,
-};
-
-marked.use(options);
+// Configure marked with proper options for GFM
+marked.use({
+  gfm: true,        // GitHub Flavored Markdown (tables, strikethrough, etc.)
+  breaks: true,     // Convert \n to <br>
+});
 
 /**
  * Parse markdown content to HTML
@@ -15,7 +13,6 @@ export async function parseMarkdown(content: string): Promise<string> {
   if (!content) return '';
 
   try {
-    // marked.parse can return string or Promise<string> depending on async option
     const result = marked.parse(content);
 
     // Handle both sync and async results
@@ -30,7 +27,7 @@ export async function parseMarkdown(content: string): Promise<string> {
 }
 
 /**
- * Parse markdown synchronously (for cases where async isn't needed)
+ * Parse markdown synchronously
  */
 export function parseMarkdownSync(content: string): string {
   if (!content) return '';
