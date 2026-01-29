@@ -5,25 +5,28 @@ import LeadCaptureForm from './LeadCaptureForm.astro';
 const currentYear = new Date().getFullYear();
 const NEWSLETTER_SEGMENT_ID = '78682';
 
+// UTM parameters for tracking
+const utmParams = '?utm_source=blog&utm_medium=footer&utm_campaign=navigation';
+
 const footerLinks = {
   produto: [
-    { label: 'Maquininhas', href: 'https://modopag.com.br/maquininhas' },
-    { label: 'Taxas', href: 'https://modopag.com.br/taxas' },
-    { label: 'Calculadora', href: '/blog/calculadoras/' },
+    { label: 'Maquininhas', href: `https://modopag.com.br/maquininhas${utmParams}`, external: true },
+    { label: 'Taxas', href: `https://modopag.com.br/taxas${utmParams}`, external: true },
+    { label: 'Calculadora', href: '/blog/calculadoras/', external: false },
   ],
   recursos: [
-    { label: 'Blog', href: '/blog/' },
-    { label: 'Gestão', href: '/blog/gestao/' },
-    { label: 'Central de Ajuda', href: 'https://modopag.com.br/ajuda' },
+    { label: 'Blog', href: '/blog/', external: false },
+    { label: 'Gestão', href: '/blog/gestao/', external: false },
+    { label: 'Central de Ajuda', href: `https://modopag.com.br/ajuda${utmParams}`, external: true },
   ],
   empresa: [
-    { label: 'Sobre', href: 'https://modopag.com.br/sobre' },
-    { label: 'Carreiras', href: 'https://modopag.com.br/carreiras' },
-    { label: 'Contato', href: 'https://modopag.com.br/contato' },
+    { label: 'Sobre', href: `https://modopag.com.br/sobre${utmParams}`, external: true },
+    { label: 'Carreiras', href: `https://modopag.com.br/carreiras${utmParams}`, external: true },
+    { label: 'Contato', href: `https://modopag.com.br/contato${utmParams}`, external: true },
   ],
   legal: [
-    { label: 'Termos de Uso', href: 'https://modopag.com.br/termos' },
-    { label: 'Privacidade', href: 'https://modopag.com.br/privacidade' },
+    { label: 'Termos de Uso', href: `https://modopag.com.br/termos${utmParams}`, external: true },
+    { label: 'Privacidade', href: `https://modopag.com.br/privacidade${utmParams}`, external: true },
   ],
 };
 
@@ -102,6 +105,7 @@ const socialLinks = [
               <a
                 href={link.href}
                 class="text-sm text-secondary-300 hover:text-primary-400 transition-colors"
+                {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
               >
                 {link.label}
               </a>
@@ -119,6 +123,7 @@ const socialLinks = [
               <a
                 href={link.href}
                 class="text-sm text-secondary-300 hover:text-primary-400 transition-colors"
+                {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
               >
                 {link.label}
               </a>
@@ -136,6 +141,7 @@ const socialLinks = [
               <a
                 href={link.href}
                 class="text-sm text-secondary-300 hover:text-primary-400 transition-colors"
+                {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
               >
                 {link.label}
               </a>
@@ -153,6 +159,7 @@ const socialLinks = [
               <a
                 href={link.href}
                 class="text-sm text-secondary-300 hover:text-primary-400 transition-colors"
+                {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
               >
                 {link.label}
               </a>

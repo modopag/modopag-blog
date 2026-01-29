@@ -2,14 +2,42 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import SEOHead from '@/components/SEOHead.astro';
 import SchemaOrg from '@/components/SchemaOrg.astro';
-import Hero from '@/components/Hero.astro';
+import HeroCarousel from '@/components/HeroCarousel.astro';
 import CategoryPills from '@/components/CategoryPills.astro';
-import PostGrid from '@/components/PostGrid.astro';
+import PostCard from '@/components/PostCard.astro';
+import NewsletterSection from '@/components/NewsletterSection.astro';
+import CalculatorsSection from '@/components/CalculatorsSection.astro';
+import ProductCTA from '@/components/ProductCTA.astro';
+import CategoryPostsSection from '@/components/CategoryPostsSection.astro';
 import { getCategories, getPosts } from '@/lib/database';
 import { generateWebSiteSchema, generateOrganizationSchema } from '@/utils/seo';
 
-const categories = await getCategories();
-const posts = await getPosts({ published: true, limit: 20 });
+// Fetch all data in parallel for performance
+const [categories, featuredPosts, latestPosts, calculatorPosts] = await Promise.all([
+  getCategories(),
+  getPosts({ published: true, featured: true, limit: 3 }),
+  getPosts({ published: true, limit: 12 }),
+  getPosts({ published: true, categorySlug: 'calculadoras', limit: 6 }),
+]);
+
+// Get posts for each category (excluding calculadoras which has its own section)
+const categoriesWithPosts = await Promise.all(
+  categories
+    .filter(cat => cat.slug !== 'calculadoras')
+    .slice(0, 4) // Show up to 4 categories
+    .map(async (category) => {
+      const posts = await getPosts({ published: true, categorySlug: category.slug, limit: 4 });
+      return { category, posts };
+    })
+);
+
+// Filter out categories with no posts
+const validCategoriesWithPosts = categoriesWithPosts.filter(({ posts }) => posts.length > 0);
+
+// Use featured posts for carousel, or fall back to latest
+const carouselPosts = featuredPosts.length >= 3
+  ? featuredPosts
+  : [...featuredPosts, ...latestPosts.filter(p => !featuredPosts.find(f => f.id === p.id))].slice(0, 3);
 
 const schemas = [generateWebSiteSchema(), generateOrganizationSchema()];
 ---
@@ -18,18 +46,64 @@ const schemas = [generateWebSiteSchema(), generateOrganizationSchema()];
   <SEOHead
     slot="head"
     title="Blog"
-    description="Dicas, guias e calculadoras gratuitas para ajudar você a gerenciar melhor seu negócio. Aprenda sobre pagamentos, taxas e finanças."
+    description="Dicas, guias e calculadoras gratuitas para ajudar você a gerenciar melhor seu negócio. Aprenda sobre pagamentos, taxas de maquininhas e finanças."
   />
   <SchemaOrg slot="head" schema={schemas} />
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-    <Hero
-      title="Dicas, guias e calculadoras gratuitas"
-      subtitle="Tudo que você precisa saber para gerenciar melhor seu negócio e aceitar pagamentos de forma inteligente."
-    />
+    <!-- Hero Carousel with Featured Posts -->
+    <section class="pt-6 pb-8">
+      <HeroCarousel posts={carouselPosts} />
+    </section>
 
+    <!-- Category Navigation Pills -->
     <CategoryPills categories={categories} />
 
-    <PostGrid posts={posts} />
+    <!-- Latest Posts Section -->
+    <section class="py-10">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold text-secondary-500">
+            Últimas do Blog
+          </h2>
+          <p class="text-secondary-400 mt-1">
+            Os artigos mais recentes para você ficar por dentro
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {latestPosts.slice(0, 8).map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <NewsletterSection variant="standalone" class="my-8" />
+
+    <!-- Calculators Section -->
+    <CalculatorsSection posts={calculatorPosts} />
+
+    <!-- Product CTA -->
+    <ProductCTA
+      variant="full"
+      utmSource="blog"
+      utmMedium="homepage-cta"
+      utmCampaign="homepage"
+    />
+
+    <!-- Posts by Category -->
+    {validCategoriesWithPosts.map(({ category, posts }) => (
+      <CategoryPostsSection category={category} posts={posts} />
+    ))}
+
+    <!-- Compact CTA at the bottom -->
+    <ProductCTA
+      variant="compact"
+      utmSource="blog"
+      utmMedium="bottom-cta"
+      utmCampaign="homepage"
+    />
   </div>
 </BaseLayout>
