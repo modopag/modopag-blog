@@ -4,6 +4,7 @@ import SEOHead from '@/components/SEOHead.astro';
 import SchemaOrg from '@/components/SchemaOrg.astro';
 import Breadcrumb from '@/components/Breadcrumb.astro';
 import TableOfContentsSidebar from '@/components/TableOfContentsSidebar.astro';
+import CalculatorEmbed from '@/components/CalculatorEmbed.astro';
 import FAQAccordion from '@/components/FAQAccordion';
 import AuthorSection from '@/components/AuthorSection.astro';
 import CTABox from '@/components/CTABox.astro';
@@ -34,6 +35,7 @@ import {
   getTypeLabel,
   getTypeColor,
   isDifferentDay,
+  splitContentAfterIntro,
 } from '@/utils/helpers';
 import { parseMarkdown } from '@/lib/markdown';
 
@@ -68,6 +70,19 @@ const htmlContent = await parseMarkdown(post.content);
 const contentWithIds = addHeadingIds(htmlContent);
 const toc = extractTableOfContents(contentWithIds);
 const readingTime = post.reading_time || calculateReadingTime(post.content);
+
+// Calculator setup
+const showCalculator = post.calculator_enabled && post.calculator_code;
+const calculatorPosition = post.calculator_position || 'bottom';
+
+// Split content for "middle" position calculator
+let introContent = '';
+let remainingContent = '';
+if (showCalculator && calculatorPosition === 'middle') {
+  const split = splitContentAfterIntro(contentWithIds);
+  introContent = split.intro;
+  remainingContent = split.remaining;
+}
 
 // Check if post was updated after creation
 const wasUpdated = isDifferentDay(post.created_at, post.updated_at);
@@ -212,11 +227,54 @@ const breadcrumbItems = [
       </figure>
     )}
 
+    <!-- Calculator: TOP position -->
+    {showCalculator && calculatorPosition === 'top' && post.calculator_code && (
+      <CalculatorEmbed
+        title={post.calculator_title}
+        description={post.calculator_description}
+        code={post.calculator_code}
+      />
+    )}
+
     <!-- Article Content -->
-    <div
-      class="prose prose-lg max-w-none prose-headings:scroll-mt-20"
-      set:html={contentWithIds}
-    />
+    {showCalculator && calculatorPosition === 'middle' ? (
+      <>
+        {/* Intro content */}
+        <div
+          class="prose prose-lg max-w-none prose-headings:scroll-mt-20"
+          set:html={introContent}
+        />
+
+        {/* Calculator: MIDDLE position */}
+        {post.calculator_code && (
+          <CalculatorEmbed
+            title={post.calculator_title}
+            description={post.calculator_description}
+            code={post.calculator_code}
+          />
+        )}
+
+        {/* Remaining content */}
+        <div
+          class="prose prose-lg max-w-none prose-headings:scroll-mt-20"
+          set:html={remainingContent}
+        />
+      </>
+    ) : (
+      <div
+        class="prose prose-lg max-w-none prose-headings:scroll-mt-20"
+        set:html={contentWithIds}
+      />
+    )}
+
+    <!-- Calculator: BOTTOM position -->
+    {showCalculator && calculatorPosition === 'bottom' && post.calculator_code && (
+      <CalculatorEmbed
+        title={post.calculator_title}
+        description={post.calculator_description}
+        code={post.calculator_code}
+      />
+    )}
 
     <!-- FAQ Section -->
     {faqs.length > 0 && <FAQAccordion client:visible faqs={faqs} />}

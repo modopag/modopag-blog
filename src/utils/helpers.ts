@@ -168,3 +168,43 @@ export function insertAtPercentage(html: string, insertContent: string, percenta
   paragraphs.splice(actualIndex, 0, `</p>${insertContent}<p>`);
   return paragraphs.join('</p>');
 }
+
+/**
+ * Split HTML content after the introduction (first heading or first 2 paragraphs)
+ * Used for inserting calculator/tools in the "middle" position
+ */
+export function splitContentAfterIntro(htmlContent: string): { intro: string; remaining: string } {
+  // Try to find the first H2 as a natural break point
+  const h2Match = htmlContent.match(/<h2[^>]*>.*?<\/h2>/i);
+  if (h2Match && h2Match.index !== undefined) {
+    const splitPoint = h2Match.index;
+    return {
+      intro: htmlContent.slice(0, splitPoint),
+      remaining: htmlContent.slice(splitPoint),
+    };
+  }
+
+  // Fallback: split after the second paragraph
+  const paragraphRegex = /<\/p>/gi;
+  let match;
+  let count = 0;
+  let lastIndex = 0;
+
+  while ((match = paragraphRegex.exec(htmlContent)) !== null) {
+    count++;
+    if (count === 2) {
+      lastIndex = match.index + match[0].length;
+      break;
+    }
+  }
+
+  if (lastIndex > 0) {
+    return {
+      intro: htmlContent.slice(0, lastIndex),
+      remaining: htmlContent.slice(lastIndex),
+    };
+  }
+
+  // Final fallback: return all as intro
+  return { intro: htmlContent, remaining: '' };
+}

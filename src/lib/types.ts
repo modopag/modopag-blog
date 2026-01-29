@@ -28,6 +28,12 @@ export interface Post {
   published_at: string | null;
   created_at: string;
   updated_at: string;
+  // Calculator/tool fields
+  calculator_enabled: boolean | null;
+  calculator_title: string | null;
+  calculator_description: string | null;
+  calculator_code: string | null;
+  calculator_position: 'top' | 'middle' | 'bottom' | null;
 }
 
 export interface PostFaq {
