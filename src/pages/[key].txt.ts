@@ -1,5 +1,8 @@
 import type { APIRoute, GetStaticPaths } from 'astro';
 
+// Prerender this page at build time
+export const prerender = true;
+
 export const getStaticPaths: GetStaticPaths = async () => {
   const indexNowKey = import.meta.env.INDEXNOW_KEY;
 
