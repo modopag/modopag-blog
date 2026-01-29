@@ -8,18 +8,45 @@ interface Props {
 const { items } = Astro.props;
 ---
 
-<nav aria-label="Breadcrumb" class="mb-6">
+<nav aria-label="Breadcrumb" class="mb-6" itemscope itemtype="https://schema.org/BreadcrumbList">
   <ol class="flex flex-wrap items-center gap-2 text-sm">
-    <li>
+    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
       <a
+        itemprop="item"
+        href="https://modopag.com.br/?utm_source=blog&utm_medium=breadcrumb&utm_campaign=navegacao"
+        class="text-secondary-400 hover:text-primary-600 dark:text-secondary-400 dark:hover:text-primary-400 transition-colors"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span itemprop="name">modoPAG</span>
+      </a>
+      <meta itemprop="position" content="1" />
+    </li>
+    <li class="flex items-center gap-2" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <svg
+        class="w-4 h-4 text-secondary-300 dark:text-secondary-500"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 5l7 7-7 7"
+        />
+      </svg>
+      <a
+        itemprop="item"
         href="/blog/"
         class="text-secondary-400 hover:text-primary-600 dark:text-secondary-400 dark:hover:text-primary-400 transition-colors"
       >
-        Blog
+        <span itemprop="name">Blog</span>
       </a>
+      <meta itemprop="position" content="2" />
     </li>
     {items.map((item, index) => (
-      <li class="flex items-center gap-2">
+      <li class="flex items-center gap-2" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
         <svg
           class="w-4 h-4 text-secondary-300 dark:text-secondary-500"
           fill="none"
@@ -35,16 +62,18 @@ const { items } = Astro.props;
         </svg>
         {item.href ? (
           <a
+            itemprop="item"
             href={item.href}
             class="text-secondary-400 hover:text-primary-600 dark:text-secondary-400 dark:hover:text-primary-400 transition-colors"
           >
-            {item.label}
+            <span itemprop="name">{item.label}</span>
           </a>
         ) : (
-          <span class="text-secondary-600 dark:text-secondary-200 font-medium">
+          <span itemprop="name" class="text-secondary-600 dark:text-secondary-200 font-medium">
             {item.label}
           </span>
         )}
+        <meta itemprop="position" content={String(index + 3)} />
       </li>
     ))}
   </ol>
