@@ -12,6 +12,7 @@ export default defineConfig({
     defaultStrategy: 'hover',
   },
   adapter: vercel({
+    runtime: 'nodejs20.x',
     isr: {
       expiration: 60,
     },
