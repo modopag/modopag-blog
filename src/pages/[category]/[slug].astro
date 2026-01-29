@@ -32,8 +32,6 @@ import {
   addHeadingIds,
   formatDateShort,
   calculateReadingTime,
-  getTypeLabel,
-  getTypeColor,
   isDifferentDay,
   splitContentAfterIntro,
 } from '@/utils/helpers';
@@ -136,29 +134,12 @@ const breadcrumbItems = [
   <!-- Reading Progress Bar -->
   <ReadingProgress />
 
-  <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Breadcrumb -->
     <Breadcrumb items={breadcrumbItems} />
 
     <!-- Article Header -->
     <header class="mb-8">
-      <!-- Category Tag -->
-      <div class="flex flex-wrap items-center gap-3 mb-4">
-        {post.category && (
-          <a
-            href={`/blog/${categorySlug}/`}
-            class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium transition-colors hover:opacity-80"
-            style={`background-color: ${post.category.color}20; color: ${post.category.color};`}
-          >
-            {post.category.emoji && <span>{post.category.emoji}</span>}
-            {post.category.name}
-          </a>
-        )}
-        <span class:list={['px-3 py-1 rounded-full text-sm font-medium', getTypeColor(post.type)]}>
-          {getTypeLabel(post.type)}
-        </span>
-      </div>
-
       <!-- Title -->
       <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-secondary-500 mb-4 text-balance leading-tight">
         {post.title}
