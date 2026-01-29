@@ -1,13 +1,9 @@
-import { marked, Renderer } from 'marked';
+import { marked } from 'marked';
 
-// Custom renderer to ensure proper table rendering
-const renderer = new Renderer();
-
-// Configure marked with proper options for GFM
-marked.use({
+// Configure marked with GFM options
+marked.setOptions({
   gfm: true,        // GitHub Flavored Markdown (tables, strikethrough, etc.)
   breaks: false,    // Don't convert single \n to <br> (breaks tables)
-  renderer,
 });
 
 /**
@@ -17,14 +13,23 @@ export async function parseMarkdown(content: string): Promise<string> {
   if (!content) return '';
 
   try {
-    // Normalize line endings and ensure proper spacing for tables
+    // Debug: Check if content already has HTML
+    const hasHtmlTags = /<[^>]+>/.test(content);
+    const hasPipeTables = /\|.*\|/.test(content);
+
+    console.log('=== MARKDOWN DEBUG ===');
+    console.log('Content length:', content.length);
+    console.log('Has HTML tags:', hasHtmlTags);
+    console.log('Has pipe tables:', hasPipeTables);
+    console.log('First 300 chars:', content.substring(0, 300));
+
+    // If content already has HTML, it might be pre-processed
+    // In that case, just return it as-is or try to parse anyway
+
+    // Normalize line endings
     const normalizedContent = content
       .replace(/\r\n/g, '\n')
       .replace(/\r/g, '\n');
-
-    // Debug: Log first 500 chars of input
-    console.log('=== MARKDOWN DEBUG ===');
-    console.log('Input (first 500 chars):', normalizedContent.substring(0, 500));
 
     const result = marked.parse(normalizedContent);
 
@@ -36,8 +41,10 @@ export async function parseMarkdown(content: string): Promise<string> {
       htmlResult = result;
     }
 
-    // Debug: Log first 500 chars of output
-    console.log('Output (first 500 chars):', htmlResult.substring(0, 500));
+    // Debug: Check output
+    const outputHasTable = /<table/.test(htmlResult);
+    console.log('Output has <table>:', outputHasTable);
+    console.log('Output first 300 chars:', htmlResult.substring(0, 300));
     console.log('=== END DEBUG ===');
 
     return htmlResult;
