@@ -117,6 +117,37 @@ const { items } = Astro.props;
     updateActiveLink();
   }
 
+  function initTocBoundary() {
+    const toc = document.getElementById('toc-sidebar');
+    const footer = document.querySelector('footer');
+
+    if (!toc || !footer) return;
+
+    function updateTocPosition() {
+      const footerRect = footer.getBoundingClientRect();
+      const tocRect = toc.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      // If footer is visible and TOC would overlap
+      if (footerRect.top < windowHeight && footerRect.top < tocRect.bottom) {
+        const offset = tocRect.bottom - footerRect.top + 24; // 24px buffer
+        toc.style.transform = `translateY(-${offset}px)`;
+        toc.style.transition = 'transform 0.15s ease-out';
+      } else {
+        toc.style.transform = 'translateY(0)';
+        toc.style.transition = 'transform 0.15s ease-out';
+      }
+    }
+
+    window.addEventListener('scroll', updateTocPosition, { passive: true });
+    window.addEventListener('resize', updateTocPosition, { passive: true });
+    updateTocPosition();
+  }
+
   initTocHighlight();
-  document.addEventListener('astro:after-swap', initTocHighlight);
+  initTocBoundary();
+  document.addEventListener('astro:after-swap', () => {
+    initTocHighlight();
+    initTocBoundary();
+  });
 </script>
