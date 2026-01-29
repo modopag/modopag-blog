@@ -31,33 +31,46 @@
 }
 
 @layer components {
-  /* Prose (article content) styles */
+  /* Prose (article content) styles - Enhanced for markdown rendering */
   .prose {
-    @apply text-secondary-600;
+    @apply text-secondary-600 leading-relaxed;
+  }
+
+  .prose > * + * {
+    @apply mt-4;
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    @apply text-secondary-500 font-semibold scroll-mt-24;
   }
 
   .prose h1 {
-    @apply text-secondary-500 font-bold text-3xl mt-8 mb-4 scroll-mt-24;
+    @apply text-3xl font-bold mt-10 mb-4;
   }
 
   .prose h2 {
-    @apply text-secondary-500 font-semibold text-2xl mt-8 mb-4 scroll-mt-24;
+    @apply text-2xl mt-10 mb-4;
   }
 
   .prose h3 {
-    @apply text-secondary-500 font-semibold text-xl mt-6 mb-3 scroll-mt-24;
+    @apply text-xl mt-8 mb-3;
   }
 
   .prose h4 {
-    @apply text-secondary-500 font-semibold text-lg mt-4 mb-2 scroll-mt-24;
+    @apply text-lg mt-6 mb-2;
   }
 
   .prose p {
-    @apply my-4 leading-relaxed;
+    @apply my-4 leading-relaxed text-secondary-600;
   }
 
   .prose a {
-    @apply text-primary-600 no-underline hover:underline;
+    @apply text-primary-600 no-underline hover:underline underline-offset-2;
   }
 
   .prose strong {
@@ -68,8 +81,14 @@
     @apply italic;
   }
 
+  /* Code styles */
   .prose code {
     @apply bg-secondary-100 px-1.5 py-0.5 rounded text-sm font-mono text-secondary-700;
+  }
+
+  .prose code::before,
+  .prose code::after {
+    content: none !important;
   }
 
   .prose pre {
@@ -77,9 +96,10 @@
   }
 
   .prose pre code {
-    @apply bg-transparent p-0 text-secondary-100;
+    @apply bg-transparent p-0 text-secondary-100 text-sm;
   }
 
+  /* Blockquote styles */
   .prose blockquote {
     @apply border-l-4 border-primary-500 bg-primary-50 pl-4 pr-4 py-3 my-6 italic text-secondary-600 rounded-r-lg;
   }
@@ -92,38 +112,58 @@
     @apply rounded-xl my-6;
   }
 
-  /* Table styles */
+  /* Table styles - Critical for markdown tables */
   .prose table {
-    @apply w-full border-collapse my-6 text-sm;
+    @apply w-full border-collapse my-6 text-sm table-auto;
+    display: table !important;
   }
 
   .prose thead {
     @apply bg-secondary-100;
   }
 
+  .prose thead tr {
+    @apply border-b-2 border-secondary-200;
+  }
+
   .prose th {
     @apply bg-secondary-100 font-semibold text-left p-3 border border-secondary-200 text-secondary-500;
   }
 
-  .prose td {
-    @apply p-3 border border-secondary-200;
+  .prose tbody tr {
+    @apply border-b border-secondary-200;
   }
 
-  .prose tbody tr:hover {
+  .prose tbody tr:nth-child(even) {
     @apply bg-secondary-50;
   }
 
-  /* List styles */
+  .prose tbody tr:hover {
+    @apply bg-primary-50;
+  }
+
+  .prose td {
+    @apply p-3 border border-secondary-200 text-secondary-600;
+  }
+
+  /* List styles - Critical for markdown lists */
   .prose ul {
     @apply list-disc pl-6 my-4 space-y-2;
+    list-style-type: disc !important;
   }
 
   .prose ol {
     @apply list-decimal pl-6 my-4 space-y-2;
+    list-style-type: decimal !important;
   }
 
   .prose li {
-    @apply leading-relaxed;
+    @apply leading-relaxed text-secondary-600;
+    display: list-item !important;
+  }
+
+  .prose li::marker {
+    @apply text-primary-500;
   }
 
   .prose li > ul,
@@ -131,9 +171,26 @@
     @apply mt-2 mb-0;
   }
 
+  .prose li > p {
+    @apply my-0;
+  }
+
   /* Horizontal rule */
   .prose hr {
     @apply border-secondary-200 my-8;
+  }
+
+  /* Definition lists */
+  .prose dl {
+    @apply my-4;
+  }
+
+  .prose dt {
+    @apply font-semibold text-secondary-500 mt-4;
+  }
+
+  .prose dd {
+    @apply pl-4 text-secondary-600;
   }
 }
 

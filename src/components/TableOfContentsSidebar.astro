@@ -13,7 +13,7 @@ const { items } = Astro.props;
     <!-- Desktop: Sticky Sidebar -->
     <aside
       id="toc-sidebar"
-      class="hidden lg:block fixed left-[max(1rem,calc(50%-42rem))] top-24 w-64 max-h-[calc(100vh-8rem)] overflow-y-auto"
+      class="hidden lg:block fixed left-[max(1rem,calc(50%-42rem))] top-24 w-64 max-h-[calc(100vh-8rem)] overflow-y-auto transition-transform duration-150 ease-out"
     >
       <nav class="bg-white rounded-xl border border-secondary-100 p-5 shadow-sm">
         <h2 class="text-sm font-semibold text-secondary-400 uppercase tracking-wider mb-4">
@@ -120,28 +120,34 @@ const { items } = Astro.props;
   function initTocBoundary() {
     const toc = document.getElementById('toc-sidebar');
     const footer = document.querySelector('footer');
-    const article = document.querySelector('article');
 
     if (!toc || !footer) return;
 
     let ticking = false;
+    const originalTop = 96; // 6rem = 96px (top-24)
+    const buffer = 48; // Extra buffer space
 
     function updateTocPosition() {
       const footerRect = footer.getBoundingClientRect();
       const tocRect = toc.getBoundingClientRect();
-      const articleRect = article?.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
 
-      // Calculate stop point (whichever comes first: article end or footer)
-      let stopPoint = footerRect.top;
-      if (articleRect && articleRect.bottom < footerRect.top) {
-        stopPoint = articleRect.bottom;
-      }
+      // Check if footer is visible in viewport
+      if (footerRect.top < viewportHeight) {
+        // Calculate how much the TOC would overlap with footer
+        const tocBottom = tocRect.bottom;
+        const footerTop = footerRect.top;
 
-      // If TOC would overlap the stop point
-      if (tocRect.bottom > stopPoint - 24) {
-        const offset = tocRect.bottom - stopPoint + 24;
-        toc.style.transform = `translateY(-${Math.max(0, offset)}px)`;
+        if (tocBottom > footerTop - buffer) {
+          // Calculate the overlap amount
+          const overlap = tocBottom - footerTop + buffer;
+          toc.style.transform = `translateY(-${Math.max(0, overlap)}px)`;
+          toc.style.transition = 'transform 0.15s ease-out';
+        } else {
+          toc.style.transform = 'translateY(0)';
+        }
       } else {
+        // Footer not visible, reset TOC position
         toc.style.transform = 'translateY(0)';
       }
     }
@@ -159,7 +165,9 @@ const { items } = Astro.props;
 
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', updateTocPosition, { passive: true });
-    updateTocPosition();
+
+    // Initial check after a small delay to ensure layout is complete
+    setTimeout(updateTocPosition, 100);
   }
 
   initTocHighlight();
