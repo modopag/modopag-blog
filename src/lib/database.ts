@@ -198,16 +198,19 @@ export async function getRelatedPosts(
  * Get all published posts for sitemap generation
  */
 export async function getAllPostsForSitemap(): Promise<
-  Pick<Post, 'slug' | 'updated_at' | 'category'>[]
+  Pick<Post, 'slug' | 'updated_at' | 'featured' | 'category'>[]
 > {
   const { data, error } = await supabase
     .from('posts')
     .select(`
       slug,
       updated_at,
+      featured,
       category:categories(slug)
     `)
-    .eq('published', true);
+    .eq('published', true)
+    .is('deleted_at', null)
+    .order('updated_at', { ascending: false });
 
   if (error) {
     console.error('Error fetching posts for sitemap:', error);
