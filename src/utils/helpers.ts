@@ -1,19 +1,18 @@
 import type { TableOfContentsItem } from '@/lib/types';
 
 /**
- * Extract table of contents from HTML content
+ * Extract table of contents from HTML content (H2 only for cleaner TOC)
  */
 export function extractTableOfContents(html: string): TableOfContentsItem[] {
-  const headingRegex = /<h([2-3])[^>]*id="([^"]*)"[^>]*>(.*?)<\/h\1>/gi;
+  const headingRegex = /<h2[^>]*id="([^"]*)"[^>]*>(.*?)<\/h2>/gi;
   const items: TableOfContentsItem[] = [];
   let match;
 
   while ((match = headingRegex.exec(html)) !== null) {
-    const level = parseInt(match[1], 10);
-    const id = match[2];
-    const text = match[3].replace(/<[^>]*>/g, ''); // Strip any inner HTML tags
+    const id = match[1];
+    const text = match[2].replace(/<[^>]*>/g, ''); // Strip any inner HTML tags
 
-    items.push({ id, text, level });
+    items.push({ id, text, level: 2 });
   }
 
   return items;
