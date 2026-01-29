@@ -25,6 +25,14 @@
     {
       "source": "/blog/_astro/:path*",
       "destination": "/_astro/:path*"
+    },
+    {
+      "source": "/blog/:path*",
+      "destination": "/:path*"
+    },
+    {
+      "source": "/blog",
+      "destination": "/"
     }
   ]
 }
