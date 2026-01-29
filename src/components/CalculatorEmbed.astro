@@ -8,45 +8,177 @@ interface Props {
 const { title, description, code } = Astro.props;
 ---
 
-<div class="calculator-embed my-8 p-6 bg-secondary-50 rounded-xl border border-secondary-200">
+<div class="calculator-container my-8 p-6 bg-white rounded-xl shadow-lg border border-secondary-200">
   {title && (
     <h3 class="text-xl font-bold text-secondary-500 mb-2">{title}</h3>
   )}
   {description && (
     <p class="text-secondary-400 mb-4">{description}</p>
   )}
-  <div class="calculator-content" set:html={code} />
+
+  <div class="calculator-embed-wrapper" set:html={code} />
 </div>
 
+<style>
+  .calculator-container {
+    container-type: inline-size;
+  }
+
+  .calculator-embed-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+</style>
+
 <style is:global>
-  /* Calculator embed styles - ensure inherited fonts and consistent styling */
-  .calculator-content input,
-  .calculator-content select,
-  .calculator-content button,
-  .calculator-content textarea {
+  /* Reset básico para elementos injetados */
+  .calculator-embed-wrapper * {
+    box-sizing: border-box;
+  }
+
+  /* Garantir visibilidade de texto - evitar texto escondido */
+  .calculator-embed-wrapper div,
+  .calculator-embed-wrapper span,
+  .calculator-embed-wrapper p {
+    color: inherit;
+  }
+
+  /* Herdar fontes */
+  .calculator-embed-wrapper input,
+  .calculator-embed-wrapper select,
+  .calculator-embed-wrapper button,
+  .calculator-embed-wrapper textarea {
     font-family: inherit;
   }
 
-  /* Basic form element styling for calculators */
-  .calculator-content input[type="text"],
-  .calculator-content input[type="number"],
-  .calculator-content input[type="email"],
-  .calculator-content select,
-  .calculator-content textarea {
-    @apply w-full px-4 py-2 border border-secondary-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors;
+  /* Estilização de inputs */
+  .calculator-embed-wrapper input[type="text"],
+  .calculator-embed-wrapper input[type="number"],
+  .calculator-embed-wrapper input[type="email"],
+  .calculator-embed-wrapper input[type="tel"],
+  .calculator-embed-wrapper select,
+  .calculator-embed-wrapper textarea {
+    width: 100%;
+    padding: 0.625rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background-color: #fff;
+    color: #1f2937;
+    font-size: 1rem;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
 
-  .calculator-content button {
-    @apply px-4 py-2 bg-primary-500 text-secondary-500 font-semibold rounded-lg hover:bg-primary-400 transition-colors cursor-pointer;
+  .calculator-embed-wrapper input:focus,
+  .calculator-embed-wrapper select:focus,
+  .calculator-embed-wrapper textarea:focus {
+    border-color: #fbbf24;
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2);
   }
 
-  .calculator-content label {
-    @apply block text-sm font-medium text-secondary-500 mb-1;
+  /* Estilização de botões */
+  .calculator-embed-wrapper button {
+    padding: 0.625rem 1.25rem;
+    background-color: #fbbf24;
+    color: #1f2937;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
   }
 
-  /* Result display styling */
-  .calculator-content .result,
-  .calculator-content [class*="result"] {
-    @apply p-4 bg-white rounded-lg border border-secondary-200 mt-4;
+  .calculator-embed-wrapper button:hover {
+    background-color: #f59e0b;
+  }
+
+  /* Labels */
+  .calculator-embed-wrapper label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.25rem;
+  }
+
+  /* Resultados - garantir visibilidade */
+  .calculator-embed-wrapper .result,
+  .calculator-embed-wrapper [class*="result"],
+  .calculator-embed-wrapper [class*="output"],
+  .calculator-embed-wrapper [class*="total"] {
+    padding: 1rem;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+    color: #1f2937;
+  }
+
+  /* Valores monetários em destaque */
+  .calculator-embed-wrapper [class*="value"],
+  .calculator-embed-wrapper [class*="price"],
+  .calculator-embed-wrapper [class*="amount"] {
+    font-weight: 700;
+    color: #059669;
+  }
+
+  /* Estrelas de rating */
+  .calculator-embed-wrapper [class*="star"],
+  .calculator-embed-wrapper [class*="rating"] {
+    cursor: pointer;
+  }
+
+  /* Botões de ação secundária (copiar, compartilhar) */
+  .calculator-embed-wrapper button[class*="copy"],
+  .calculator-embed-wrapper button[class*="share"],
+  .calculator-embed-wrapper button[class*="whatsapp"] {
+    background-color: #10b981;
+    color: #fff;
+  }
+
+  .calculator-embed-wrapper button[class*="copy"]:hover,
+  .calculator-embed-wrapper button[class*="share"]:hover,
+  .calculator-embed-wrapper button[class*="whatsapp"]:hover {
+    background-color: #059669;
+  }
+
+  /* Responsividade mobile */
+  @media (max-width: 640px) {
+    .calculator-embed-wrapper {
+      font-size: 0.875rem;
+    }
+
+    .calculator-embed-wrapper input,
+    .calculator-embed-wrapper select,
+    .calculator-embed-wrapper button,
+    .calculator-embed-wrapper textarea {
+      min-height: 44px; /* Touch-friendly */
+      font-size: 1rem; /* Prevent zoom on iOS */
+    }
+
+    .calculator-embed-wrapper button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Grids e flexbox responsivos */
+  .calculator-embed-wrapper .grid,
+  .calculator-embed-wrapper [class*="grid"] {
+    gap: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .calculator-embed-wrapper .grid,
+    .calculator-embed-wrapper [class*="grid"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    .calculator-embed-wrapper .flex,
+    .calculator-embed-wrapper [class*="flex"] {
+      flex-wrap: wrap;
+    }
   }
 </style>
