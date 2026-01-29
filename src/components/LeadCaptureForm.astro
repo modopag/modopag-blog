@@ -4,6 +4,7 @@ interface Props {
   title?: string;
   description?: string;
   buttonText?: string;
+  showName?: boolean;
   showPhone?: boolean;
   variant?: 'default' | 'inline' | 'card';
   class?: string;
@@ -14,6 +15,7 @@ const {
   title,
   description,
   buttonText = 'Cadastrar',
+  showName = true,
   showPhone = true,
   variant = 'default',
   class: className = '',
@@ -37,20 +39,22 @@ const formId = `lead-form-${segmentId}-${Math.random().toString(36).substr(2, 9)
     class="space-y-3"
     id={formId}
   >
-    <input
-      data-rptn-field="name"
-      type="text"
-      name="name"
-      placeholder="Seu nome"
-      required
-      class="w-full px-4 py-3 border border-secondary-200 rounded-lg bg-white text-secondary-500 placeholder:text-secondary-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
-    />
+    {showName && (
+      <input
+        data-rptn-field="name"
+        type="text"
+        name="name"
+        placeholder="Seu nome"
+        required
+        class="w-full px-4 py-3 border border-secondary-200 rounded-lg bg-white text-secondary-500 placeholder:text-secondary-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+      />
+    )}
 
     <input
       data-rptn-field="email"
       type="email"
       name="email"
-      placeholder="Seu melhor e-mail"
+      placeholder="Digite seu melhor e-mail"
       required
       class="w-full px-4 py-3 border border-secondary-200 rounded-lg bg-white text-secondary-500 placeholder:text-secondary-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
     />

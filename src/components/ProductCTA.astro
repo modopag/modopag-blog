@@ -4,6 +4,7 @@ interface Props {
   utmSource?: string;
   utmMedium?: string;
   utmCampaign?: string;
+  image?: string;
 }
 
 const {
@@ -11,38 +12,42 @@ const {
   utmSource = 'blog',
   utmMedium = 'cta',
   utmCampaign = 'homepage',
+  image,
 } = Astro.props;
 
 const utmParams = `?utm_source=${utmSource}&utm_medium=${utmMedium}&utm_campaign=${utmCampaign}`;
 const maquininhasUrl = `https://modopag.com.br/maquininhas${utmParams}`;
 const taxasUrl = `https://modopag.com.br/taxas${utmParams}`;
+
+// Default maquininha image - update this path when image is uploaded
+const maquininhaImage = image || '/blog/images/maquininha-modopag.png';
 ---
 
 {variant === 'full' && (
   <section class="py-12 md:py-16">
-    <div class="relative overflow-hidden bg-gradient-to-br from-secondary-600 via-secondary-700 to-secondary-800 rounded-3xl">
+    <div class="relative overflow-hidden bg-gradient-to-br from-primary-400 via-primary-500 to-primary-600 rounded-3xl">
       <!-- Background decoration -->
-      <div class="absolute inset-0 opacity-30">
-        <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-primary-500/20 blur-3xl" />
-        <div class="absolute -left-10 -bottom-10 w-60 h-60 rounded-full bg-primary-500/10 blur-2xl" />
+      <div class="absolute inset-0 opacity-20">
+        <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-white/20 blur-3xl" />
+        <div class="absolute -left-10 -bottom-10 w-60 h-60 rounded-full bg-white/10 blur-2xl" />
       </div>
 
-      <div class="relative grid md:grid-cols-2 gap-8 p-8 md:p-12 lg:p-16">
+      <div class="relative grid md:grid-cols-2 gap-8 p-8 md:p-12 lg:p-16 items-center">
         <!-- Text content -->
         <div class="flex flex-col justify-center">
-          <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-primary-500/20 text-primary-400 text-sm font-semibold rounded-full w-fit mb-6">
+          <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-secondary-500/20 text-secondary-700 text-sm font-semibold rounded-full w-fit mb-6">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
             As menores taxas do Brasil
           </span>
 
-          <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
-            Conheça as maquininhas <span class="text-primary-400">modoPAG</span>
+          <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-secondary-700 mb-4">
+            Conheça as maquininhas modoPAG
           </h2>
 
-          <p class="text-lg text-secondary-300 mb-8">
-            Taxas a partir de <span class="text-primary-400 font-bold">0,99%</span> no débito e crédito.
+          <p class="text-lg text-secondary-600 mb-8">
+            Taxas a partir de <span class="font-bold">0,99%</span> no débito e crédito.
             Sem aluguel, sem mensalidade. Receba em até 1 dia útil.
           </p>
 
@@ -51,7 +56,7 @@ const taxasUrl = `https://modopag.com.br/taxas${utmParams}`;
               href={maquininhasUrl}
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 hover:bg-primary-400 text-secondary-700 font-semibold rounded-lg transition-colors"
+              class="inline-flex items-center gap-2 px-6 py-3 bg-secondary-600 hover:bg-secondary-700 text-white font-semibold rounded-lg transition-colors shadow-lg"
               data-no-instant
             >
               Ver maquininhas
@@ -64,7 +69,7 @@ const taxasUrl = `https://modopag.com.br/taxas${utmParams}`;
               href={taxasUrl}
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-2 px-6 py-3 border-2 border-white/20 hover:border-white/40 text-white font-semibold rounded-lg transition-colors"
+              class="inline-flex items-center gap-2 px-6 py-3 border-2 border-secondary-600/30 hover:border-secondary-600/50 text-secondary-700 font-semibold rounded-lg transition-colors"
               data-no-instant
             >
               Simular taxas
@@ -72,21 +77,21 @@ const taxasUrl = `https://modopag.com.br/taxas${utmParams}`;
           </div>
 
           <!-- Trust badges -->
-          <div class="flex flex-wrap items-center gap-6 mt-8 pt-8 border-t border-white/10">
-            <div class="flex items-center gap-2 text-secondary-300 text-sm">
-              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="flex flex-wrap items-center gap-6 mt-8 pt-8 border-t border-secondary-600/20">
+            <div class="flex items-center gap-2 text-secondary-600 text-sm">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
               <span>Compra segura</span>
             </div>
-            <div class="flex items-center gap-2 text-secondary-300 text-sm">
-              <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center gap-2 text-secondary-600 text-sm">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span>Receba em 1 dia</span>
             </div>
-            <div class="flex items-center gap-2 text-secondary-300 text-sm">
-              <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center gap-2 text-secondary-600 text-sm">
+              <svg class="w-5 h-5 text-secondary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
               <span>Sem mensalidade</span>
@@ -94,18 +99,17 @@ const taxasUrl = `https://modopag.com.br/taxas${utmParams}`;
           </div>
         </div>
 
-        <!-- Image/illustration area -->
-        <div class="flex items-center justify-center">
+        <!-- Maquininha Image -->
+        <div class="flex items-center justify-center order-first md:order-last">
           <div class="relative">
-            <!-- Placeholder for product image - using a stylized illustration -->
-            <div class="w-64 h-80 md:w-72 md:h-96 bg-gradient-to-br from-primary-500/30 to-primary-600/20 rounded-3xl flex items-center justify-center backdrop-blur-sm border border-primary-500/20">
-              <div class="text-center">
-                <span class="text-8xl">💳</span>
-                <p class="mt-4 text-white/80 font-medium">Maquininhas modoPAG</p>
-              </div>
-            </div>
+            <img
+              src={maquininhaImage}
+              alt="Maquininha modoPAG"
+              class="w-64 md:w-80 lg:w-96 h-auto drop-shadow-2xl transform -rotate-6 hover:rotate-0 transition-transform duration-500"
+              loading="lazy"
+            />
             <!-- Floating badge -->
-            <div class="absolute -top-4 -right-4 bg-green-500 text-white px-4 py-2 rounded-full font-bold shadow-lg transform rotate-12">
+            <div class="absolute -top-2 -right-2 md:-top-4 md:-right-4 bg-green-500 text-white px-4 py-2 rounded-full font-bold shadow-lg transform rotate-12 text-sm md:text-base">
               Sem aluguel!
             </div>
           </div>
@@ -117,14 +121,19 @@ const taxasUrl = `https://modopag.com.br/taxas${utmParams}`;
 
 {variant === 'compact' && (
   <section class="py-8">
-    <div class="bg-gradient-to-r from-secondary-600 to-secondary-700 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="bg-gradient-to-r from-primary-400 to-primary-500 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
       <div class="flex items-center gap-4">
-        <span class="text-4xl">💳</span>
+        <img
+          src={maquininhaImage}
+          alt="Maquininha modoPAG"
+          class="w-16 h-auto drop-shadow-lg hidden sm:block"
+          loading="lazy"
+        />
         <div>
-          <h3 class="text-lg font-bold text-white">
+          <h3 class="text-lg font-bold text-secondary-700">
             Maquininha com as menores taxas
           </h3>
-          <p class="text-secondary-300 text-sm">
+          <p class="text-secondary-600 text-sm">
             A partir de 0,99%. Sem aluguel ou mensalidade.
           </p>
         </div>
@@ -134,7 +143,7 @@ const taxasUrl = `https://modopag.com.br/taxas${utmParams}`;
         href={maquininhasUrl}
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-500 hover:bg-primary-400 text-secondary-700 font-semibold rounded-lg transition-colors whitespace-nowrap"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary-600 hover:bg-secondary-700 text-white font-semibold rounded-lg transition-colors whitespace-nowrap shadow-lg"
         data-no-instant
       >
         Conhecer modoPAG

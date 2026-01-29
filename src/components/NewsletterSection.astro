@@ -2,7 +2,7 @@
 import LeadCaptureForm from './LeadCaptureForm.astro';
 
 interface Props {
-  variant?: 'footer' | 'standalone' | 'sidebar';
+  variant?: 'standalone' | 'sidebar';
   class?: string;
 }
 
@@ -11,43 +11,21 @@ const { variant = 'standalone', class: className = '' } = Astro.props;
 const SEGMENT_ID = '78682'; // Newsletter Principal
 ---
 
-{variant === 'footer' && (
-  <section class:list={['bg-secondary-600 py-12', className]}>
-    <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <div class="mb-6">
-        <span class="text-4xl">📬</span>
-      </div>
-      <h2 class="text-2xl font-bold text-white mb-3">
-        Newsletter modoPAG
-      </h2>
-      <p class="text-secondary-300 mb-6">
-        Receba dicas exclusivas sobre maquininhas, taxas e gestão financeira direto no seu e-mail.
-      </p>
-      <LeadCaptureForm
-        segmentId={SEGMENT_ID}
-        buttonText="Quero Receber"
-        showPhone={false}
-      />
-    </div>
-  </section>
-)}
-
 {variant === 'standalone' && (
   <section class:list={['bg-gradient-to-br from-primary-50 to-primary-100 py-16 rounded-2xl', className]}>
     <div class="max-w-xl mx-auto px-6 text-center">
-      <div class="mb-6">
-        <span class="text-5xl">💌</span>
-      </div>
-      <h2 class="text-3xl font-bold text-secondary-500 mb-4">
-        Fique por dentro das novidades
+      <h2 class="text-3xl font-bold text-secondary-500 mb-2">
+        Dicas semanais para lucrar mais
       </h2>
-      <p class="text-secondary-400 mb-8">
-        Cadastre-se e receba conteúdos exclusivos sobre pagamentos, taxas de maquininhas e dicas para seu negócio.
+      <p class="text-secondary-400 text-lg mb-8">
+        — sem rabo preso com ninguém
       </p>
       <div class="max-w-md mx-auto">
         <LeadCaptureForm
           segmentId={SEGMENT_ID}
           buttonText="Cadastrar Grátis"
+          showName={false}
+          showPhone={false}
         />
       </div>
     </div>
@@ -64,45 +42,8 @@ const SEGMENT_ID = '78682'; // Newsletter Principal
       title="Não perca nenhuma dica"
       description="Cadastre-se e receba conteúdos exclusivos."
       buttonText="Me Cadastrar"
+      showName={false}
       showPhone={false}
     />
   </div>
 )}
-
-<style>
-  /* Override form styles for footer dark background */
-  .bg-secondary-600 :global(input) {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: white;
-  }
-
-  .bg-secondary-600 :global(input::placeholder) {
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .bg-secondary-600 :global(input:focus) {
-    border-color: #fbbf24;
-    background-color: rgba(255, 255, 255, 0.15);
-  }
-
-  .bg-secondary-600 :global(.text-secondary-500) {
-    color: white;
-  }
-
-  .bg-secondary-600 :global(.text-secondary-400) {
-    color: rgba(255, 255, 255, 0.7);
-  }
-
-  .bg-secondary-600 :global(p.text-xs) {
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .bg-secondary-600 :global(a) {
-    color: rgba(255, 255, 255, 0.7);
-  }
-
-  .bg-secondary-600 :global(a:hover) {
-    color: white;
-  }
-</style>
