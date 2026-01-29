@@ -11,6 +11,45 @@ interface Props {
 }
 
 const { class: className = '' } = Astro.props;
+
+// Schema.org data
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "modoPAG",
+  "url": SITE.url,
+  "logo": {
+    "@type": "ImageObject",
+    "url": BRAND.ogDefault,
+    "width": 1000,
+    "height": 1000
+  },
+  "image": BRAND.ogDefault,
+  "description": "A forma mais simples de aceitar pagamentos no seu negócio. Maquininhas com as menores taxas do Brasil.",
+  "sameAs": [
+    "https://instagram.com/modopag",
+    "https://linkedin.com/company/modopag",
+    "https://twitter.com/modopag"
+  ]
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": SITE.name,
+  "alternateName": "Blog modoPAG",
+  "description": SITE.description,
+  "url": SITE.blogUrl,
+  "inLanguage": SITE.language,
+  "publisher": {
+    "@type": "Organization",
+    "name": "modoPAG",
+    "logo": {
+      "@type": "ImageObject",
+      "url": BRAND.ogDefault
+    }
+  }
+};
 ---
 
 <!doctype html>
@@ -28,30 +67,65 @@ const { class: className = '' } = Astro.props;
     <!-- PWA Manifest -->
     <link rel="manifest" href="/blog/manifest.json" />
     <meta name="theme-color" content={SITE.secondaryColor} />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content={SITE.shortName} />
+    <meta name="application-name" content={SITE.shortName} />
+    <meta name="msapplication-TileColor" content={SITE.secondaryColor} />
+    <meta name="msapplication-TileImage" content={BRAND.iconLarge} />
 
-    <!-- DNS Prefetch & Preconnect for external resources -->
+    <!-- DNS Prefetch for Supabase (database only) -->
     <link rel="dns-prefetch" href="https://acxelejbtjjkttfwrdbi.supabase.co" />
     <link rel="preconnect" href="https://acxelejbtjjkttfwrdbi.supabase.co" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Font preload for faster text rendering -->
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <!-- LOCAL FONTS - Preload for faster rendering -->
+    <link rel="preload" href="/blog/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/blog/fonts/inter-latin-600.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Local Font Definitions -->
+    <style is:inline>
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/blog/fonts/inter-latin-400.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 500;
+        font-display: swap;
+        src: url('/blog/fonts/inter-latin-500.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url('/blog/fonts/inter-latin-600.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url('/blog/fonts/inter-latin-700.woff2') format('woff2');
+      }
+    </style>
+
+    <!-- Schema.org - Organization -->
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+
+    <!-- Schema.org - WebSite -->
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
 
     <!-- View Transitions for smooth page navigation -->
     <ViewTransitions />
 
     <slot name="head" />
   </head>
-  <body class="min-h-screen flex flex-col bg-white text-secondary-500">
+  <body class="min-h-screen flex flex-col bg-white text-secondary-500 font-sans">
     <NavigationLoader />
     <Header />
     <main class:list={['flex-1', className]}>

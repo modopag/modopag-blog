@@ -4,53 +4,20 @@
   "description": "Dicas, guias e calculadoras gratuitas para gerenciar melhor seu negócio e aceitar pagamentos de forma inteligente.",
   "start_url": "/blog/",
   "scope": "/blog/",
-  "id": "/blog/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1a1a2e",
   "orientation": "portrait-primary",
   "lang": "pt-BR",
-  "dir": "ltr",
   "categories": ["business", "finance", "education"],
   "icons": [
     {
       "src": "/blog/images/brand/modopag-icon.png",
       "sizes": "32x32",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
-      "src": "/blog/images/brand/modopag-icon.png",
-      "sizes": "48x48",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/blog/images/brand/modopag-icon.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/blog/images/brand/modopag-icon.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/blog/images/brand/modopag-icon.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/blog/images/brand/modopag-icon.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/blog/images/brand/modopag-icon.png",
+      "src": "/blog/images/brand/modopag-icon-large.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
@@ -59,29 +26,16 @@
       "src": "/blog/images/brand/modopag-icon-large.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/blog/images/brand/modopag-icon-large.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ],
-  "shortcuts": [
+  "screenshots": [
     {
-      "name": "Calculadoras",
-      "short_name": "Calculadoras",
-      "description": "Calculadoras gratuitas para seu negócio",
-      "url": "/blog/calculadoras/",
-      "icons": [{ "src": "/blog/images/brand/modopag-icon.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "Guias",
-      "short_name": "Guias",
-      "description": "Guias completos para empreendedores",
-      "url": "/blog/guias/",
-      "icons": [{ "src": "/blog/images/brand/modopag-icon.png", "sizes": "96x96" }]
+      "src": "/blog/images/brand/modopag-square-light.png",
+      "sizes": "1000x1000",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "modoPAG Blog"
     }
   ]
 }
