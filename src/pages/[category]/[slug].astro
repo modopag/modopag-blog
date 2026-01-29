@@ -7,7 +7,6 @@ import TableOfContentsSidebar from '@/components/TableOfContentsSidebar.astro';
 import FAQAccordion from '@/components/FAQAccordion';
 import AuthorSection from '@/components/AuthorSection.astro';
 import CTABox from '@/components/CTABox.astro';
-import InlineCTA from '@/components/InlineCTA.astro';
 import ShareButtons from '@/components/ShareButtons.astro';
 import RelatedPosts from '@/components/RelatedPosts.astro';
 import ReadingProgress from '@/components/ReadingProgress.astro';
@@ -30,12 +29,10 @@ import {
 import {
   extractTableOfContents,
   addHeadingIds,
-  formatDate,
   formatDateShort,
   calculateReadingTime,
   getTypeLabel,
   getTypeColor,
-  countWords,
   isDifferentDay,
 } from '@/utils/helpers';
 import { parseMarkdown } from '@/lib/markdown';
@@ -71,8 +68,6 @@ const htmlContent = await parseMarkdown(post.content);
 const contentWithIds = addHeadingIds(htmlContent);
 const toc = extractTableOfContents(contentWithIds);
 const readingTime = post.reading_time || calculateReadingTime(post.content);
-const wordCount = countWords(post.content);
-const showInlineCTA = wordCount > 500;
 
 // Check if post was updated after creation
 const wasUpdated = isDifferentDay(post.created_at, post.updated_at);
@@ -101,31 +96,6 @@ const breadcrumbItems = [
   { label: post.category?.name || 'Artigos', href: `/blog/${categorySlug}/` },
   { label: post.title },
 ];
-
-// Inline CTA HTML for insertion
-const inlineCtaHtml = `
-<aside class="my-8 p-5 bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl border border-primary-200">
-  <a href="https://modopag.com.br/taxas" class="flex items-center justify-between group">
-    <span class="font-medium text-secondary-500 group-hover:text-primary-600 transition-colors">
-      Conheça as taxas da modoPAG
-    </span>
-    <svg class="w-5 h-5 text-primary-600 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-    </svg>
-  </a>
-</aside>
-`;
-
-// Insert inline CTA at 50% of content if post has >500 words
-let finalContent = contentWithIds;
-if (showInlineCTA) {
-  const paragraphs = finalContent.split('</p>');
-  if (paragraphs.length > 3) {
-    const insertIndex = Math.floor(paragraphs.length / 2);
-    paragraphs.splice(insertIndex, 0, inlineCtaHtml);
-    finalContent = paragraphs.join('</p>');
-  }
-}
 ---
 
 <BaseLayout>
@@ -245,7 +215,7 @@ if (showInlineCTA) {
     <!-- Article Content -->
     <div
       class="prose prose-lg max-w-none prose-headings:scroll-mt-20"
-      set:html={finalContent}
+      set:html={contentWithIds}
     />
 
     <!-- FAQ Section -->
