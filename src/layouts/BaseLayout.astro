@@ -3,7 +3,7 @@ import { ViewTransitions } from 'astro:transitions';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import NavigationLoader from '@/components/NavigationLoader.astro';
-import { BRAND } from '@/lib/images';
+import { BRAND, SITE } from '@/lib/images';
 import '@/styles/global.css';
 
 interface Props {
@@ -14,7 +14,7 @@ const { class: className = '' } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="pt-BR">
+<html lang={SITE.language}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,13 +22,12 @@ const { class: className = '' } = Astro.props;
     <!-- Favicon and App Icons -->
     <link rel="icon" type="image/svg+xml" href={BRAND.favicon} />
     <link rel="icon" type="image/png" sizes="32x32" href={BRAND.icon} />
-    <link rel="apple-touch-icon" href={BRAND.icon} />
+    <link rel="icon" type="image/png" sizes="192x192" href={BRAND.iconLarge} />
+    <link rel="apple-touch-icon" sizes="180x180" href={BRAND.iconLarge} />
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="/blog/manifest.json" />
-    <meta name="theme-color" content="#1a1a2e" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content={SITE.secondaryColor} />
 
     <!-- DNS Prefetch & Preconnect for external resources -->
     <link rel="dns-prefetch" href="https://acxelejbtjjkttfwrdbi.supabase.co" />

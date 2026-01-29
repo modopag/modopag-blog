@@ -6,26 +6,62 @@
  * ├── favicon.svg              (SVG favicon - best quality)
  * └── images/
  *     └── brand/
- *         ├── modopag-icon.png        (PWA icons - 512x512)
- *         ├── modopag-logo-dark.png   (for light backgrounds)
- *         └── modopag-logo-yellow.png (for dark backgrounds)
+ *         ├── modopag-icon.png           (Favicon 32x32)
+ *         ├── modopag-icon-large.png     (PWA icon 512x512)
+ *         ├── modopag-logo-dark.png      (Logo: black + yellow)
+ *         ├── modopag-logo-yellow.png    (Logo: yellow only)
+ *         ├── modopag-logo-black.png     (Logo: black only)
+ *         ├── modopag-logo-white.png     (Logo: black + white)
+ *         ├── modopag-logo-mixed.png     (Logo: yellow + black)
+ *         ├── modopag-square-dark.png    (1000x1000 dark)
+ *         └── modopag-square-light.png   (1000x1000 light)
  *
  * Post images still come from Supabase (dynamic content):
  * https://acxelejbtjjkttfwrdbi.supabase.co/storage/v1/object/public/blog-images/posts/
  */
 
-// Base path for local images (includes /blog base)
+// Base paths
 const LOCAL_BASE = '/blog/images';
+const BRAND_BASE = `${LOCAL_BASE}/brand`;
+const SITE_URL = 'https://modopag.com.br';
 const SUPABASE_STORAGE_URL = 'https://acxelejbtjjkttfwrdbi.supabase.co/storage/v1/object/public/blog-images';
 
 // Brand assets (local - served from Vercel CDN)
 export const BRAND = {
+  // Favicons
   favicon: '/blog/favicon.svg',
-  icon: `${LOCAL_BASE}/brand/modopag-icon.png`,
-  logoDark: `${LOCAL_BASE}/brand/modopag-logo-dark.png`,
-  logoYellow: `${LOCAL_BASE}/brand/modopag-logo-yellow.png`,
-  // OG image uses full URL for social sharing
-  ogDefault: 'https://modopag.com.br/blog/images/brand/modopag-icon.png',
+  icon: `${BRAND_BASE}/modopag-icon.png`,
+  iconLarge: `${BRAND_BASE}/modopag-icon-large.png`,
+
+  // Logos (horizontal)
+  logoDark: `${BRAND_BASE}/modopag-logo-dark.png`,      // Black text + yellow accent (for light bg)
+  logoYellow: `${BRAND_BASE}/modopag-logo-yellow.png`,  // Yellow (for dark bg)
+  logoBlack: `${BRAND_BASE}/modopag-logo-black.png`,    // Black only
+  logoWhite: `${BRAND_BASE}/modopag-logo-white.png`,    // Black + white
+  logoMixed: `${BRAND_BASE}/modopag-logo-mixed.png`,    // Yellow + black
+
+  // Square icons (1000x1000)
+  squareDark: `${BRAND_BASE}/modopag-square-dark.png`,
+  squareLight: `${BRAND_BASE}/modopag-square-light.png`,
+
+  // Full URLs for social sharing / Open Graph
+  ogDefault: `${SITE_URL}/blog/images/brand/modopag-square-light.png`,
+  ogDark: `${SITE_URL}/blog/images/brand/modopag-square-dark.png`,
+} as const;
+
+// Site metadata
+export const SITE = {
+  url: SITE_URL,
+  blogUrl: `${SITE_URL}/blog/`,
+  name: 'modoPAG Blog',
+  shortName: 'modoPAG',
+  description: 'Dicas, guias e calculadoras gratuitas para gerenciar melhor seu negócio e aceitar pagamentos de forma inteligente.',
+  author: 'Equipe modoPAG',
+  twitter: '@modopag',
+  brandColor: '#FFD700',
+  secondaryColor: '#1a1a2e',
+  locale: 'pt_BR',
+  language: 'pt-BR',
 } as const;
 
 /**
@@ -35,4 +71,13 @@ export const BRAND = {
  */
 export function getPostImageUrl(slug: string, filename = 'featured.webp'): string {
   return `${SUPABASE_STORAGE_URL}/posts/${slug}/${filename}`;
+}
+
+/**
+ * Get full URL for an image path (for social sharing)
+ * @param path - Local image path starting with /blog/
+ */
+export function getFullImageUrl(path: string): string {
+  if (path.startsWith('http')) return path;
+  return `${SITE_URL}${path}`;
 }
