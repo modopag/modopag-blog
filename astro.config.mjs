@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
-import react from '@astrojs/react';
+import vercel from '@astrojs/vercel';
 import tailwind from '@astrojs/tailwind';
-import vercel from '@astrojs/vercel/serverless';
+import react from '@astrojs/react';
 
 export default defineConfig({
   site: 'https://modopag.com.br',
@@ -12,16 +12,15 @@ export default defineConfig({
     defaultStrategy: 'hover',
   },
   adapter: vercel({
-    runtime: 'nodejs20.x',
+    maxDuration: 30,
+    imageService: true,
+    devImageService: 'sharp',
     isr: {
       expiration: 60,
     },
-    edgeMiddleware: true,
+    functionPerRoute: false,
   }),
-  integrations: [
-    react(),
-    tailwind(),
-  ],
+  integrations: [tailwind(), react()],
   vite: {
     ssr: {
       noExternal: ['@supabase/supabase-js'],
