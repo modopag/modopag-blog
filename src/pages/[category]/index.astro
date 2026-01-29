@@ -12,13 +12,19 @@ import { generateBreadcrumbSchema } from '@/utils/seo';
 const { category: categorySlug } = Astro.params;
 
 if (!categorySlug) {
-  return Astro.redirect('/blog/');
+  return new Response(null, {
+    status: 404,
+    statusText: 'Not Found',
+  });
 }
 
 const category = await getCategoryBySlug(categorySlug);
 
 if (!category) {
-  return Astro.redirect('/blog/');
+  return new Response(null, {
+    status: 404,
+    statusText: 'Not Found',
+  });
 }
 
 const categories = await getCategories();

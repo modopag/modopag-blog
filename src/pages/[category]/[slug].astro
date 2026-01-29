@@ -40,13 +40,19 @@ import { parseMarkdown } from '@/lib/markdown';
 const { category: categorySlug, slug } = Astro.params;
 
 if (!categorySlug || !slug) {
-  return Astro.redirect('/blog/');
+  return new Response(null, {
+    status: 404,
+    statusText: 'Not Found',
+  });
 }
 
 const post = await getPostBySlug(categorySlug, slug);
 
 if (!post) {
-  return Astro.redirect('/blog/');
+  return new Response(null, {
+    status: 404,
+    statusText: 'Not Found',
+  });
 }
 
 // Fire and forget view increment
