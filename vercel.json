@@ -35,12 +35,34 @@
           "value": "public, max-age=86400, stale-while-revalidate=604800"
         }
       ]
+    },
+    {
+      "source": "/blog/sitemap.xml",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=3600"
+        }
+      ]
+    },
+    {
+      "source": "/blog/rss.xml",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=3600"
+        }
+      ]
     }
   ],
   "rewrites": [
     {
       "source": "/blog/sitemap.xml",
-      "destination": "/blog/sitemap-index.xml"
+      "destination": "https://acxelejbtjjkttfwrdbi.supabase.co/functions/v1/sitemap"
+    },
+    {
+      "source": "/blog/rss.xml",
+      "destination": "https://acxelejbtjjkttfwrdbi.supabase.co/functions/v1/rss"
     }
   ]
 }
