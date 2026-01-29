@@ -7,6 +7,10 @@ export default defineConfig({
   site: 'https://modopag.com.br',
   base: '/blog',
   output: 'server',
+  prefetch: {
+    prefetchAll: false,
+    defaultStrategy: 'hover',
+  },
   adapter: vercel({
     isr: {
       expiration: 60,
@@ -24,5 +28,6 @@ export default defineConfig({
   },
   image: {
     domains: ['acxelejbtjjkttfwrdbi.supabase.co'],
+    remotePatterns: [{ protocol: 'https' }],
   },
 });
