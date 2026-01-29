@@ -21,8 +21,8 @@ export interface Post {
   meta_title: string | null;
   meta_description: string | null;
   type: 'gratuito' | 'guia' | 'artigo';
-  is_featured: boolean;
-  is_published: boolean;
+  featured: boolean;
+  published: boolean;
   views: number;
   reading_time: number | null;
   published_at: string | null;

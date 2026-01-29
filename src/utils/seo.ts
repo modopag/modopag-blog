@@ -26,18 +26,33 @@ export function generateSEO(props: SEOProps): SEOProps {
   };
 }
 
-export function generateArticleSchema(post: Post, categorySlug: string): string {
+export interface AuthorInfo {
+  name: string;
+  bio?: string;
+  avatar?: string;
+  twitter?: string;
+  linkedin?: string;
+}
+
+export function generateArticleSchema(
+  post: Post,
+  categorySlug: string,
+  author?: AuthorInfo
+): string {
+  const authorName = author?.name || 'Equipe modoPAG';
+
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: post.title,
     description: post.meta_description || post.description,
     image: post.featured_image || `${SITE_URL}${DEFAULT_OG_IMAGE}`,
-    datePublished: post.published_at,
+    datePublished: post.created_at,
     dateModified: post.updated_at,
+    wordCount: post.content ? post.content.split(/\s+/).length : undefined,
     author: {
-      '@type': 'Organization',
-      name: 'modoPAG',
+      '@type': 'Person',
+      name: authorName,
       url: SITE_URL,
     },
     publisher: {
@@ -47,13 +62,44 @@ export function generateArticleSchema(post: Post, categorySlug: string): string 
       logo: {
         '@type': 'ImageObject',
         url: `${SITE_URL}/blog/images/logo.png`,
+        width: 200,
+        height: 60,
       },
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `${SITE_URL}/blog/${categorySlug}/${post.slug}/`,
     },
+    articleSection: post.category?.name,
+    inLanguage: 'pt-BR',
   };
+
+  return JSON.stringify(schema);
+}
+
+export function generatePersonSchema(author: AuthorInfo): string {
+  const schema: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: author.name,
+    description: author.bio,
+    url: SITE_URL,
+  };
+
+  if (author.avatar) {
+    schema.image = author.avatar;
+  }
+
+  const sameAs: string[] = [];
+  if (author.twitter) {
+    sameAs.push(`https://twitter.com/${author.twitter}`);
+  }
+  if (author.linkedin) {
+    sameAs.push(`https://linkedin.com/in/${author.linkedin}`);
+  }
+  if (sameAs.length > 0) {
+    schema.sameAs = sameAs;
+  }
 
   return JSON.stringify(schema);
 }

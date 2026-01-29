@@ -1,0 +1,272 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SEOHead from '@/components/SEOHead.astro';
+import SchemaOrg from '@/components/SchemaOrg.astro';
+import Breadcrumb from '@/components/Breadcrumb.astro';
+import TableOfContentsSidebar from '@/components/TableOfContentsSidebar.astro';
+import FAQAccordion from '@/components/FAQAccordion';
+import AuthorSection from '@/components/AuthorSection.astro';
+import CTABox from '@/components/CTABox.astro';
+import InlineCTA from '@/components/InlineCTA.astro';
+import ShareButtons from '@/components/ShareButtons.astro';
+import RelatedPosts from '@/components/RelatedPosts.astro';
+import ReadingProgress from '@/components/ReadingProgress.astro';
+import BackToTop from '@/components/BackToTop.astro';
+import {
+  getPostBySlug,
+  getFaqsByPostId,
+  getRelatedPosts,
+  incrementViews,
+} from '@/lib/database';
+import {
+  generateArticleSchema,
+  generateFAQSchema,
+  generateBreadcrumbSchema,
+  generatePersonSchema,
+} from '@/utils/seo';
+import {
+  extractTableOfContents,
+  addHeadingIds,
+  formatDate,
+  formatDateShort,
+  calculateReadingTime,
+  getTypeLabel,
+  getTypeColor,
+  countWords,
+  isDifferentDay,
+} from '@/utils/helpers';
+import { parseMarkdown } from '@/lib/markdown';
+
+const { category: categorySlug, slug } = Astro.params;
+
+if (!categorySlug || !slug) {
+  return Astro.redirect('/blog/');
+}
+
+const post = await getPostBySlug(categorySlug, slug);
+
+if (!post) {
+  return Astro.redirect('/blog/');
+}
+
+// Fire and forget view increment
+incrementViews(post.id);
+
+const faqs = await getFaqsByPostId(post.id);
+const relatedPosts = await getRelatedPosts(post.category_id, post.id, 3);
+
+// Process content: parse markdown to HTML, then add heading IDs
+const htmlContent = await parseMarkdown(post.content);
+const contentWithIds = addHeadingIds(htmlContent);
+const toc = extractTableOfContents(contentWithIds);
+const readingTime = post.reading_time || calculateReadingTime(post.content);
+const wordCount = countWords(post.content);
+const showInlineCTA = wordCount > 500;
+
+// Check if post was updated after creation
+const wasUpdated = isDifferentDay(post.created_at, post.updated_at);
+
+// Author info (default for now, can be extended to support per-post authors)
+const author = {
+  name: 'Equipe modoPAG',
+  bio: 'Especialistas em pagamentos e soluções financeiras para empreendedores brasileiros.',
+};
+
+// Schema.org
+const siteUrl = 'https://modopag.com.br';
+const postUrl = `${siteUrl}/blog/${categorySlug}/${slug}/`;
+const articleSchema = generateArticleSchema(post, categorySlug, author);
+const faqSchema = faqs.length > 0 ? generateFAQSchema(faqs) : '';
+const personSchema = generatePersonSchema(author);
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Blog', url: `${siteUrl}/blog/` },
+  { name: post.category?.name || 'Artigos', url: `${siteUrl}/blog/${categorySlug}/` },
+  { name: post.title, url: postUrl },
+]);
+
+const schemas = [articleSchema, breadcrumbSchema, personSchema, faqSchema].filter(Boolean);
+
+const breadcrumbItems = [
+  { label: post.category?.name || 'Artigos', href: `/blog/${categorySlug}/` },
+  { label: post.title },
+];
+
+// Inline CTA HTML for insertion
+const inlineCtaHtml = `
+<aside class="my-8 p-5 bg-gradient-to-r from-primary-50 to-primary-100 dark:from-secondary-600 dark:to-secondary-700 rounded-xl border border-primary-200 dark:border-secondary-500">
+  <a href="https://modopag.com.br/taxas" class="flex items-center justify-between group">
+    <span class="font-medium text-secondary-500 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+      Conheça as taxas da modoPAG
+    </span>
+    <svg class="w-5 h-5 text-primary-600 dark:text-primary-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+    </svg>
+  </a>
+</aside>
+`;
+
+// Insert inline CTA at 50% of content if post has >500 words
+let finalContent = contentWithIds;
+if (showInlineCTA) {
+  const paragraphs = finalContent.split('</p>');
+  if (paragraphs.length > 3) {
+    const insertIndex = Math.floor(paragraphs.length / 2);
+    paragraphs.splice(insertIndex, 0, inlineCtaHtml);
+    finalContent = paragraphs.join('</p>');
+  }
+}
+---
+
+<BaseLayout>
+  <SEOHead
+    slot="head"
+    title={post.meta_title || post.title}
+    description={post.meta_description || post.description || ''}
+    canonical={postUrl}
+    ogImage={post.featured_image || undefined}
+    ogType="article"
+    publishedTime={post.created_at}
+    modifiedTime={post.updated_at}
+    author={author.name}
+    section={post.category?.name}
+  />
+  <SchemaOrg slot="head" schema={schemas} />
+
+  <!-- Reading Progress Bar -->
+  <ReadingProgress />
+
+  <!-- Table of Contents Sidebar (Desktop) -->
+  <TableOfContentsSidebar items={toc} />
+
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:ml-80">
+    <!-- Breadcrumb -->
+    <Breadcrumb items={breadcrumbItems} />
+
+    <!-- Article Header -->
+    <header class="mb-8">
+      <!-- Category Tag -->
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        {post.category && (
+          <a
+            href={`/blog/${categorySlug}/`}
+            class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium transition-colors hover:opacity-80"
+            style={`background-color: ${post.category.color}20; color: ${post.category.color};`}
+          >
+            {post.category.emoji && <span>{post.category.emoji}</span>}
+            {post.category.name}
+          </a>
+        )}
+        <span class:list={['px-3 py-1 rounded-full text-sm font-medium', getTypeColor(post.type)]}>
+          {getTypeLabel(post.type)}
+        </span>
+      </div>
+
+      <!-- Title -->
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-secondary-500 dark:text-white mb-4 text-balance leading-tight">
+        {post.title}
+      </h1>
+
+      <!-- Description -->
+      {post.description && (
+        <p class="text-lg text-secondary-400 dark:text-secondary-300 mb-6 leading-relaxed">
+          {post.description}
+        </p>
+      )}
+
+      <!-- Meta Info -->
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-secondary-400 dark:text-secondary-400">
+        <!-- Author -->
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded-full bg-primary-500 flex items-center justify-center">
+            <span class="text-xs font-bold text-secondary-500">EM</span>
+          </div>
+          <span class="font-medium text-secondary-500 dark:text-secondary-200">{author.name}</span>
+        </div>
+
+        <span class="text-secondary-300 dark:text-secondary-500">•</span>
+
+        <!-- Published Date -->
+        <time datetime={post.created_at}>
+          Publicado em {formatDateShort(post.created_at)}
+        </time>
+
+        <!-- Updated Date (if different) -->
+        {wasUpdated && (
+          <>
+            <span class="text-secondary-300 dark:text-secondary-500">•</span>
+            <time datetime={post.updated_at} class="text-primary-600 dark:text-primary-400">
+              Atualizado em {formatDateShort(post.updated_at)}
+            </time>
+          </>
+        )}
+
+        <span class="text-secondary-300 dark:text-secondary-500">•</span>
+
+        <!-- Reading Time -->
+        <span>{readingTime} min de leitura</span>
+      </div>
+    </header>
+
+    <!-- Table of Contents (Mobile) -->
+    <div class="lg:hidden">
+      <TableOfContentsSidebar items={toc} />
+    </div>
+
+    <!-- Featured Image -->
+    {post.featured_image && (
+      <figure class="mb-8 -mx-4 sm:mx-0">
+        <img
+          src={post.featured_image}
+          alt={post.featured_image_alt || post.title}
+          class="w-full sm:rounded-2xl"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
+      </figure>
+    )}
+
+    <!-- Article Content -->
+    <div
+      class="prose prose-lg max-w-none dark:prose-invert prose-headings:scroll-mt-20"
+      set:html={finalContent}
+    />
+
+    <!-- FAQ Section -->
+    {faqs.length > 0 && <FAQAccordion client:visible faqs={faqs} />}
+
+    <!-- Author Section -->
+    <AuthorSection
+      name={author.name}
+      bio={author.bio}
+    />
+
+    <!-- Share Buttons -->
+    <div class="my-8 pt-8 border-t border-secondary-200 dark:border-secondary-600">
+      <ShareButtons url={postUrl} title={post.title} />
+    </div>
+
+    <!-- Related Posts -->
+    <RelatedPosts posts={relatedPosts} />
+
+    <!-- CTA Box -->
+    <CTABox />
+  </article>
+
+  <!-- Back to Top Button -->
+  <BackToTop />
+</BaseLayout>
+
+<style>
+  /* Hide desktop TOC sidebar on mobile */
+  @media (max-width: 1023px) {
+    article {
+      margin-left: auto !important;
+    }
+  }
+
+  /* Smooth scroll for anchor links */
+  :global(html) {
+    scroll-behavior: smooth;
+  }
+</style>

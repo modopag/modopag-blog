@@ -40,12 +40,6 @@ const buttons = [
     color: 'hover:bg-sky-500',
     icon: `<path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>`,
   },
-  {
-    name: 'Email',
-    href: shareUrls.email,
-    color: 'hover:bg-secondary-500',
-    icon: `<path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>`,
-  },
 ];
 ---
 
@@ -59,7 +53,7 @@ const buttons = [
       target="_blank"
       rel="noopener noreferrer"
       class:list={[
-        'p-2 rounded-lg bg-secondary-100 dark:bg-secondary-700 text-secondary-500 dark:text-secondary-300 transition-all hover:text-white',
+        'p-2.5 rounded-lg bg-secondary-100 dark:bg-secondary-700 text-secondary-500 dark:text-secondary-300 transition-all hover:text-white',
         button.color,
       ]}
       aria-label={`Compartilhar no ${button.name}`}
@@ -69,4 +63,69 @@ const buttons = [
       </svg>
     </a>
   ))}
+
+  <!-- Copy Link Button -->
+  <button
+    id="copy-link-btn"
+    type="button"
+    class="p-2.5 rounded-lg bg-secondary-100 dark:bg-secondary-700 text-secondary-500 dark:text-secondary-300 transition-all hover:bg-primary-500 hover:text-secondary-500"
+    aria-label="Copiar link"
+    data-url={url}
+  >
+    <svg id="copy-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+    </svg>
+    <svg id="check-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+  </button>
 </div>
+
+<!-- Toast Notification -->
+<div
+  id="copy-toast"
+  class="fixed bottom-20 left-1/2 -translate-x-1/2 px-4 py-2 bg-secondary-500 text-white text-sm font-medium rounded-lg shadow-lg opacity-0 invisible transition-all duration-300 z-50"
+>
+  Link copiado!
+</div>
+
+<script>
+  function initCopyLink() {
+    const btn = document.getElementById('copy-link-btn');
+    const copyIcon = document.getElementById('copy-icon');
+    const checkIcon = document.getElementById('check-icon');
+    const toast = document.getElementById('copy-toast');
+
+    if (!btn || !copyIcon || !checkIcon || !toast) return;
+
+    btn.addEventListener('click', async () => {
+      const url = btn.getAttribute('data-url');
+      if (!url) return;
+
+      try {
+        await navigator.clipboard.writeText(url);
+
+        // Show check icon
+        copyIcon.classList.add('hidden');
+        checkIcon.classList.remove('hidden');
+
+        // Show toast
+        toast.classList.remove('opacity-0', 'invisible');
+        toast.classList.add('opacity-100', 'visible');
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+          copyIcon.classList.remove('hidden');
+          checkIcon.classList.add('hidden');
+          toast.classList.remove('opacity-100', 'visible');
+          toast.classList.add('opacity-0', 'invisible');
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy:', err);
+      }
+    });
+  }
+
+  initCopyLink();
+  document.addEventListener('astro:after-swap', initCopyLink);
+</script>

@@ -7,6 +7,8 @@ interface Props {
   ogType?: 'website' | 'article';
   publishedTime?: string;
   modifiedTime?: string;
+  author?: string;
+  section?: string;
   noindex?: boolean;
 }
 
@@ -18,6 +20,8 @@ const {
   ogType = 'website',
   publishedTime,
   modifiedTime,
+  author = 'Equipe modoPAG',
+  section,
   noindex = false,
 } = Astro.props;
 
@@ -33,7 +37,18 @@ const ogImageUrl = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteU
 <meta name="description" content={description} />
 <link rel="canonical" href={canonicalUrl} />
 
-{noindex && <meta name="robots" content="noindex, nofollow" />}
+<!-- Robots directive -->
+{noindex ? (
+  <meta name="robots" content="noindex, nofollow" />
+) : (
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+)}
+
+<!-- Sitemap -->
+<link rel="sitemap" type="application/xml" href="/blog/sitemap.xml" />
+
+<!-- RSS Feed Auto-Discovery -->
+<link rel="alternate" type="application/rss+xml" title={`${siteName} RSS Feed`} href="/blog/rss.xml" />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={ogType} />
@@ -41,11 +56,15 @@ const ogImageUrl = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteU
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={ogImageUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
 <meta property="og:site_name" content={siteName} />
 <meta property="og:locale" content="pt_BR" />
 
 {publishedTime && <meta property="article:published_time" content={publishedTime} />}
 {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+{author && <meta property="article:author" content={author} />}
+{section && <meta property="article:section" content={section} />}
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
@@ -54,8 +73,16 @@ const ogImageUrl = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteU
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImageUrl} />
 <meta name="twitter:site" content="@modopag" />
+<meta name="twitter:creator" content="@modopag" />
 
 <!-- Additional SEO -->
-<meta name="author" content="modoPAG" />
+<meta name="author" content={author} />
 <meta name="publisher" content="modoPAG" />
 <meta name="theme-color" content="#FFD700" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="google" content="notranslate" />
+
+<!-- Mobile optimization -->
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

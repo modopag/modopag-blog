@@ -55,15 +55,15 @@ export async function getPosts(options: GetPostsOptions = {}): Promise<Post[]> {
       *,
       category:categories(*)
     `)
-    .order('published_at', { ascending: false, nullsFirst: false })
+    .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1);
 
   if (published) {
-    query = query.eq('is_published', true);
+    query = query.eq('published', true);
   }
 
   if (featured !== undefined) {
-    query = query.eq('is_featured', featured);
+    query = query.eq('featured', featured);
   }
 
   if (categorySlug) {
@@ -116,7 +116,7 @@ export async function getPostBySlug(
     `)
     .eq('slug', postSlug)
     .eq('category_id', category.id)
-    .eq('is_published', true)
+    .eq('published', true)
     .single();
 
   if (error) {
@@ -134,8 +134,7 @@ export async function getFaqsByPostId(postId: string): Promise<PostFaq[]> {
   const { data, error } = await supabase
     .from('post_faqs')
     .select('*')
-    .eq('post_id', postId)
-    .order('order', { ascending: true });
+    .eq('post_id', postId);
 
   if (error) {
     console.error('Error fetching FAQs:', error);
@@ -149,10 +148,9 @@ export async function getFaqsByPostId(postId: string): Promise<PostFaq[]> {
  * Increment view count for a post (fire and forget)
  */
 export function incrementViews(postId: string): void {
-  supabase.rpc('increment_post_views', { post_id: postId }).then(({ error }) => {
-    if (error) {
-      console.error('Error incrementing views:', error);
-    }
+  // Fire and forget - silently fail if RPC doesn't exist
+  supabase.rpc('increment_post_views', { post_id: postId }).then(() => {
+    // Success - do nothing
   });
 }
 
@@ -171,9 +169,9 @@ export async function getRelatedPosts(
       category:categories(*)
     `)
     .eq('category_id', categoryId)
-    .eq('is_published', true)
+    .eq('published', true)
     .neq('id', currentPostId)
-    .order('published_at', { ascending: false })
+    .order('created_at', { ascending: false })
     .limit(limit);
 
   if (error) {
@@ -197,7 +195,7 @@ export async function getAllPostsForSitemap(): Promise<
       updated_at,
       category:categories(slug)
     `)
-    .eq('is_published', true);
+    .eq('published', true);
 
   if (error) {
     console.error('Error fetching posts for sitemap:', error);

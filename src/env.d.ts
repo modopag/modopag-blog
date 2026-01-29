@@ -1,3 +1,4 @@
+/// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 
 interface ImportMetaEnv {
@@ -5,6 +6,7 @@ interface ImportMetaEnv {
   readonly SUPABASE_ANON_KEY: string;
   readonly PUBLIC_SITE_URL: string;
   readonly PUBLIC_SITE_NAME: string;
+  readonly INDEXNOW_KEY: string;
 }
 
 interface ImportMeta {

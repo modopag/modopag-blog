@@ -1,0 +1,122 @@
+---
+import type { TableOfContentsItem } from '@/lib/types';
+
+interface Props {
+  items: TableOfContentsItem[];
+}
+
+const { items } = Astro.props;
+---
+
+{items.length > 0 && (
+  <>
+    <!-- Desktop: Sticky Sidebar -->
+    <aside
+      id="toc-sidebar"
+      class="hidden lg:block fixed left-[max(1rem,calc(50%-42rem))] top-24 w-64 max-h-[calc(100vh-8rem)] overflow-y-auto"
+    >
+      <nav class="bg-white dark:bg-secondary-600 rounded-xl border border-secondary-100 dark:border-secondary-500 p-5 shadow-sm">
+        <h2 class="text-sm font-semibold text-secondary-400 dark:text-secondary-300 uppercase tracking-wider mb-4">
+          Índice
+        </h2>
+        <ul class="space-y-2">
+          {items.map((item) => (
+            <li class:list={[item.level === 3 && 'ml-3']}>
+              <a
+                href={`#${item.id}`}
+                data-toc-link={item.id}
+                class="toc-link block text-sm py-1.5 px-3 rounded-lg text-secondary-500 dark:text-secondary-300 hover:bg-primary-50 dark:hover:bg-secondary-500 hover:text-primary-600 dark:hover:text-primary-400 transition-all border-l-2 border-transparent"
+              >
+                {item.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Mobile: Collapsible Box -->
+    <div class="lg:hidden mb-8">
+      <details class="group bg-white dark:bg-secondary-600 rounded-xl border border-secondary-100 dark:border-secondary-500 overflow-hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer list-none">
+          <span class="font-semibold text-secondary-500 dark:text-white">
+            Índice do artigo
+          </span>
+          <svg
+            class="w-5 h-5 text-secondary-400 transition-transform group-open:rotate-180"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </summary>
+        <nav class="px-4 pb-4">
+          <ul class="space-y-1">
+            {items.map((item) => (
+              <li class:list={[item.level === 3 && 'ml-3']}>
+                <a
+                  href={`#${item.id}`}
+                  class="block text-sm py-2 px-3 rounded-lg text-secondary-500 dark:text-secondary-300 hover:bg-primary-50 dark:hover:bg-secondary-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                >
+                  {item.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </details>
+    </div>
+  </>
+)}
+
+<style>
+  .toc-link.active {
+    @apply bg-primary-50 dark:bg-secondary-500 text-primary-600 dark:text-primary-400 border-l-primary-500 font-medium;
+  }
+</style>
+
+<script>
+  function initTocHighlight() {
+    const tocLinks = document.querySelectorAll('[data-toc-link]');
+    const headings: HTMLElement[] = [];
+
+    tocLinks.forEach((link) => {
+      const id = link.getAttribute('data-toc-link');
+      if (id) {
+        const heading = document.getElementById(id);
+        if (heading) headings.push(heading);
+      }
+    });
+
+    if (!headings.length) return;
+
+    function updateActiveLink() {
+      const scrollY = window.scrollY;
+      const offset = 120;
+
+      let activeId = headings[0]?.id;
+
+      for (const heading of headings) {
+        if (heading.offsetTop - offset <= scrollY) {
+          activeId = heading.id;
+        }
+      }
+
+      tocLinks.forEach((link) => {
+        const linkId = link.getAttribute('data-toc-link');
+        if (linkId === activeId) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', updateActiveLink, { passive: true });
+    updateActiveLink();
+  }
+
+  initTocHighlight();
+  document.addEventListener('astro:after-swap', initTocHighlight);
+</script>

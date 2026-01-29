@@ -126,3 +126,46 @@ export function generateShareUrls(url: string, title: string) {
     email: `mailto:?subject=${encodedTitle}&body=${encodedUrl}`,
   };
 }
+
+/**
+ * Format date to DD/MM/YYYY Brazilian format
+ */
+export function formatDateShort(date: string | Date): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  return d.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+}
+
+/**
+ * Count words in content
+ */
+export function countWords(content: string): number {
+  const text = content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  return text ? text.split(' ').length : 0;
+}
+
+/**
+ * Check if two dates are on different days
+ */
+export function isDifferentDay(date1: string | Date, date2: string | Date): boolean {
+  const d1 = typeof date1 === 'string' ? new Date(date1) : date1;
+  const d2 = typeof date2 === 'string' ? new Date(date2) : date2;
+  return d1.toDateString() !== d2.toDateString();
+}
+
+/**
+ * Insert content at a specific position in HTML
+ */
+export function insertAtPercentage(html: string, insertContent: string, percentage: number): string {
+  const paragraphs = html.split(/<\/p>/gi);
+  if (paragraphs.length < 2) return html;
+
+  const insertIndex = Math.floor(paragraphs.length * (percentage / 100));
+  const actualIndex = Math.max(1, Math.min(insertIndex, paragraphs.length - 1));
+
+  paragraphs.splice(actualIndex, 0, `</p>${insertContent}<p>`);
+  return paragraphs.join('</p>');
+}
