@@ -25,10 +25,6 @@
     {
       "source": "/blog/_astro/:path*",
       "destination": "/_astro/:path*"
-    },
-    {
-      "source": "/blog/favicon.svg",
-      "destination": "/favicon.svg"
     }
   ]
 }

@@ -1,11 +1,27 @@
 ---
 interface Props {
   class?: string;
+  variant?: 'dark' | 'yellow';
 }
 
-const { class: className = '' } = Astro.props;
+const { class: className = '', variant = 'dark' } = Astro.props;
+
+const logoUrl = variant === 'yellow'
+  ? 'https://acxelejbtjjkttfwrdbi.supabase.co/storage/v1/object/public/blog-images/brand/modopag-logo-yellow.png'
+  : 'https://acxelejbtjjkttfwrdbi.supabase.co/storage/v1/object/public/blog-images/brand/modopag-logo-dark.png';
 ---
 
-<a href="/blog/" class:list={['flex items-center gap-1 font-bold text-xl', className]}>
-  <span class="text-secondary-500 dark:text-white">modo</span><span class="text-primary-500">PAG</span>
+<a href="/blog/" class:list={['flex items-center', className]}>
+  <picture>
+    <source srcset={logoUrl} type="image/png" />
+    <img
+      src={logoUrl}
+      alt="modoPAG"
+      width="120"
+      height="40"
+      loading="eager"
+      decoding="async"
+      class="h-8 w-auto object-contain"
+    />
+  </picture>
 </a>
