@@ -3,62 +3,34 @@ import type { TableOfContentsItem } from '@/lib/types';
 
 interface Props {
   items: TableOfContentsItem[];
+  variant?: 'desktop' | 'mobile' | 'both';
 }
 
-const { items } = Astro.props;
+const { items, variant = 'both' } = Astro.props;
+const showDesktop = variant === 'desktop' || variant === 'both';
+const showMobile = variant === 'mobile' || variant === 'both';
 ---
 
 {items.length > 0 && (
   <>
-    <!-- Desktop: Sticky Sidebar -->
-    <aside
-      id="toc-sidebar"
-      class="hidden xl:block fixed top-24 w-56 max-h-[calc(100vh-8rem)] overflow-y-auto scrollbar-hide transition-transform duration-150 ease-out"
-      style="left: max(1rem, calc(50% - 44rem));"
-    >
-      <nav class="bg-white rounded-xl border border-secondary-100 p-5 shadow-sm">
-        <h2 class="text-sm font-semibold text-secondary-400 uppercase tracking-wider mb-4">
-          Índice
-        </h2>
-        <ul class="space-y-2">
-          {items.map((item) => (
-            <li>
-              <a
-                href={`#${item.id}`}
-                data-toc-link={item.id}
-                class="toc-link block text-sm py-1.5 px-3 rounded-lg text-secondary-500 hover:bg-primary-50 hover:text-primary-600 transition-all border-l-2 border-transparent"
-              >
-                {item.text}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </aside>
-
-    <!-- Mobile/Tablet: Collapsible Box -->
-    <div class="xl:hidden mb-8">
-      <details class="group bg-white rounded-xl border border-secondary-100 overflow-hidden">
-        <summary class="flex items-center justify-between p-4 cursor-pointer list-none">
-          <span class="font-semibold text-secondary-500">
-            Índice do artigo
-          </span>
-          <svg
-            class="w-5 h-5 text-secondary-400 transition-transform group-open:rotate-180"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </summary>
-        <nav class="px-4 pb-4">
-          <ul class="space-y-1">
+    {/* Desktop: Sticky Sidebar */}
+    {showDesktop && (
+      <aside
+        id="toc-sidebar"
+        class="hidden xl:block fixed top-24 w-56 max-h-[calc(100vh-8rem)] overflow-y-auto scrollbar-hide transition-transform duration-150 ease-out"
+        style="left: max(1rem, calc(50% - 44rem));"
+      >
+        <nav class="bg-white rounded-xl border border-secondary-100 p-5 shadow-sm">
+          <h2 class="text-sm font-semibold text-secondary-400 uppercase tracking-wider mb-4">
+            Índice
+          </h2>
+          <ul class="space-y-2">
             {items.map((item) => (
               <li>
                 <a
                   href={`#${item.id}`}
-                  class="block text-sm py-2 px-3 rounded-lg text-secondary-500 hover:bg-primary-50 hover:text-primary-600 transition-colors"
+                  data-toc-link={item.id}
+                  class="toc-link block text-sm py-1.5 px-3 rounded-lg text-secondary-500 hover:bg-primary-50 hover:text-primary-600 transition-all border-l-2 border-transparent"
                 >
                   {item.text}
                 </a>
@@ -66,8 +38,43 @@ const { items } = Astro.props;
             ))}
           </ul>
         </nav>
-      </details>
-    </div>
+      </aside>
+    )}
+
+    {/* Mobile/Tablet: Collapsible Box */}
+    {showMobile && (
+      <div class="xl:hidden mb-8">
+        <details class="group bg-white rounded-xl border border-secondary-100 overflow-hidden">
+          <summary class="flex items-center justify-between p-4 cursor-pointer list-none">
+            <span class="font-semibold text-secondary-500">
+              Índice do artigo
+            </span>
+            <svg
+              class="w-5 h-5 text-secondary-400 transition-transform group-open:rotate-180"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </summary>
+          <nav class="px-4 pb-4">
+            <ul class="space-y-1">
+              {items.map((item) => (
+                <li>
+                  <a
+                    href={`#${item.id}`}
+                    class="block text-sm py-2 px-3 rounded-lg text-secondary-500 hover:bg-primary-50 hover:text-primary-600 transition-colors"
+                  >
+                    {item.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </details>
+      </div>
+    )}
   </>
 )}
 

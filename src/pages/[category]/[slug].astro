@@ -146,8 +146,8 @@ if (showInlineCTA) {
   <!-- Reading Progress Bar -->
   <ReadingProgress />
 
-  <!-- Table of Contents Sidebar (Desktop) -->
-  <TableOfContentsSidebar items={toc} />
+  <!-- Table of Contents Sidebar (Desktop Only) -->
+  <TableOfContentsSidebar items={toc} variant="desktop" />
 
   <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 xl:mx-auto xl:max-w-4xl">
     <!-- Breadcrumb -->
@@ -224,6 +224,9 @@ if (showInlineCTA) {
         </a>
       </div>
     </header>
+
+    <!-- Table of Contents (Mobile/Tablet Only) -->
+    <TableOfContentsSidebar items={toc} variant="mobile" />
 
     <!-- Featured Image -->
     {post.featured_image && (
