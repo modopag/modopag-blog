@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://modopag.com.br/blog/sitemap-index.xml
+
+# Disallow admin and draft pages
+Disallow: /blog/draft/
+Disallow: /blog/preview/

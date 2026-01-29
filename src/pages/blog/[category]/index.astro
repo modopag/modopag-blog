@@ -1,0 +1,61 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SEOHead from '@/components/SEOHead.astro';
+import SchemaOrg from '@/components/SchemaOrg.astro';
+import Breadcrumb from '@/components/Breadcrumb.astro';
+import Hero from '@/components/Hero.astro';
+import CategoryPills from '@/components/CategoryPills.astro';
+import PostGrid from '@/components/PostGrid.astro';
+import { getCategories, getCategoryBySlug, getPosts } from '@/lib/database';
+import { generateBreadcrumbSchema } from '@/utils/seo';
+
+const { category: categorySlug } = Astro.params;
+
+if (!categorySlug) {
+  return Astro.redirect('/blog/');
+}
+
+const category = await getCategoryBySlug(categorySlug);
+
+if (!category) {
+  return Astro.redirect('/blog/');
+}
+
+const categories = await getCategories();
+const posts = await getPosts({ categorySlug, published: true, limit: 20 });
+
+const breadcrumbItems = [{ label: category.name }];
+const siteUrl = 'https://modopag.com.br';
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Blog', url: `${siteUrl}/blog/` },
+  { name: category.name, url: `${siteUrl}/blog/${categorySlug}/` },
+]);
+---
+
+<BaseLayout>
+  <SEOHead
+    slot="head"
+    title={category.name}
+    description={category.description || `Explore todos os artigos sobre ${category.name}. Dicas, guias e informações para seu negócio.`}
+    canonical={`${siteUrl}/blog/${categorySlug}/`}
+  />
+  <SchemaOrg slot="head" schema={breadcrumbSchema} />
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    <div class="pt-8">
+      <Breadcrumb items={breadcrumbItems} />
+    </div>
+
+    <Hero
+      title={`${category.emoji || ''} ${category.name}`}
+      subtitle={category.description || undefined}
+    />
+
+    <CategoryPills categories={categories} activeSlug={categorySlug} />
+
+    <PostGrid
+      posts={posts}
+      emptyMessage={`Nenhum artigo encontrado em ${category.name}.`}
+    />
+  </div>
+</BaseLayout>

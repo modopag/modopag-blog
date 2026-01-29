@@ -1,0 +1,86 @@
+---
+import Logo from './Logo.astro';
+import DarkModeToggle from './DarkModeToggle.astro';
+
+const navItems = [
+  { label: 'Blog', href: '/blog/' },
+  { label: 'Calculadoras', href: '/blog/calculadoras/' },
+  { label: 'Guias', href: '/blog/guias/' },
+];
+---
+
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-secondary-500/80 backdrop-blur-md border-b border-secondary-100 dark:border-secondary-600">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <div class="flex items-center gap-8">
+        <Logo />
+        <nav class="hidden md:flex items-center gap-6">
+          {navItems.map((item) => (
+            <a
+              href={item.href}
+              class="text-sm font-medium text-secondary-500 hover:text-primary-600 dark:text-secondary-200 dark:hover:text-primary-400 transition-colors"
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <DarkModeToggle />
+        <a
+          href="https://modopag.com.br"
+          class="hidden sm:inline-flex items-center px-4 py-2 text-sm font-semibold text-secondary-500 bg-primary-500 hover:bg-primary-400 rounded-lg transition-colors"
+        >
+          Acessar modoPAG
+        </a>
+
+        <!-- Mobile menu button -->
+        <button
+          type="button"
+          id="mobile-menu-button"
+          class="md:hidden p-2 rounded-lg text-secondary-500 hover:bg-secondary-100 dark:text-secondary-200 dark:hover:bg-secondary-700"
+          aria-label="Abrir menu"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-secondary-100 dark:border-secondary-600">
+    <div class="px-4 py-4 space-y-2">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class="block px-4 py-2 text-sm font-medium text-secondary-500 hover:bg-secondary-100 dark:text-secondary-200 dark:hover:bg-secondary-700 rounded-lg transition-colors"
+        >
+          {item.label}
+        </a>
+      ))}
+      <a
+        href="https://modopag.com.br"
+        class="block px-4 py-2 text-sm font-semibold text-secondary-500 bg-primary-500 hover:bg-primary-400 rounded-lg text-center transition-colors"
+      >
+        Acessar modoPAG
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  function initMobileMenu() {
+    const button = document.getElementById('mobile-menu-button');
+    const menu = document.getElementById('mobile-menu');
+
+    button?.addEventListener('click', () => {
+      menu?.classList.toggle('hidden');
+    });
+  }
+
+  initMobileMenu();
+  document.addEventListener('astro:after-swap', initMobileMenu);
+</script>

@@ -1,0 +1,41 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+  buttonText?: string;
+  buttonUrl?: string;
+}
+
+const {
+  title = 'Comece a aceitar pagamentos hoje',
+  description = 'Cadastre-se no modoPAG e tenha as melhores taxas do mercado para seu negócio.',
+  buttonText = 'Criar conta grátis',
+  buttonUrl = 'https://modopag.com.br/cadastro',
+} = Astro.props;
+---
+
+<aside class="bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-2xl p-8 my-12">
+  <div class="max-w-2xl">
+    <h3 class="text-2xl font-bold text-white mb-3">{title}</h3>
+    <p class="text-secondary-200 mb-6">{description}</p>
+    <a
+      href={buttonUrl}
+      class="inline-flex items-center px-6 py-3 text-base font-semibold text-secondary-500 bg-primary-500 hover:bg-primary-400 rounded-lg transition-colors"
+    >
+      {buttonText}
+      <svg
+        class="w-5 h-5 ml-2"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M13 7l5 5m0 0l-5 5m5-5H6"
+        />
+      </svg>
+    </a>
+  </div>
+</aside>

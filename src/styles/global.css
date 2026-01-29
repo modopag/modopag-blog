@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply antialiased;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-secondary-100 dark:bg-secondary-700;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-secondary-300 dark:bg-secondary-500 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-secondary-400 dark:bg-secondary-400;
+  }
+}
+
+@layer components {
+  .prose {
+    @apply text-secondary-600 dark:text-secondary-200;
+  }
+
+  .prose h2 {
+    @apply text-secondary-500 dark:text-white scroll-mt-24;
+  }
+
+  .prose h3 {
+    @apply text-secondary-500 dark:text-white scroll-mt-24;
+  }
+
+  .prose a {
+    @apply text-primary-600 dark:text-primary-400 no-underline hover:underline;
+  }
+
+  .prose strong {
+    @apply text-secondary-500 dark:text-white;
+  }
+
+  .prose code {
+    @apply bg-secondary-100 dark:bg-secondary-700 px-1.5 py-0.5 rounded text-sm;
+  }
+
+  .prose pre {
+    @apply bg-secondary-500 dark:bg-secondary-700 rounded-xl;
+  }
+
+  .prose pre code {
+    @apply bg-transparent p-0;
+  }
+
+  .prose blockquote {
+    @apply border-l-primary-500 bg-primary-50 dark:bg-primary-900/20 px-4 py-2 rounded-r-lg;
+  }
+
+  .prose img {
+    @apply rounded-xl;
+  }
+
+  .prose table {
+    @apply w-full;
+  }
+
+  .prose th {
+    @apply bg-secondary-100 dark:bg-secondary-700;
+  }
+
+  .prose td,
+  .prose th {
+    @apply border border-secondary-200 dark:border-secondary-600 px-4 py-2;
+  }
+
+  .prose ul {
+    @apply list-disc pl-6;
+  }
+
+  .prose ol {
+    @apply list-decimal pl-6;
+  }
+
+  .prose li {
+    @apply my-1;
+  }
+
+  .prose hr {
+    @apply border-secondary-200 dark:border-secondary-600;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

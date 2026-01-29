@@ -1,0 +1,208 @@
+import { supabase } from './supabase';
+import type { Category, Post, PostFaq, GetPostsOptions } from './types';
+
+/**
+ * Fetch all categories
+ */
+export async function getCategories(): Promise<Category[]> {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*')
+    .order('name', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching categories:', error);
+    return [];
+  }
+
+  return data || [];
+}
+
+/**
+ * Fetch a single category by slug
+ */
+export async function getCategoryBySlug(slug: string): Promise<Category | null> {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+
+  if (error) {
+    console.error('Error fetching category:', error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * Fetch posts with optional filters
+ */
+export async function getPosts(options: GetPostsOptions = {}): Promise<Post[]> {
+  const {
+    limit = 20,
+    offset = 0,
+    categorySlug,
+    featured,
+    published = true,
+    excludeId,
+  } = options;
+
+  let query = supabase
+    .from('posts')
+    .select(`
+      *,
+      category:categories(*)
+    `)
+    .order('published_at', { ascending: false, nullsFirst: false })
+    .range(offset, offset + limit - 1);
+
+  if (published) {
+    query = query.eq('is_published', true);
+  }
+
+  if (featured !== undefined) {
+    query = query.eq('is_featured', featured);
+  }
+
+  if (categorySlug) {
+    // First get the category ID
+    const { data: category } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('slug', categorySlug)
+      .single();
+
+    if (category) {
+      query = query.eq('category_id', category.id);
+    } else {
+      return [];
+    }
+  }
+
+  if (excludeId) {
+    query = query.neq('id', excludeId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error('Error fetching posts:', error);
+    return [];
+  }
+
+  return data || [];
+}
+
+/**
+ * Fetch a single post by category and post slug
+ */
+export async function getPostBySlug(
+  categorySlug: string,
+  postSlug: string
+): Promise<Post | null> {
+  // First get the category
+  const category = await getCategoryBySlug(categorySlug);
+  if (!category) {
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from('posts')
+    .select(`
+      *,
+      category:categories(*)
+    `)
+    .eq('slug', postSlug)
+    .eq('category_id', category.id)
+    .eq('is_published', true)
+    .single();
+
+  if (error) {
+    console.error('Error fetching post:', error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * Fetch FAQs for a specific post
+ */
+export async function getFaqsByPostId(postId: string): Promise<PostFaq[]> {
+  const { data, error } = await supabase
+    .from('post_faqs')
+    .select('*')
+    .eq('post_id', postId)
+    .order('order', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching FAQs:', error);
+    return [];
+  }
+
+  return data || [];
+}
+
+/**
+ * Increment view count for a post (fire and forget)
+ */
+export function incrementViews(postId: string): void {
+  supabase.rpc('increment_post_views', { post_id: postId }).then(({ error }) => {
+    if (error) {
+      console.error('Error incrementing views:', error);
+    }
+  });
+}
+
+/**
+ * Get related posts based on category
+ */
+export async function getRelatedPosts(
+  categoryId: string,
+  currentPostId: string,
+  limit = 3
+): Promise<Post[]> {
+  const { data, error } = await supabase
+    .from('posts')
+    .select(`
+      *,
+      category:categories(*)
+    `)
+    .eq('category_id', categoryId)
+    .eq('is_published', true)
+    .neq('id', currentPostId)
+    .order('published_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error('Error fetching related posts:', error);
+    return [];
+  }
+
+  return data || [];
+}
+
+/**
+ * Get all published posts for sitemap generation
+ */
+export async function getAllPostsForSitemap(): Promise<
+  Pick<Post, 'slug' | 'updated_at' | 'category'>[]
+> {
+  const { data, error } = await supabase
+    .from('posts')
+    .select(`
+      slug,
+      updated_at,
+      category:categories(slug)
+    `)
+    .eq('is_published', true);
+
+  if (error) {
+    console.error('Error fetching posts for sitemap:', error);
+    return [];
+  }
+
+  return data || [];
+}

@@ -1,0 +1,56 @@
+---
+import type { Post } from '@/lib/types';
+import { truncate, getTypeLabel, getTypeColor } from '@/utils/helpers';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const categorySlug = post.category?.slug || 'artigos';
+const categoryName = post.category?.name || 'Artigos';
+const categoryEmoji = post.category?.emoji || '📄';
+const categoryColor = post.category?.color || '#6B7280';
+---
+
+<article class="group">
+  <a
+    href={`/blog/${categorySlug}/${post.slug}/`}
+    class="block h-full bg-white dark:bg-secondary-600 rounded-2xl border border-secondary-100 dark:border-secondary-500 p-6 transition-all duration-300 hover:translate-y-[-4px] hover:shadow-xl hover:shadow-secondary-200/50 dark:hover:shadow-secondary-900/50"
+  >
+    <!-- Icon -->
+    <div class="text-4xl mb-4">{categoryEmoji}</div>
+
+    <!-- Title -->
+    <h3 class="text-lg font-semibold text-secondary-500 dark:text-white mb-2 line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+      {post.title}
+    </h3>
+
+    <!-- Description -->
+    <p class="text-sm text-secondary-400 dark:text-secondary-300 mb-4 line-clamp-2">
+      {truncate(post.description || '', 100)}
+    </p>
+
+    <!-- Tags -->
+    <div class="flex flex-wrap gap-2">
+      <span
+        class="px-2.5 py-1 rounded-full text-xs font-medium"
+        style={`background-color: ${categoryColor}20; color: ${categoryColor};`}
+      >
+        {categoryName}
+      </span>
+      <span class:list={['px-2.5 py-1 rounded-full text-xs font-medium', getTypeColor(post.type)]}>
+        {getTypeLabel(post.type)}
+      </span>
+    </div>
+  </a>
+</article>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

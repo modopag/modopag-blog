@@ -1,0 +1,170 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SEOHead from '@/components/SEOHead.astro';
+import SchemaOrg from '@/components/SchemaOrg.astro';
+import Breadcrumb from '@/components/Breadcrumb.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
+import FAQAccordion from '@/components/FAQAccordion';
+import CTABox from '@/components/CTABox.astro';
+import ShareButtons from '@/components/ShareButtons.astro';
+import RelatedPosts from '@/components/RelatedPosts.astro';
+import {
+  getPostBySlug,
+  getFaqsByPostId,
+  getRelatedPosts,
+  incrementViews,
+} from '@/lib/database';
+import {
+  generateArticleSchema,
+  generateFAQSchema,
+  generateBreadcrumbSchema,
+} from '@/utils/seo';
+import {
+  extractTableOfContents,
+  addHeadingIds,
+  formatDate,
+  calculateReadingTime,
+  getTypeLabel,
+  getTypeColor,
+} from '@/utils/helpers';
+
+const { category: categorySlug, slug } = Astro.params;
+
+if (!categorySlug || !slug) {
+  return Astro.redirect('/blog/');
+}
+
+const post = await getPostBySlug(categorySlug, slug);
+
+if (!post) {
+  return Astro.redirect('/blog/');
+}
+
+// Fire and forget view increment
+incrementViews(post.id);
+
+const faqs = await getFaqsByPostId(post.id);
+const relatedPosts = await getRelatedPosts(post.category_id, post.id, 3);
+
+// Process content
+const contentWithIds = addHeadingIds(post.content);
+const toc = extractTableOfContents(contentWithIds);
+const readingTime = post.reading_time || calculateReadingTime(post.content);
+
+// Schema.org
+const siteUrl = 'https://modopag.com.br';
+const postUrl = `${siteUrl}/blog/${categorySlug}/${slug}/`;
+const articleSchema = generateArticleSchema(post, categorySlug);
+const faqSchema = faqs.length > 0 ? generateFAQSchema(faqs) : '';
+const breadcrumbSchema = generateBreadcrumbSchema([
+  { name: 'Blog', url: `${siteUrl}/blog/` },
+  { name: post.category?.name || 'Artigos', url: `${siteUrl}/blog/${categorySlug}/` },
+  { name: post.title, url: postUrl },
+]);
+
+const schemas = [articleSchema, breadcrumbSchema, faqSchema].filter(Boolean);
+
+const breadcrumbItems = [
+  { label: post.category?.name || 'Artigos', href: `/blog/${categorySlug}/` },
+  { label: post.title },
+];
+---
+
+<BaseLayout>
+  <SEOHead
+    slot="head"
+    title={post.meta_title || post.title}
+    description={post.meta_description || post.description || ''}
+    canonical={postUrl}
+    ogImage={post.featured_image || undefined}
+    ogType="article"
+    publishedTime={post.published_at || undefined}
+    modifiedTime={post.updated_at}
+  />
+  <SchemaOrg slot="head" schema={schemas} />
+
+  <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Breadcrumb items={breadcrumbItems} />
+
+    <!-- Article Header -->
+    <header class="mb-8">
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        {post.category && (
+          <a
+            href={`/blog/${categorySlug}/`}
+            class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium transition-colors"
+            style={`background-color: ${post.category.color}20; color: ${post.category.color};`}
+          >
+            {post.category.emoji && <span>{post.category.emoji}</span>}
+            {post.category.name}
+          </a>
+        )}
+        <span class:list={['px-3 py-1 rounded-full text-sm font-medium', getTypeColor(post.type)]}>
+          {getTypeLabel(post.type)}
+        </span>
+      </div>
+
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-secondary-500 dark:text-white mb-4 text-balance">
+        {post.title}
+      </h1>
+
+      {post.description && (
+        <p class="text-lg text-secondary-400 dark:text-secondary-300 mb-6">
+          {post.description}
+        </p>
+      )}
+
+      <div class="flex flex-wrap items-center gap-4 text-sm text-secondary-400 dark:text-secondary-400">
+        {post.published_at && (
+          <time datetime={post.published_at}>
+            {formatDate(post.published_at)}
+          </time>
+        )}
+        <span>•</span>
+        <span>{readingTime} min de leitura</span>
+        {post.views > 0 && (
+          <>
+            <span>•</span>
+            <span>{post.views.toLocaleString('pt-BR')} visualizações</span>
+          </>
+        )}
+      </div>
+    </header>
+
+    <!-- Featured Image -->
+    {post.featured_image && (
+      <figure class="mb-8">
+        <img
+          src={post.featured_image}
+          alt={post.featured_image_alt || post.title}
+          class="w-full rounded-2xl"
+          loading="eager"
+          decoding="async"
+        />
+      </figure>
+    )}
+
+    <!-- Table of Contents -->
+    <TableOfContents items={toc} />
+
+    <!-- Article Content -->
+    <div
+      class="prose prose-lg max-w-none dark:prose-invert"
+      set:html={contentWithIds}
+    />
+
+    <!-- Share Buttons -->
+    <div class="my-8 pt-8 border-t border-secondary-200 dark:border-secondary-600">
+      <ShareButtons url={postUrl} title={post.title} />
+    </div>
+
+    <!-- FAQ Section -->
+    {faqs.length > 0 && <FAQAccordion client:visible faqs={faqs} />}
+
+    <!-- CTA Box -->
+    <CTABox />
+
+    <!-- Related Posts -->
+    <RelatedPosts posts={relatedPosts} />
+  </article>
+</BaseLayout>

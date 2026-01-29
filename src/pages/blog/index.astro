@@ -1,0 +1,35 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SEOHead from '@/components/SEOHead.astro';
+import SchemaOrg from '@/components/SchemaOrg.astro';
+import Hero from '@/components/Hero.astro';
+import CategoryPills from '@/components/CategoryPills.astro';
+import PostGrid from '@/components/PostGrid.astro';
+import { getCategories, getPosts } from '@/lib/database';
+import { generateWebSiteSchema, generateOrganizationSchema } from '@/utils/seo';
+
+const categories = await getCategories();
+const posts = await getPosts({ published: true, limit: 20 });
+
+const schemas = [generateWebSiteSchema(), generateOrganizationSchema()];
+---
+
+<BaseLayout>
+  <SEOHead
+    slot="head"
+    title="Blog"
+    description="Dicas, guias e calculadoras gratuitas para ajudar você a gerenciar melhor seu negócio. Aprenda sobre pagamentos, taxas e finanças."
+  />
+  <SchemaOrg slot="head" schema={schemas} />
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    <Hero
+      title="Dicas, guias e calculadoras gratuitas"
+      subtitle="Tudo que você precisa saber para gerenciar melhor seu negócio e aceitar pagamentos de forma inteligente."
+    />
+
+    <CategoryPills categories={categories} />
+
+    <PostGrid posts={posts} />
+  </div>
+</BaseLayout>
