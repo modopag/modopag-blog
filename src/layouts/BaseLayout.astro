@@ -20,7 +20,8 @@ const { class: className = '' } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Favicon and App Icons -->
-    <link rel="icon" type="image/png" href={BRAND.icon} />
+    <link rel="icon" type="image/svg+xml" href={BRAND.favicon} />
+    <link rel="icon" type="image/png" sizes="32x32" href={BRAND.icon} />
     <link rel="apple-touch-icon" href={BRAND.icon} />
 
     <!-- PWA Manifest -->

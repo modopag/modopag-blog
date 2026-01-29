@@ -9,13 +9,13 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "https://acxelejbtjjkttfwrdbi.supabase.co/storage/v1/object/public/blog-images/brand/modopag-icon.png",
+      "src": "/blog/images/brand/modopag-icon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "https://acxelejbtjjkttfwrdbi.supabase.co/storage/v1/object/public/blog-images/brand/modopag-icon.png",
+      "src": "/blog/images/brand/modopag-icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

@@ -1,9 +1,13 @@
-import { marked } from 'marked';
+import { marked, Renderer } from 'marked';
+
+// Custom renderer to ensure proper table rendering
+const renderer = new Renderer();
 
 // Configure marked with proper options for GFM
 marked.use({
   gfm: true,        // GitHub Flavored Markdown (tables, strikethrough, etc.)
-  breaks: true,     // Convert \n to <br>
+  breaks: false,    // Don't convert single \n to <br> (breaks tables)
+  renderer,
 });
 
 /**
@@ -13,7 +17,12 @@ export async function parseMarkdown(content: string): Promise<string> {
   if (!content) return '';
 
   try {
-    const result = marked.parse(content);
+    // Normalize line endings and ensure proper spacing for tables
+    const normalizedContent = content
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n');
+
+    const result = marked.parse(normalizedContent);
 
     // Handle both sync and async results
     if (result instanceof Promise) {
