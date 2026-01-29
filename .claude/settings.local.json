@@ -12,7 +12,8 @@
       "Bash(cmd /c \"copy \"\"C:\\\\Users\\\\Vitor Melo\\\\Downloads\\\\Imagens-modopag\\\\modopag amarela.png\"\" \"\"public\\\\images\\\\brand\\\\modopag-logo-yellow.png\"\"\")",
       "Bash(cmd /c \"copy \"\"C:\\\\Users\\\\Vitor Melo\\\\Downloads\\\\Imagens-modopag\\\\Favicon 1.png\"\" \"\"public\\\\images\\\\brand\\\\modopag-icon.png\"\"\")",
       "Bash(cmd /c \"copy \"\"C:\\\\Users\\\\Vitor Melo\\\\Downloads\\\\Imagens-modopag\\\\ModoPag - Icon.png\"\" \"\"public\\\\images\\\\brand\\\\modopag-icon-large.png\"\"\")",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npm run build:*)"
     ]
   }
 }
