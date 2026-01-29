@@ -11,4 +11,12 @@ export default defineConfig({
     maxDuration: 30,
   }),
   integrations: [tailwind(), react()],
+  build: {
+    assets: '_astro',
+  },
+  vite: {
+    ssr: {
+      noExternal: ['@supabase/supabase-js'],
+    },
+  },
 });
