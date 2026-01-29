@@ -75,6 +75,11 @@ const readingTime = post.reading_time || calculateReadingTime(post.content);
 const showCalculator = post.calculator_enabled && post.calculator_code;
 const calculatorPosition = post.calculator_position || 'bottom';
 
+// Hide hero image for calculator posts or "calculadoras" category
+const isCalculatorPost = post.calculator_enabled === true;
+const isCalculatorCategory = categorySlug === 'calculadoras';
+const shouldHideHeroImage = isCalculatorPost || isCalculatorCategory;
+
 // Split content for "middle" position calculator
 let introContent = '';
 let remainingContent = '';
@@ -213,8 +218,8 @@ const breadcrumbItems = [
     <!-- Table of Contents (Mobile/Tablet Only) -->
     <TableOfContentsSidebar items={toc} variant="mobile" />
 
-    <!-- Featured Image -->
-    {post.featured_image && (
+    <!-- Featured Image (hidden for calculator posts and calculadoras category) -->
+    {!shouldHideHeroImage && post.featured_image && (
       <figure class="mb-8 -mx-4 sm:mx-0">
         <img
           src={post.featured_image}
