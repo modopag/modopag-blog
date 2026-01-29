@@ -149,7 +149,7 @@ if (showInlineCTA) {
   <!-- Table of Contents Sidebar (Desktop) -->
   <TableOfContentsSidebar items={toc} />
 
-  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:ml-80">
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 xl:ml-80">
     <!-- Breadcrumb -->
     <Breadcrumb items={breadcrumbItems} />
 
@@ -279,8 +279,8 @@ if (showInlineCTA) {
 </BaseLayout>
 
 <style>
-  /* Hide desktop TOC sidebar on mobile */
-  @media (max-width: 1023px) {
+  /* Hide desktop TOC sidebar margin on smaller screens */
+  @media (max-width: 1279px) {
     article {
       margin-left: auto !important;
     }

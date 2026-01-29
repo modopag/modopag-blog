@@ -13,7 +13,8 @@ const { items } = Astro.props;
     <!-- Desktop: Sticky Sidebar -->
     <aside
       id="toc-sidebar"
-      class="hidden lg:block fixed left-[max(1rem,calc(50%-42rem))] top-24 w-64 max-h-[calc(100vh-8rem)] overflow-y-auto transition-transform duration-150 ease-out"
+      class="hidden xl:block fixed top-24 w-64 max-h-[calc(100vh-8rem)] overflow-y-auto transition-transform duration-150 ease-out"
+      style="left: max(1rem, calc(50% - 38rem));"
     >
       <nav class="bg-white rounded-xl border border-secondary-100 p-5 shadow-sm">
         <h2 class="text-sm font-semibold text-secondary-400 uppercase tracking-wider mb-4">
@@ -35,8 +36,8 @@ const { items } = Astro.props;
       </nav>
     </aside>
 
-    <!-- Mobile: Collapsible Box -->
-    <div class="lg:hidden mb-8">
+    <!-- Mobile/Tablet: Collapsible Box -->
+    <div class="xl:hidden mb-8">
       <details class="group bg-white rounded-xl border border-secondary-100 overflow-hidden">
         <summary class="flex items-center justify-between p-4 cursor-pointer list-none">
           <span class="font-semibold text-secondary-500">
