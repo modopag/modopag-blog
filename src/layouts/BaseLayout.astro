@@ -39,16 +39,8 @@ const { class: className = '' } = Astro.props;
     <ViewTransitions />
 
     <slot name="head" />
-    <script is:inline>
-      // Prevent flash of wrong theme
-      (function() {
-        const theme = localStorage.getItem('theme');
-        const isDark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
-        if (isDark) document.documentElement.classList.add('dark');
-      })();
-    </script>
   </head>
-  <body class="min-h-screen flex flex-col bg-white dark:bg-secondary-500 text-secondary-500 dark:text-secondary-100">
+  <body class="min-h-screen flex flex-col bg-white text-secondary-500">
     <Header />
     <main class:list={['flex-1', className]}>
       <slot />
