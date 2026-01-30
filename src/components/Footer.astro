@@ -6,7 +6,7 @@ const currentYear = new Date().getFullYear();
 // UTM parameters for tracking
 const utmParams = '?utm_source=blog&utm_medium=footer&utm_campaign=blog_modopag';
 
-// Social links with circle border icons
+// Social links with circle border icons (external - target="_blank")
 const socialLinks = [
   {
     label: 'Facebook',
@@ -35,24 +35,26 @@ const socialLinks = [
   },
 ];
 
-// Nossos links (with UTM)
+// Nossos links (with UTM, NO target="_blank" except Central de ajuda)
 const nossosLinks = [
-  { label: 'Maquininhas', href: `https://modopag.com.br/maquininhas${utmParams}` },
-  { label: 'Modo MINI', href: `https://modopag.com.br/maquininhas/modo-mini${utmParams}` },
-  { label: 'Modo PRO', href: `https://modopag.com.br/maquininhas/modo-pro${utmParams}` },
-  { label: 'Modo SMART', href: `https://modopag.com.br/maquininhas/modo-smart${utmParams}` },
-  { label: 'Modo LINK', href: `https://modopag.com.br/modolink${utmParams}` },
+  { label: 'Maquininhas', href: `https://modopag.com.br/maquininhas/${utmParams}` },
+  { label: 'Modo MINI', href: `https://modopag.com.br/maquininhas/modo-mini/${utmParams}` },
+  { label: 'Modo PRO', href: `https://modopag.com.br/maquininhas/modo-pro/${utmParams}` },
+  { label: 'Modo SMART', href: `https://modopag.com.br/maquininhas/modo-smart/${utmParams}` },
+  { label: 'Modo LINK', href: `https://modopag.com.br/modolink/${utmParams}` },
   { label: 'Planos e taxas', href: `https://modopag.com.br/maquininhas/taxas/${utmParams}` },
-  { label: 'Sobre nós', href: `https://modopag.com.br/sobre${utmParams}` },
-  { label: 'Central de ajuda', href: `https://modopag.com.br/ajuda${utmParams}` },
+  { label: 'Sobre nós', href: `https://modopag.com.br/sobre-nos/${utmParams}` },
 ];
 
-// Termos (WITHOUT UTM)
+// Central de ajuda (subdomain, no UTM, opens in new tab)
+const centralAjudaLink = { label: 'Central de ajuda', href: 'https://ajuda.modopag.com.br' };
+
+// Termos (WITHOUT UTM, NO target="_blank")
 const termosLinks = [
   { label: 'Termos e condições de uso', href: 'https://modopag.com.br/termos-de-uso-e-condicoes-de-uso/' },
   { label: 'Políticas de privacidade', href: 'https://modopag.com.br/politicas-de-privacidade/' },
   { label: 'Termos de consentimento', href: 'https://modopag.com.br/termos-de-consentimento/' },
-  { label: 'Termos de programa de afiliados', href: 'https://modopag.com.br/termos-programa-afiliados/' },
+  { label: 'Termos de programa de afiliados', href: 'https://modopag.com.br/termos-afiliados/' },
 ];
 ---
 
@@ -104,14 +106,22 @@ const termosLinks = [
             <li>
               <a
                 href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
                 class="text-sm text-gray-400 hover:text-primary-400 transition-colors"
               >
                 {link.label}
               </a>
             </li>
           ))}
+          <li>
+            <a
+              href={centralAjudaLink.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-sm text-gray-400 hover:text-primary-400 transition-colors"
+            >
+              {centralAjudaLink.label}
+            </a>
+          </li>
         </ul>
       </div>
 
@@ -123,8 +133,6 @@ const termosLinks = [
             <li>
               <a
                 href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
                 class="text-sm text-gray-400 hover:text-primary-400 transition-colors"
               >
                 {link.label}
