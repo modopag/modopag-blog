@@ -3,6 +3,7 @@ import { ViewTransitions } from 'astro:transitions';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import NavigationLoader from '@/components/NavigationLoader.astro';
+import CookieConsentBanner from '@/components/CookieConsentBanner';
 import WhatsAppLeadCapture from '@/components/WhatsAppLeadCapture';
 import { BRAND, SITE } from '@/lib/images';
 import '@/styles/global.css';
@@ -58,6 +59,9 @@ const websiteSchema = {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- modoPAG Tracker - Start of Head -->
+    <script is:inline src="https://pagamento.modopag.com.br/tracking/modopag-tracker.js"></script>
 
     <!-- Favicon and App Icons -->
     <link rel="icon" type="image/svg+xml" href={BRAND.favicon} />
@@ -133,6 +137,11 @@ const websiteSchema = {
       <slot />
     </main>
     <Footer />
+
+    <!-- Cookie Consent Banner (LGPD) - deve vir antes do WhatsApp -->
+    <CookieConsentBanner client:load />
+
+    <!-- WhatsApp Lead Capture -->
     <WhatsAppLeadCapture client:load />
 
     <!-- Instant navigation on mousedown for faster perceived performance -->
@@ -154,7 +163,10 @@ const websiteSchema = {
       initInstantClick();
     </script>
 
+    <!-- modoPAG Tracker Init - End of Body -->
+    <script is:inline src="https://pagamento.modopag.com.br/tracking/modopag-framer-init.js"></script>
+
     <!-- Reportana Lead Capture Forms -->
-    <script src="https://cdn.reportana.com/form.js" async></script>
+    <script is:inline src="https://cdn.reportana.com/form.js" async></script>
   </body>
 </html>
