@@ -22,6 +22,15 @@ const {
 } = Astro.props;
 
 const formId = `lead-form-${segmentId}-${Math.random().toString(36).substr(2, 9)}`;
+const isInline = variant === 'inline';
+
+const inputClasses = isInline
+  ? 'flex-1 min-w-0 px-4 py-3 rounded-lg text-secondary-500 placeholder:text-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-400 transition'
+  : 'w-full px-4 py-3 border border-secondary-200 rounded-lg bg-white text-secondary-500 placeholder:text-secondary-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition';
+
+const buttonClasses = isInline
+  ? 'bg-primary-500 hover:bg-primary-400 text-secondary-500 font-semibold px-6 py-3 rounded-lg transition-colors whitespace-nowrap'
+  : 'w-full bg-primary-500 text-secondary-500 py-3 px-4 rounded-lg font-semibold hover:bg-primary-400 transition-colors';
 ---
 
 <div class:list={['lead-capture-form', className]} data-form-wrapper={formId}>
@@ -36,7 +45,7 @@ const formId = `lead-form-${segmentId}-${Math.random().toString(36).substr(2, 9)
     method="POST"
     action="/"
     data-rptn-form={segmentId}
-    class="space-y-3"
+    class:list={[isInline ? 'flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto' : 'space-y-3']}
     id={formId}
   >
     {showName && (
@@ -46,7 +55,7 @@ const formId = `lead-form-${segmentId}-${Math.random().toString(36).substr(2, 9)
         name="name"
         placeholder="Seu nome"
         required
-        class="w-full px-4 py-3 border border-secondary-200 rounded-lg bg-white text-secondary-500 placeholder:text-secondary-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+        class={inputClasses}
       />
     )}
 
@@ -54,9 +63,9 @@ const formId = `lead-form-${segmentId}-${Math.random().toString(36).substr(2, 9)
       data-rptn-field="email"
       type="email"
       name="email"
-      placeholder="Digite seu melhor e-mail"
+      placeholder="Seu melhor e-mail"
       required
-      class="w-full px-4 py-3 border border-secondary-200 rounded-lg bg-white text-secondary-500 placeholder:text-secondary-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+      class={inputClasses}
     />
 
     {showPhone && (
@@ -65,31 +74,42 @@ const formId = `lead-form-${segmentId}-${Math.random().toString(36).substr(2, 9)
         type="tel"
         name="phone"
         placeholder="WhatsApp (opcional)"
-        class="w-full px-4 py-3 border border-secondary-200 rounded-lg bg-white text-secondary-500 placeholder:text-secondary-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+        class={inputClasses}
       />
     )}
 
     <button
       type="submit"
-      class="w-full bg-primary-500 text-secondary-500 py-3 px-4 rounded-lg font-semibold hover:bg-primary-400 transition-colors"
+      class={buttonClasses}
     >
       {buttonText}
     </button>
-
-    <p class="text-xs text-secondary-400 text-center">
-      Ao se cadastrar, você concorda com nossa{' '}
-      <a href="https://modopag.com.br/privacidade" class="underline hover:text-secondary-500 transition-colors">
-        Política de Privacidade
-      </a>
-    </p>
   </form>
 
+  {isInline ? (
+    <a
+      href="https://modopag.com.br/politicas-de-privacidade"
+      class="inline-block mt-4 text-sm text-secondary-300 hover:text-secondary-200 transition-colors"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Respeitamos sua privacidade
+    </a>
+  ) : (
+    <p class="text-xs text-secondary-400 text-center mt-3">
+      Ao se cadastrar, voce concorda com nossa{' '}
+      <a href="https://modopag.com.br/politicas-de-privacidade" class="underline hover:text-secondary-500 transition-colors" target="_blank" rel="noopener noreferrer">
+        Politica de Privacidade
+      </a>
+    </p>
+  )}
+
   <!-- Success message (hidden by default) -->
-  <div class="success-message hidden text-center p-6 bg-green-50 rounded-lg">
+  <div class:list={['success-message hidden text-center p-6 rounded-lg', isInline ? 'bg-white/10' : 'bg-green-50']}>
     <div class="text-3xl mb-2">🎉</div>
-    <h3 class="text-green-800 font-semibold">Cadastro realizado!</h3>
-    <p class="text-green-600 text-sm mt-2">
-      Você receberá nossas novidades em breve.
+    <h3 class:list={['font-semibold', isInline ? 'text-white' : 'text-green-800']}>Cadastro realizado!</h3>
+    <p class:list={['text-sm mt-2', isInline ? 'text-secondary-200' : 'text-green-600']}>
+      Voce recebera nossas novidades em breve.
     </p>
   </div>
 </div>
