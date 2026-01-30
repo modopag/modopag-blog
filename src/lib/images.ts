@@ -3,7 +3,7 @@
  *
  * Folder structure:
  * public/
- * ├── favicon.svg              (SVG favicon - best quality)
+ * ├── favicon.avif             (AVIF favicon - best quality)
  * └── images/
  *     └── brand/
  *         ├── modopag-icon.png           (Favicon 32x32)
@@ -29,7 +29,7 @@ const SUPABASE_STORAGE_URL = 'https://acxelejbtjjkttfwrdbi.supabase.co/storage/v
 // Brand assets (local - served from Vercel CDN)
 export const BRAND = {
   // Favicons
-  favicon: '/blog/favicon.svg',
+  favicon: '/blog/favicon.avif',
   icon: `${BRAND_BASE}/modopag-icon.png`,
   iconLarge: `${BRAND_BASE}/modopag-icon-large.png`,
 
