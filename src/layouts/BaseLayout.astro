@@ -3,6 +3,7 @@ import { ViewTransitions } from 'astro:transitions';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import NavigationLoader from '@/components/NavigationLoader.astro';
+import WhatsAppLeadCapture from '@/components/WhatsAppLeadCapture';
 import { BRAND, SITE } from '@/lib/images';
 import '@/styles/global.css';
 
@@ -132,6 +133,7 @@ const websiteSchema = {
       <slot />
     </main>
     <Footer />
+    <WhatsAppLeadCapture client:load />
 
     <!-- Instant navigation on mousedown for faster perceived performance -->
     <script>
