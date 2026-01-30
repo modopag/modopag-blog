@@ -2,6 +2,7 @@
 import { ViewTransitions } from 'astro:transitions';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import CTABannerBottom from '@/components/CTABannerBottom.astro';
 import NavigationLoader from '@/components/NavigationLoader.astro';
 import CookieConsentBanner from '@/components/CookieConsentBanner';
 import WhatsAppLeadCapture from '@/components/WhatsAppLeadCapture';
@@ -31,7 +32,7 @@ const organizationSchema = {
   "sameAs": [
     "https://instagram.com/modopag",
     "https://linkedin.com/company/modopag",
-    "https://twitter.com/modopag"
+    "https://x.com/modopag"
   ]
 };
 
@@ -136,6 +137,7 @@ const websiteSchema = {
     <main class:list={['flex-1', className]}>
       <slot />
     </main>
+    <CTABannerBottom />
     <Footer />
 
     <!-- Cookie Consent Banner (LGPD) - deve vir antes do WhatsApp -->
