@@ -1,0 +1,262 @@
+---
+import type { Post } from '@/lib/types';
+
+interface Props {
+  posts: Post[];
+}
+
+const { posts } = Astro.props;
+
+// Ensure we have at least one post
+const featuredPosts = posts.slice(0, 3);
+---
+
+{featuredPosts.length > 0 && (
+  <section class="relative overflow-hidden bg-gradient-to-br from-secondary-500 via-secondary-600 to-secondary-700 rounded-2xl">
+    <!-- Carousel container -->
+    <div class="hero-carousel relative" data-carousel>
+      <!-- Slides -->
+      <div class="carousel-track flex transition-transform duration-500 ease-out">
+        {featuredPosts.map((post, index) => {
+          const categorySlug = post.category?.slug || 'artigos';
+          const categoryName = post.category?.name || 'Artigos';
+          const categoryEmoji = post.category?.emoji || '📄';
+          const categoryColor = post.category?.color || '#FFD700';
+
+          return (
+            <div
+              class="carousel-slide flex-shrink-0 w-full"
+              data-slide={index}
+            >
+              <a
+                href={`/blog/${categorySlug}/${post.slug}/`}
+                data-astro-prefetch="viewport"
+                class="block"
+              >
+                <div class="grid md:grid-cols-2 gap-6 p-6 md:p-10 lg:p-12 min-h-[320px] md:min-h-[400px]">
+                  <!-- Text content -->
+                  <div class="flex flex-col justify-center order-2 md:order-1">
+                    <div class="mb-4">
+                      <span
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-full"
+                        style={`background-color: ${categoryColor}20; color: ${categoryColor};`}
+                      >
+                        <span>{categoryEmoji}</span>
+                        {categoryName}
+                      </span>
+                    </div>
+
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 line-clamp-3 group-hover:text-primary-400 transition-colors">
+                      {post.title}
+                    </h2>
+
+                    {post.description && (
+                      <p class="text-secondary-300 text-base md:text-lg mb-6 line-clamp-2">
+                        {post.description}
+                      </p>
+                    )}
+
+                    <div class="flex items-center gap-4">
+                      <span class="inline-flex items-center gap-2 text-primary-400 font-semibold group-hover:gap-3 transition-all">
+                        Ler artigo
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                      </span>
+                      {post.reading_time && (
+                        <span class="text-secondary-400 text-sm">
+                          {post.reading_time} min de leitura
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <!-- Image -->
+                  <div class="relative order-1 md:order-2">
+                    {post.featured_image ? (
+                      <div class="aspect-[16/10] rounded-xl overflow-hidden shadow-2xl">
+                        <img
+                          src={post.featured_image}
+                          alt={post.featured_image_alt || post.title}
+                          class="w-full h-full object-cover"
+                          loading={index === 0 ? 'eager' : 'lazy'}
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        class="aspect-[16/10] rounded-xl overflow-hidden shadow-2xl flex items-center justify-center"
+                        style={`background: linear-gradient(135deg, ${categoryColor}40, ${categoryColor}20);`}
+                      >
+                        <span class="text-7xl opacity-60">{categoryEmoji}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </a>
+            </div>
+          );
+        })}
+      </div>
+
+      <!-- Navigation dots -->
+      {featuredPosts.length > 1 && (
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
+          {featuredPosts.map((_, index) => (
+            <button
+              type="button"
+              class="carousel-dot w-2.5 h-2.5 rounded-full bg-white/30 hover:bg-white/50 transition-colors"
+              class:list={[index === 0 && 'active bg-primary-500']}
+              data-dot={index}
+              aria-label={`Ir para slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
+
+      <!-- Arrow navigation -->
+      {featuredPosts.length > 1 && (
+        <>
+          <button
+            type="button"
+            class="carousel-prev absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors hidden md:flex"
+            aria-label="Slide anterior"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="carousel-next absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors hidden md:flex"
+            aria-label="Próximo slide"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </>
+      )}
+    </div>
+  </section>
+)}
+
+<style>
+  .carousel-dot.active {
+    @apply bg-primary-500 w-6;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  function initCarousel() {
+    const carousels = document.querySelectorAll('[data-carousel]');
+
+    carousels.forEach((carousel) => {
+      const track = carousel.querySelector('.carousel-track') as HTMLElement;
+      const slides = carousel.querySelectorAll('.carousel-slide');
+      const dots = carousel.querySelectorAll('.carousel-dot');
+      const prevBtn = carousel.querySelector('.carousel-prev');
+      const nextBtn = carousel.querySelector('.carousel-next');
+
+      if (!track || slides.length <= 1) return;
+
+      let currentIndex = 0;
+      let autoplayInterval: number;
+
+      function goToSlide(index: number) {
+        currentIndex = (index + slides.length) % slides.length;
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === currentIndex);
+          dot.classList.toggle('bg-primary-500', i === currentIndex);
+          dot.classList.toggle('w-6', i === currentIndex);
+          dot.classList.toggle('w-2.5', i !== currentIndex);
+        });
+      }
+
+      function nextSlide() {
+        goToSlide(currentIndex + 1);
+      }
+
+      function prevSlide() {
+        goToSlide(currentIndex - 1);
+      }
+
+      function startAutoplay() {
+        autoplayInterval = window.setInterval(nextSlide, 5000);
+      }
+
+      function stopAutoplay() {
+        clearInterval(autoplayInterval);
+      }
+
+      // Event listeners
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          goToSlide(index);
+          stopAutoplay();
+          startAutoplay();
+        });
+      });
+
+      prevBtn?.addEventListener('click', () => {
+        prevSlide();
+        stopAutoplay();
+        startAutoplay();
+      });
+
+      nextBtn?.addEventListener('click', () => {
+        nextSlide();
+        stopAutoplay();
+        startAutoplay();
+      });
+
+      // Pause on hover
+      carousel.addEventListener('mouseenter', stopAutoplay);
+      carousel.addEventListener('mouseleave', startAutoplay);
+
+      // Touch swipe support
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      carousel.addEventListener('touchstart', (e: Event) => {
+        touchStartX = (e as TouchEvent).changedTouches[0].screenX;
+      }, { passive: true });
+
+      carousel.addEventListener('touchend', (e: Event) => {
+        touchEndX = (e as TouchEvent).changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) {
+            nextSlide();
+          } else {
+            prevSlide();
+          }
+          stopAutoplay();
+          startAutoplay();
+        }
+      }, { passive: true });
+
+      // Start autoplay
+      startAutoplay();
+    });
+  }
+
+  initCarousel();
+  document.addEventListener('astro:after-swap', initCarousel);
+</script>

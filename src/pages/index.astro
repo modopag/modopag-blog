@@ -2,34 +2,813 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import SEOHead from '@/components/SEOHead.astro';
 import SchemaOrg from '@/components/SchemaOrg.astro';
-import Hero from '@/components/Hero.astro';
-import CategoryPills from '@/components/CategoryPills.astro';
-import PostGrid from '@/components/PostGrid.astro';
+import YouTubeSection from '@/components/YouTubeSection.astro';
 import { getCategories, getPosts } from '@/lib/database';
 import { generateWebSiteSchema, generateOrganizationSchema } from '@/utils/seo';
+import { truncate } from '@/utils/helpers';
 
-const categories = await getCategories();
-const posts = await getPosts({ published: true, limit: 20 });
+// Fetch all data in parallel for performance
+const [categories, featuredPosts, latestPosts, calculatorPosts] = await Promise.all([
+  getCategories(),
+  getPosts({ published: true, featured: true, limit: 3 }),
+  getPosts({ published: true, limit: 12 }),
+  getPosts({ published: true, categorySlug: 'calculadoras', limit: 3 }),
+]);
+
+// Get posts for each category (excluding calculadoras)
+const categoriesWithPosts = await Promise.all(
+  categories
+    .filter(cat => cat.slug !== 'calculadoras')
+    .slice(0, 3)
+    .map(async (category) => {
+      const posts = await getPosts({ published: true, categorySlug: category.slug, limit: 4 });
+      return { category, posts };
+    })
+);
+
+const validCategoriesWithPosts = categoriesWithPosts.filter(({ posts }) => posts.length > 0);
+
+// Use featured posts for hero, or fall back to latest
+const heroPosts = featuredPosts.length >= 1
+  ? featuredPosts
+  : latestPosts.slice(0, 3);
+
+const heroPost = heroPosts[0];
+const secondaryPosts = heroPosts.slice(1, 3);
 
 const schemas = [generateWebSiteSchema(), generateOrganizationSchema()];
+
+// UTM params
+const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage';
 ---
 
 <BaseLayout>
   <SEOHead
     slot="head"
     title="Blog"
-    description="Dicas, guias e calculadoras gratuitas para ajudar você a gerenciar melhor seu negócio. Aprenda sobre pagamentos, taxas e finanças."
+    description="Dicas, guias e calculadoras gratuitas para ajudar você a gerenciar melhor seu negócio. Aprenda sobre pagamentos, taxas de maquininhas e finanças."
   />
   <SchemaOrg slot="head" schema={schemas} />
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-    <Hero
-      title="Dicas, guias e calculadoras gratuitas"
-      subtitle="Tudo que você precisa saber para gerenciar melhor seu negócio e aceitar pagamentos de forma inteligente."
-    />
+  <div class="min-h-screen bg-white overflow-hidden">
 
-    <CategoryPills categories={categories} />
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- HERO SECTION - Cinematic & Bold -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+      <!-- Animated gradient background -->
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary-100 via-white to-white"></div>
 
-    <PostGrid posts={posts} />
+      <!-- Floating orbs -->
+      <div class="absolute top-20 left-10 w-72 h-72 bg-primary-300/30 rounded-full blur-3xl floating-slow"></div>
+      <div class="absolute bottom-20 right-10 w-96 h-96 bg-primary-200/20 rounded-full blur-3xl floating-medium"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-100/30 rounded-full blur-3xl"></div>
+
+      <!-- Grain texture overlay -->
+      <div class="absolute inset-0 opacity-[0.02] pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
+
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+        <!-- Main headline -->
+        <div class="text-center max-w-5xl mx-auto mb-16">
+          <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-black leading-[0.9] tracking-tight mb-8 reveal-up" style="animation-delay: 100ms">
+            O blog que fala
+            <span class="relative inline-block">
+              <span class="relative z-10">a verdade</span>
+              <span class="absolute -bottom-2 left-0 w-full h-4 bg-primary-400/60 -rotate-1 rounded"></span>
+            </span>
+            <br />sobre pagamentos
+          </h1>
+          <p class="text-xl md:text-2xl text-gray-500 font-light max-w-2xl mx-auto reveal-up" style="animation-delay: 200ms">
+            Dicas, comparativos e ferramentas gratuitas para você economizar nas taxas da sua maquininha.
+          </p>
+        </div>
+
+        <!-- Featured post card - Floating style -->
+        {heroPost && (
+          <div class="max-w-4xl mx-auto reveal-up" style="animation-delay: 300ms">
+            <a
+              href={`/blog/${heroPost.category?.slug || 'artigos'}/${heroPost.slug}/`}
+              data-astro-prefetch="viewport"
+              class="group block relative"
+            >
+              <div class="absolute -inset-1 bg-gradient-to-r from-primary-500 via-primary-400 to-primary-500 rounded-[2rem] opacity-0 group-hover:opacity-100 blur-xl transition-all duration-700"></div>
+              <div class="relative bg-black rounded-[1.75rem] overflow-hidden aspect-[2/1] md:aspect-[2.5/1] shadow-2xl shadow-black/20 group-hover:shadow-primary-500/20 transition-all duration-500">
+                {heroPost.featured_image ? (
+                  <img
+                    src={heroPost.featured_image}
+                    alt={heroPost.featured_image_alt || heroPost.title}
+                    class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700 ease-out"
+                    loading="eager"
+                  />
+                ) : (
+                  <div class="absolute inset-0 bg-gradient-to-br from-primary-500 to-primary-600"></div>
+                )}
+
+                <!-- Overlay gradient -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+
+                <!-- Content -->
+                <div class="absolute inset-0 p-8 md:p-12 flex flex-col justify-end">
+                  <div class="flex items-center gap-3 mb-4">
+                    <span class="px-3 py-1 bg-primary-500 text-black text-xs font-bold rounded-full uppercase tracking-wide">
+                      {heroPost.category?.name || 'Destaque'}
+                    </span>
+                    {heroPost.reading_time && (
+                      <span class="text-white/60 text-sm">{heroPost.reading_time} min de leitura</span>
+                    )}
+                  </div>
+
+                  <h2 class="text-2xl md:text-4xl font-bold text-white mb-3 group-hover:text-primary-400 transition-colors duration-300 max-w-3xl">
+                    {heroPost.title}
+                  </h2>
+
+                  {heroPost.description && (
+                    <p class="text-gray-300 text-base md:text-lg max-w-2xl line-clamp-2 mb-6">
+                      {truncate(heroPost.description, 140)}
+                    </p>
+                  )}
+
+                  <div class="inline-flex items-center gap-2 text-white font-medium">
+                    <span class="group-hover:text-primary-400 transition-colors">Ler artigo completo</span>
+                    <svg class="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </div>
+                </div>
+
+                <!-- Corner accent -->
+                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary-500/20 to-transparent"></div>
+              </div>
+            </a>
+          </div>
+        )}
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 reveal-up" style="animation-delay: 600ms">
+        <div class="flex flex-col items-center gap-2 text-gray-400">
+          <span class="text-xs uppercase tracking-widest">Explorar</span>
+          <div class="w-6 h-10 border-2 border-gray-300 rounded-full flex justify-center pt-2">
+            <div class="w-1 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- CATEGORIES - Minimal pill navigation -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section class="sticky top-16 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-100">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center gap-2 py-4 overflow-x-auto scrollbar-hide">
+          <a
+            href="/blog/"
+            class="magnetic-element flex-shrink-0 px-5 py-2.5 bg-black text-white text-sm font-medium rounded-full transition-all duration-300 hover:scale-105 active:scale-95"
+          >
+            Todos
+          </a>
+          {categories.map((category) => (
+            <a
+              href={`/blog/${category.slug}/`}
+              class="magnetic-element flex-shrink-0 px-5 py-2.5 bg-gray-100 text-gray-600 text-sm font-medium rounded-full transition-all duration-300 hover:bg-gray-200 hover:text-black hover:scale-105 active:scale-95"
+            >
+              {category.emoji && <span class="mr-1.5">{category.emoji}</span>}
+              {category.name}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- BENTO GRID - Secondary featured posts -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    {secondaryPosts.length > 0 && (
+      <section class="py-20 md:py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid md:grid-cols-2 gap-6 lg:gap-8">
+            {secondaryPosts.map((post, index) => (
+              <a
+                href={`/blog/${post.category?.slug || 'artigos'}/${post.slug}/`}
+                data-astro-prefetch="viewport"
+                class="group relative block reveal-up"
+                style={`animation-delay: ${index * 100}ms`}
+              >
+                <div class="relative bg-gray-100 rounded-3xl overflow-hidden aspect-[4/3] hover-lift">
+                  {post.featured_image ? (
+                    <img
+                      src={post.featured_image}
+                      alt={post.featured_image_alt || post.title}
+                      class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div class="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                      <span class="text-6xl">{post.category?.emoji || '📄'}</span>
+                    </div>
+                  )}
+
+                  <!-- Hover overlay -->
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
+
+                  <!-- Content -->
+                  <div class="absolute inset-0 p-8 flex flex-col justify-end">
+                    <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white text-xs font-medium rounded-full w-fit mb-4">
+                      {post.category?.emoji && <span>{post.category.emoji}</span>}
+                      {post.category?.name || 'Artigo'}
+                    </span>
+
+                    <h3 class="text-xl md:text-2xl font-bold text-white group-hover:text-primary-400 transition-colors duration-300 line-clamp-2">
+                      {post.title}
+                    </h3>
+
+                    <div class="mt-4 flex items-center gap-2 text-white/70 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                      <span class="text-sm">Ler mais</span>
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- LATEST POSTS - Magazine style grid -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section class="py-20 md:py-32 bg-gray-50/50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Section header -->
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-16">
+          <div class="reveal-up">
+            <span class="text-primary-600 text-sm font-semibold uppercase tracking-widest mb-2 block">Novidades</span>
+            <h2 class="text-4xl md:text-5xl font-bold text-black">
+              Últimas publicações
+            </h2>
+          </div>
+          <p class="text-gray-500 text-lg max-w-md reveal-up" style="animation-delay: 100ms">
+            Conteúdo fresco para você ficar sempre atualizado sobre o mercado de pagamentos.
+          </p>
+        </div>
+
+        <!-- Posts grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+          {latestPosts.slice(0, 8).map((post, index) => (
+            <article class="group reveal-up" style={`animation-delay: ${index * 50}ms`}>
+              <a
+                href={`/blog/${post.category?.slug || 'artigos'}/${post.slug}/`}
+                data-astro-prefetch="viewport"
+                class="block h-full"
+              >
+                <!-- Image container -->
+                <div class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-5 bg-gray-100">
+                  {post.featured_image ? (
+                    <img
+                      src={post.featured_image}
+                      alt={post.featured_image_alt || post.title}
+                      class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div class="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                      <span class="text-5xl opacity-50">{post.category?.emoji || '📄'}</span>
+                    </div>
+                  )}
+
+                  <!-- Category pill on hover -->
+                  <div class="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm text-black text-xs font-medium rounded-full opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                    {post.category?.name || 'Artigo'}
+                  </div>
+
+                  <!-- Gradient overlay on hover -->
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                </div>
+
+                <!-- Content -->
+                <div class="space-y-3">
+                  <div class="flex items-center gap-3 text-xs text-gray-400">
+                    <span class="uppercase tracking-wider font-medium">{post.category?.name || 'Artigo'}</span>
+                    {post.reading_time && (
+                      <>
+                        <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                        <span>{post.reading_time} min</span>
+                      </>
+                    )}
+                  </div>
+
+                  <h3 class="text-lg font-semibold text-black group-hover:text-primary-600 transition-colors duration-300 line-clamp-2 leading-snug">
+                    {post.title}
+                  </h3>
+
+                  <div class="flex items-center gap-1 text-primary-600 text-sm font-medium opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                    <span>Ler artigo</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- NEWSLETTER - Dark, elegant, immersive -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section class="relative py-32 md:py-40 bg-black text-white overflow-hidden">
+      <!-- Animated gradient mesh -->
+      <div class="absolute inset-0">
+        <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-primary-900/40 via-transparent to-transparent"></div>
+        <div class="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-primary-800/30 via-transparent to-transparent"></div>
+      </div>
+
+      <!-- Floating particles -->
+      <div class="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-500 rounded-full floating-slow opacity-60"></div>
+      <div class="absolute top-1/3 right-1/3 w-1 h-1 bg-primary-400 rounded-full floating-medium opacity-40"></div>
+      <div class="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-primary-500 rounded-full floating-fast opacity-50"></div>
+      <div class="absolute bottom-1/3 right-1/4 w-1 h-1 bg-white rounded-full floating-slow opacity-30"></div>
+
+      <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <!-- Icon -->
+        <div class="mb-8 reveal-up">
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-white/10 rounded-2xl backdrop-blur-sm">
+            <svg class="w-8 h-8 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+        </div>
+
+        <h2 class="text-4xl md:text-6xl font-bold mb-12 reveal-up" style="animation-delay: 100ms">
+          Dicas semanais para
+          <span class="block mt-2">
+            <span class="bg-gradient-to-r from-primary-400 via-primary-500 to-primary-400 bg-clip-text text-transparent">
+              lucrar mais
+            </span>
+          </span>
+        </h2>
+
+        <!-- Form -->
+        <form
+          method="POST"
+          action="/"
+          data-rptn-form="78682"
+          class="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto reveal-up"
+          style="animation-delay: 300ms"
+          id="newsletter-form-homepage"
+        >
+          <div class="flex-1 relative group">
+            <input
+              data-rptn-field="email"
+              type="email"
+              name="email"
+              placeholder="Digite seu melhor e-mail"
+              required
+              class="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-gray-500 focus:outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all duration-300 text-center sm:text-left"
+            />
+            <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary-500/20 to-primary-600/20 opacity-0 group-focus-within:opacity-100 -z-10 blur-xl transition-opacity duration-500"></div>
+          </div>
+          <button
+            type="submit"
+            class="magnetic-element px-8 py-5 bg-primary-500 text-black font-bold rounded-2xl hover:bg-primary-400 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30"
+          >
+            Cadastrar grátis
+          </button>
+        </form>
+
+        <p class="text-sm text-gray-500 mt-6 reveal-up" style="animation-delay: 400ms">
+          Ao se cadastrar, você concorda com nossa{' '}
+          <a href="https://modopag.com.br/politicas-de-privacidade/" class="text-gray-400 hover:text-white underline underline-offset-4 transition-colors" target="_blank" rel="noopener noreferrer">
+            Política de Privacidade
+          </a>
+        </p>
+
+        <!-- Success message -->
+        <div id="newsletter-success" class="hidden mt-8 p-6 bg-green-500/10 rounded-2xl border border-green-500/20 backdrop-blur-sm">
+          <div class="flex items-center justify-center gap-3">
+            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-green-400 font-medium">Cadastro realizado com sucesso!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- CALCULATORS - Interactive tools showcase -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    {calculatorPosts.length > 0 && (
+      <section class="py-20 md:py-32 bg-white relative overflow-hidden">
+        <!-- Background decoration -->
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary-50 to-transparent pointer-events-none"></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <!-- Section header -->
+          <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16">
+            <div class="max-w-2xl reveal-up">
+              <div class="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 text-sm font-medium rounded-full mb-4">
+                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                100% Gratuitas
+              </div>
+              <h2 class="text-4xl md:text-5xl font-bold text-black mb-4">
+                Ferramentas para você
+              </h2>
+              <p class="text-gray-500 text-lg">
+                Calculadoras e simuladores para tomar decisões melhores sobre taxas e maquininhas.
+              </p>
+            </div>
+
+            <a
+              href="/blog/calculadoras/"
+              class="magnetic-element inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-medium rounded-xl hover:bg-gray-800 transition-all duration-300 reveal-up"
+              style="animation-delay: 100ms"
+            >
+              Ver todas as ferramentas
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+          </div>
+
+          <!-- Calculator cards -->
+          <div class="grid md:grid-cols-3 gap-6">
+            {calculatorPosts.map((post, index) => (
+              <a
+                href={`/blog/calculadoras/${post.slug}/`}
+                data-astro-prefetch="viewport"
+                class="group relative reveal-up"
+                style={`animation-delay: ${index * 100}ms`}
+              >
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-primary-500 to-primary-600 rounded-3xl opacity-0 group-hover:opacity-100 blur transition-all duration-500"></div>
+                <div class="relative h-full bg-white rounded-[1.4rem] p-8 border border-gray-200 group-hover:border-transparent transition-all duration-300 hover-lift">
+                  <!-- Icon -->
+                  <div class="w-14 h-14 bg-primary-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary-500 group-hover:scale-110 transition-all duration-300">
+                    <span class="text-3xl group-hover:scale-110 transition-transform duration-300">🧮</span>
+                  </div>
+
+                  <!-- Content -->
+                  <h3 class="text-xl font-bold text-black mb-3 group-hover:text-primary-600 transition-colors duration-300">
+                    {post.title}
+                  </h3>
+
+                  {post.description && (
+                    <p class="text-gray-500 text-sm line-clamp-2 mb-6">
+                      {truncate(post.description, 100)}
+                    </p>
+                  )}
+
+                  <!-- CTA -->
+                  <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center gap-2 text-primary-600 font-medium text-sm">
+                      <span>Usar agora</span>
+                      <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </span>
+                    <span class="px-2.5 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                      Grátis
+                    </span>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- YOUTUBE SECTION - Videos do canal modoPAG -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <YouTubeSection />
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- CTA SECTION - Yellow, bold, conversion-focused -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section class="py-20 md:py-32 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-primary-400 via-primary-500 to-primary-500">
+          <!-- Decorative elements -->
+          <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+          <div class="absolute bottom-0 left-0 w-72 h-72 bg-black/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-2xl"></div>
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl"></div>
+
+          <div class="relative grid lg:grid-cols-2 gap-12 items-center p-10 md:p-16 lg:p-20">
+            <!-- Content -->
+            <div class="reveal-up">
+              <div class="inline-flex items-center gap-2 px-4 py-2 bg-black/10 text-black text-sm font-semibold rounded-full mb-6">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                As menores taxas do Brasil
+              </div>
+
+              <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-black mb-6 leading-tight">
+                Aceite pagamentos
+                <br />
+                <span class="text-black/70">com economia real</span>
+              </h2>
+
+              <p class="text-xl text-black/60 mb-10 max-w-lg">
+                Aceite Pix, debito, credito ate 18x e voucher. Sem meta de vendas e dinheiro na conta na hora.
+              </p>
+
+              <div class="flex flex-wrap gap-4">
+                <a
+                  href={`https://modopag.com.br/maquininhas${utmParams}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="magnetic-element inline-flex items-center gap-3 px-8 py-4 bg-black text-white font-bold rounded-2xl hover:bg-gray-900 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-black/20"
+                  data-no-instant
+                >
+                  Ver maquininhas
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </a>
+
+                <a
+                  href={`https://modopag.com.br/maquininhas/taxas/${utmParams}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="magnetic-element inline-flex items-center gap-2 px-8 py-4 bg-white/40 backdrop-blur-sm text-black font-bold rounded-2xl hover:bg-white/60 transition-all duration-300"
+                  data-no-instant
+                >
+                  Simular taxas
+                </a>
+              </div>
+
+              <!-- Trust badges - 2 Diferenciais modoPAG -->
+              <div class="flex flex-wrap items-center gap-6 mt-10 pt-8 border-t border-black/10">
+                <div class="flex items-center gap-2">
+                  <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span class="text-black/70 text-sm font-medium">CPF ou CNPJ</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
+                  <span class="text-black/70 text-sm font-medium">Parcele em até 18x</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Maquininha image -->
+            <div class="hidden lg:flex justify-center items-center reveal-up" style="animation-delay: 200ms">
+              <div class="relative">
+                <!-- Glow effect -->
+                <div class="absolute inset-0 bg-white/30 rounded-full blur-3xl scale-75"></div>
+
+                <img
+                  src="/blog/images/maquininhas/Maquininhas.png"
+                  alt="Maquininhas modoPAG"
+                  class="relative w-96 h-auto drop-shadow-2xl transform -rotate-6 hover:rotate-0 hover:scale-105 transition-all duration-700 ease-out floating-slow"
+                  loading="lazy"
+                  onerror="this.parentElement.style.display='none'"
+                />
+
+                <!-- Floating badge -->
+                <div class="absolute -top-4 -right-4 px-5 py-2.5 bg-green-500 text-white font-bold rounded-full shadow-lg shadow-green-500/30 transform rotate-12 animate-bounce-slow">
+                  Sem aluguel!
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- CATEGORY SECTIONS - Clean, minimal -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    {validCategoriesWithPosts.map(({ category, posts }, catIndex) => (
+      <section class="py-20 bg-white border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <!-- Section header -->
+          <div class="flex items-end justify-between mb-12 reveal-up">
+            <div class="flex items-center gap-4">
+              {category.emoji && (
+                <span class="text-4xl">{category.emoji}</span>
+              )}
+              <div>
+                <h2 class="text-3xl md:text-4xl font-bold text-black">
+                  {category.name}
+                </h2>
+                {category.description && (
+                  <p class="text-gray-500 mt-1">{truncate(category.description, 60)}</p>
+                )}
+              </div>
+            </div>
+            <a
+              href={`/blog/${category.slug}/`}
+              class="magnetic-element hidden md:inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-full hover:bg-gray-200 hover:text-black transition-all duration-300"
+            >
+              Ver todos
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+
+          <!-- Posts grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {posts.slice(0, 4).map((post, index) => (
+              <article class="group reveal-up" style={`animation-delay: ${index * 50}ms`}>
+                <a
+                  href={`/blog/${category.slug}/${post.slug}/`}
+                  data-astro-prefetch="viewport"
+                  class="block"
+                >
+                  <div class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-gray-100">
+                    {post.featured_image ? (
+                      <img
+                        src={post.featured_image}
+                        alt={post.featured_image_alt || post.title}
+                        class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div class="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                        <span class="text-4xl opacity-50">{category.emoji || '📄'}</span>
+                      </div>
+                    )}
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300"></div>
+                  </div>
+
+                  <h3 class="font-semibold text-black group-hover:text-primary-600 transition-colors duration-300 line-clamp-2 leading-snug">
+                    {post.title}
+                  </h3>
+                </a>
+              </article>
+            ))}
+          </div>
+
+          <!-- Mobile see all link -->
+          <div class="mt-8 text-center md:hidden reveal-up">
+            <a
+              href={`/blog/${category.slug}/`}
+              class="inline-flex items-center gap-2 text-primary-600 font-medium"
+            >
+              Ver todos os artigos
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+    ))}
+
   </div>
 </BaseLayout>
+
+<style>
+  /* Line clamp utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Hide scrollbar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Floating animations */
+  @keyframes floating-slow {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(2deg); }
+  }
+  @keyframes floating-medium {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+  }
+  @keyframes floating-fast {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  .floating-slow { animation: floating-slow 8s ease-in-out infinite; }
+  .floating-medium { animation: floating-medium 6s ease-in-out infinite; }
+  .floating-fast { animation: floating-fast 4s ease-in-out infinite; }
+
+  /* Bounce slow animation */
+  @keyframes bounce-slow {
+    0%, 100% { transform: translateY(-5%) rotate(12deg); }
+    50% { transform: translateY(0%) rotate(12deg); }
+  }
+  .animate-bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
+
+  /* Reveal animations */
+  @keyframes reveal-up {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .reveal-up {
+    animation: reveal-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-play-state: paused;
+  }
+  .reveal-up.is-visible {
+    animation-play-state: running;
+  }
+
+  /* Hover lift effect */
+  .hover-lift {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Magnetic button effect placeholder - enhanced via JS */
+  .magnetic-element {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+</style>
+
+<script>
+  // Newsletter form handler
+  function initNewsletterForm() {
+    const form = document.getElementById('newsletter-form-homepage');
+    const success = document.getElementById('newsletter-success');
+
+    if (!form || !success) return;
+
+    form.addEventListener('submit', () => {
+      setTimeout(() => {
+        form.classList.add('hidden');
+        success.classList.remove('hidden');
+      }, 500);
+    });
+  }
+
+  // Scroll reveal animation
+  function initScrollReveal() {
+    const reveals = document.querySelectorAll('.reveal-up');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    reveals.forEach(el => observer.observe(el));
+  }
+
+  // Magnetic button effect
+  function initMagneticButtons() {
+    const buttons = document.querySelectorAll('.magnetic-element');
+
+    buttons.forEach(button => {
+      button.addEventListener('mousemove', (e) => {
+        const rect = button.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+
+        button.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
+      });
+
+      button.addEventListener('mouseleave', () => {
+        button.style.transform = 'translate(0, 0)';
+      });
+    });
+  }
+
+  // Initialize all effects
+  function init() {
+    initNewsletterForm();
+    initScrollReveal();
+    initMagneticButtons();
+  }
+
+  // Run on load
+  init();
+
+  // Re-run after Astro page transitions
+  document.addEventListener('astro:after-swap', init);
+</script>

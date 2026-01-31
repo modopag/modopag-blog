@@ -1,0 +1,142 @@
+---
+interface Props {
+  segmentId: string;
+  title?: string;
+  description?: string;
+  buttonText?: string;
+  showName?: boolean;
+  showPhone?: boolean;
+  variant?: 'default' | 'inline' | 'card';
+  class?: string;
+}
+
+const {
+  segmentId,
+  title,
+  description,
+  buttonText = 'Cadastrar',
+  showName = true,
+  showPhone = true,
+  variant = 'default',
+  class: className = '',
+} = Astro.props;
+
+const formId = `lead-form-${segmentId}-${Math.random().toString(36).substr(2, 9)}`;
+const isInline = variant === 'inline';
+
+const inputClasses = isInline
+  ? 'flex-1 min-w-0 px-4 py-3 rounded-lg text-secondary-500 placeholder:text-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-400 transition'
+  : 'w-full px-4 py-3 border border-secondary-200 rounded-lg bg-white text-secondary-500 placeholder:text-secondary-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition';
+
+const buttonClasses = isInline
+  ? 'bg-primary-500 hover:bg-primary-400 text-secondary-500 font-semibold px-6 py-3 rounded-lg transition-colors whitespace-nowrap'
+  : 'w-full bg-primary-500 text-secondary-500 py-3 px-4 rounded-lg font-semibold hover:bg-primary-400 transition-colors';
+---
+
+<div class:list={['lead-capture-form', className]} data-form-wrapper={formId}>
+  {title && (
+    <h3 class="font-bold text-lg text-secondary-500 mb-2">{title}</h3>
+  )}
+  {description && (
+    <p class="text-secondary-400 text-sm mb-4">{description}</p>
+  )}
+
+  <form
+    method="POST"
+    action="/"
+    data-rptn-form={segmentId}
+    class:list={[isInline ? 'flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto' : 'space-y-3']}
+    id={formId}
+  >
+    {showName && (
+      <input
+        data-rptn-field="name"
+        type="text"
+        name="name"
+        placeholder="Seu nome"
+        required
+        class={inputClasses}
+      />
+    )}
+
+    <input
+      data-rptn-field="email"
+      type="email"
+      name="email"
+      placeholder="Seu melhor e-mail"
+      required
+      class={inputClasses}
+    />
+
+    {showPhone && (
+      <input
+        data-rptn-field="phone"
+        type="tel"
+        name="phone"
+        placeholder="WhatsApp (opcional)"
+        class={inputClasses}
+      />
+    )}
+
+    <button
+      type="submit"
+      class={buttonClasses}
+    >
+      {buttonText}
+    </button>
+  </form>
+
+  {isInline ? (
+    <a
+      href="https://modopag.com.br/politicas-de-privacidade/"
+      class="inline-block mt-4 text-sm text-secondary-300 hover:text-secondary-200 transition-colors"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Respeitamos sua privacidade
+    </a>
+  ) : (
+    <p class="text-xs text-secondary-400 text-center mt-3">
+      Ao se cadastrar, voce concorda com nossa{' '}
+      <a href="https://modopag.com.br/politicas-de-privacidade/" class="underline hover:text-secondary-500 transition-colors" target="_blank" rel="noopener noreferrer">
+        Politica de Privacidade
+      </a>
+    </p>
+  )}
+
+  <!-- Success message (hidden by default) -->
+  <div class:list={['success-message hidden text-center p-6 rounded-lg', isInline ? 'bg-white/10' : 'bg-green-50']}>
+    <div class="text-3xl mb-2">🎉</div>
+    <h3 class:list={['font-semibold', isInline ? 'text-white' : 'text-green-800']}>Cadastro realizado!</h3>
+    <p class:list={['text-sm mt-2', isInline ? 'text-secondary-200' : 'text-green-600']}>
+      Voce recebera nossas novidades em breve.
+    </p>
+  </div>
+</div>
+
+<script define:vars={{ formId }}>
+  function initLeadForm() {
+    const wrapper = document.querySelector(`[data-form-wrapper="${formId}"]`);
+    if (!wrapper) return;
+
+    const form = wrapper.querySelector('form');
+    const successMessage = wrapper.querySelector('.success-message');
+
+    if (!form || !successMessage) return;
+
+    form.addEventListener('submit', (e) => {
+      // Let Reportana handle the submission
+      // Show success message after a short delay
+      setTimeout(() => {
+        form.classList.add('hidden');
+        successMessage.classList.remove('hidden');
+      }, 500);
+    });
+  }
+
+  // Initialize on page load
+  initLeadForm();
+
+  // Re-initialize after Astro page transitions
+  document.addEventListener('astro:after-swap', initLeadForm);
+</script>

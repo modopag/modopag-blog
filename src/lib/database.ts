@@ -2,6 +2,18 @@ import { supabase } from './supabase';
 import type { Category, Post, PostFaq, GetPostsOptions, Comment, CreateCommentInput } from './types';
 
 /**
+ * Map database field names to TypeScript interface names
+ * Handles: image_url -> featured_image, image_alt -> featured_image_alt
+ */
+function mapPostFields(post: Record<string, unknown>): Post {
+  return {
+    ...post,
+    featured_image: post.image_url ?? post.featured_image ?? null,
+    featured_image_alt: post.image_alt ?? post.featured_image_alt ?? null,
+  } as Post;
+}
+
+/**
  * Fetch all categories
  */
 export async function getCategories(): Promise<Category[]> {
@@ -92,7 +104,7 @@ export async function getPosts(options: GetPostsOptions = {}): Promise<Post[]> {
     return [];
   }
 
-  return data || [];
+  return (data || []).map(mapPostFields);
 }
 
 /**
@@ -124,7 +136,7 @@ export async function getPostBySlug(
     return null;
   }
 
-  return data;
+  return data ? mapPostFields(data) : null;
 }
 
 /**
@@ -179,23 +191,26 @@ export async function getRelatedPosts(
     return [];
   }
 
-  return data || [];
+  return (data || []).map(mapPostFields);
 }
 
 /**
  * Get all published posts for sitemap generation
  */
 export async function getAllPostsForSitemap(): Promise<
-  Pick<Post, 'slug' | 'updated_at' | 'category'>[]
+  Pick<Post, 'slug' | 'updated_at' | 'featured' | 'category'>[]
 > {
   const { data, error } = await supabase
     .from('posts')
     .select(`
       slug,
       updated_at,
+      featured,
       category:categories(slug)
     `)
-    .eq('published', true);
+    .eq('published', true)
+    .is('deleted_at', null)
+    .order('updated_at', { ascending: false });
 
   if (error) {
     console.error('Error fetching posts for sitemap:', error);

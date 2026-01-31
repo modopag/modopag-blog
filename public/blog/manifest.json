@@ -1,0 +1,41 @@
+{
+  "name": "modoPAG Blog",
+  "short_name": "modoPAG",
+  "description": "Dicas, guias e calculadoras gratuitas para gerenciar melhor seu negócio e aceitar pagamentos de forma inteligente.",
+  "start_url": "/blog/",
+  "scope": "/blog/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a1a2e",
+  "orientation": "portrait-primary",
+  "lang": "pt-BR",
+  "categories": ["business", "finance", "education"],
+  "icons": [
+    {
+      "src": "/blog/images/brand/modopag-icon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/blog/images/brand/modopag-icon-large.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/blog/images/brand/modopag-icon-large.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/blog/images/brand/modopag-square-light.png",
+      "sizes": "1000x1000",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "modoPAG Blog"
+    }
+  ]
+}

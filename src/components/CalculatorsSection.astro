@@ -1,0 +1,163 @@
+---
+import type { Post } from '@/lib/types';
+
+interface Props {
+  posts: Post[];
+  title?: string;
+  subtitle?: string;
+}
+
+const {
+  posts,
+  title = '🧮 Calculadoras e Ferramentas',
+  subtitle = 'Ferramentas gratuitas para ajudar na gestão do seu negócio',
+} = Astro.props;
+
+// Calculator cards data - used when no posts are available
+const defaultCalculators = [
+  {
+    title: 'Calculadora de Taxas',
+    description: 'Compare taxas de diferentes maquininhas e encontre a melhor opção',
+    emoji: '💳',
+    gradient: 'from-cyan-500 to-blue-600',
+    href: '/blog/calculadoras/',
+  },
+  {
+    title: 'Simulador de Antecipação',
+    description: 'Simule quanto você recebe ao antecipar suas vendas',
+    emoji: '⚡',
+    gradient: 'from-amber-500 to-orange-600',
+    href: '/blog/calculadoras/',
+  },
+  {
+    title: 'Calculadora de Lucro',
+    description: 'Calcule a margem de lucro dos seus produtos',
+    emoji: '📊',
+    gradient: 'from-emerald-500 to-teal-600',
+    href: '/blog/calculadoras/',
+  },
+];
+
+const calculatorPosts = posts.slice(0, 6);
+---
+
+<section class="py-12 md:py-16">
+  <div class="mb-8">
+    <h2 class="text-2xl md:text-3xl font-bold text-secondary-500 mb-2">
+      {title}
+    </h2>
+    <p class="text-secondary-400">
+      {subtitle}
+    </p>
+  </div>
+
+  {calculatorPosts.length > 0 ? (
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {calculatorPosts.map((post) => {
+        const categorySlug = post.category?.slug || 'calculadoras';
+        const emoji = post.category?.emoji || '🧮';
+
+        return (
+          <a
+            href={`/blog/${categorySlug}/${post.slug}/`}
+            data-astro-prefetch="viewport"
+            class="group relative bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl p-6 text-white overflow-hidden hover:shadow-xl hover:shadow-cyan-500/20 transition-all duration-300 hover:-translate-y-1"
+          >
+            <!-- Background pattern -->
+            <div class="absolute inset-0 opacity-10">
+              <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white" />
+              <div class="absolute -left-4 -bottom-4 w-24 h-24 rounded-full bg-white" />
+            </div>
+
+            <div class="relative">
+              <div class="flex items-start justify-between mb-4">
+                <span class="text-4xl">{emoji}</span>
+                <span class="px-2.5 py-1 bg-white/20 rounded-full text-xs font-medium backdrop-blur-sm">
+                  Gratuito
+                </span>
+              </div>
+
+              <h3 class="text-lg font-bold mb-2 group-hover:underline decoration-2 underline-offset-4">
+                {post.title}
+              </h3>
+
+              {post.description && (
+                <p class="text-white/80 text-sm line-clamp-2">
+                  {post.description}
+                </p>
+              )}
+
+              <div class="mt-4 flex items-center gap-2 text-sm font-medium">
+                <span>Usar agora</span>
+                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </div>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+  ) : (
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {defaultCalculators.map((calc) => (
+        <a
+          href={calc.href}
+          data-astro-prefetch="viewport"
+          class={`group relative bg-gradient-to-br ${calc.gradient} rounded-2xl p-6 text-white overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}
+        >
+          <!-- Background pattern -->
+          <div class="absolute inset-0 opacity-10">
+            <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white" />
+            <div class="absolute -left-4 -bottom-4 w-24 h-24 rounded-full bg-white" />
+          </div>
+
+          <div class="relative">
+            <div class="flex items-start justify-between mb-4">
+              <span class="text-4xl">{calc.emoji}</span>
+              <span class="px-2.5 py-1 bg-white/20 rounded-full text-xs font-medium backdrop-blur-sm">
+                Gratuito
+              </span>
+            </div>
+
+            <h3 class="text-lg font-bold mb-2 group-hover:underline decoration-2 underline-offset-4">
+              {calc.title}
+            </h3>
+
+            <p class="text-white/80 text-sm line-clamp-2">
+              {calc.description}
+            </p>
+
+            <div class="mt-4 flex items-center gap-2 text-sm font-medium">
+              <span>Usar agora</span>
+              <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  )}
+
+  <div class="mt-8 text-center">
+    <a
+      href="/blog/calculadoras/"
+      class="inline-flex items-center gap-2 px-6 py-3 bg-secondary-100 hover:bg-secondary-200 text-secondary-600 font-semibold rounded-lg transition-colors"
+    >
+      Ver todas as calculadoras
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </a>
+  </div>
+</section>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

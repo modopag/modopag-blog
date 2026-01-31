@@ -1,19 +1,39 @@
 ---
-import type { Post } from '@/lib/types';
+import type { Post, Category } from '@/lib/types';
 import PostCard from './PostCard.astro';
 
 interface Props {
   posts: Post[];
+  category?: Category | null;
 }
 
-const { posts } = Astro.props;
+const { posts, category } = Astro.props;
 ---
 
 {posts.length > 0 && (
   <section class="my-12">
-    <h2 class="text-2xl font-bold text-secondary-500 dark:text-white mb-6">
-      Artigos Relacionados
-    </h2>
+    <!-- Category Title with Link -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+      <h2
+        class="text-2xl sm:text-3xl font-bold"
+        style={category?.color ? `color: ${category.color}` : undefined}
+      >
+        {category?.name || 'Artigos Relacionados'}
+      </h2>
+      {category?.slug && (
+        <a
+          href={`/blog/${category.slug}/`}
+          class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-secondary-500 border border-secondary-200 rounded-full hover:bg-secondary-50 hover:border-secondary-300 transition-colors"
+        >
+          Ir para a categoria
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      )}
+    </div>
+
+    <!-- Posts Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {posts.map((post) => (
         <PostCard post={post} />

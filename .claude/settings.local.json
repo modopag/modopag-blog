@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(python:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfix: TOC overlap on wide screens + show featured image when exists\n\n- Changed TOC sidebar from lg \\(1024px\\) to xl \\(1280px\\) breakpoint\n- Adjusted TOC positioning from calc\\(50% - 42rem\\) to calc\\(50% - 38rem\\)\n- Fixed article margin breakpoint to match TOC visibility\n- Added mapPostFields to convert database image_url to featured_image\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(copy \"\\\\MELOWEB-NAS\\\\Melo Web\\\\modoPAG\\\\Logo\\\\PNG\\\\modopag preta + amarela.png\" \"public\\\\images\\\\brand\\\\modopag-logo-dark.png\")",
+      "Bash(copy \"\\\\MELOWEB-NAS\\\\Melo Web\\\\modoPAG\\\\Logo\\\\PNG\\\\modopag amarela.png\" \"public\\\\images\\\\brand\\\\modopag-logo-yellow.png\")",
+      "Bash(cmd /c \"copy \"\"C:\\\\Users\\\\Vitor Melo\\\\Downloads\\\\Imagens-modopag\\\\modopag preta + amarela.png\"\" \"\"public\\\\images\\\\brand\\\\modopag-logo-dark.png\"\"\")",
+      "Bash(cmd /c \"copy \"\"C:\\\\Users\\\\Vitor Melo\\\\Downloads\\\\Imagens-modopag\\\\modopag amarela.png\"\" \"\"public\\\\images\\\\brand\\\\modopag-logo-yellow.png\"\"\")",
+      "Bash(cmd /c \"copy \"\"C:\\\\Users\\\\Vitor Melo\\\\Downloads\\\\Imagens-modopag\\\\Favicon 1.png\"\" \"\"public\\\\images\\\\brand\\\\modopag-icon.png\"\"\")",
+      "Bash(cmd /c \"copy \"\"C:\\\\Users\\\\Vitor Melo\\\\Downloads\\\\Imagens-modopag\\\\ModoPag - Icon.png\"\" \"\"public\\\\images\\\\brand\\\\modopag-icon-large.png\"\"\")",
+      "Bash(git commit:*)",
+      "Bash(npm run build:*)"
+    ]
+  }
+}

@@ -30,6 +30,12 @@ export interface Post {
   updated_at: string;
   // GEO: TL;DR summary for LLM citation
   tldr: string | null;
+  // Calculator/tool fields
+  calculator_enabled: boolean | null;
+  calculator_title: string | null;
+  calculator_description: string | null;
+  calculator_code: string | null;
+  calculator_position: 'top' | 'middle' | 'bottom' | null;
 }
 
 export interface PostFaq {

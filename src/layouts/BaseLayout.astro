@@ -2,8 +2,11 @@
 import { ViewTransitions } from 'astro:transitions';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import CTABannerBottom from '@/components/CTABannerBottom.astro';
 import NavigationLoader from '@/components/NavigationLoader.astro';
-import { BRAND } from '@/lib/images';
+import CookieConsentBanner from '@/components/CookieConsentBanner';
+import WhatsAppLeadCapture from '@/components/WhatsAppLeadCapture';
+import { BRAND, SITE } from '@/lib/images';
 import '@/styles/global.css';
 
 interface Props {
@@ -11,54 +14,137 @@ interface Props {
 }
 
 const { class: className = '' } = Astro.props;
+
+// Schema.org data
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "modoPAG",
+  "url": SITE.url,
+  "logo": {
+    "@type": "ImageObject",
+    "url": BRAND.ogDefault,
+    "width": 1000,
+    "height": 1000
+  },
+  "image": BRAND.ogDefault,
+  "description": "A forma mais simples de aceitar pagamentos no seu negócio. Maquininhas com as menores taxas do Brasil.",
+  "sameAs": [
+    "https://instagram.com/modopag",
+    "https://linkedin.com/company/modopag",
+    "https://x.com/modopag"
+  ]
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": SITE.name,
+  "alternateName": "Blog modoPAG",
+  "description": SITE.description,
+  "url": SITE.blogUrl,
+  "inLanguage": SITE.language,
+  "publisher": {
+    "@type": "Organization",
+    "name": "modoPAG",
+    "logo": {
+      "@type": "ImageObject",
+      "url": BRAND.ogDefault
+    }
+  }
+};
 ---
 
 <!doctype html>
-<html lang="pt-BR">
+<html lang={SITE.language}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- modoPAG Tracker - Start of Head -->
+    <script is:inline src="https://pagamento.modopag.com.br/tracking/modopag-tracker.js"></script>
+
     <!-- Favicon and App Icons -->
-    <link rel="icon" type="image/svg+xml" href={BRAND.favicon} />
+    <link rel="icon" type="image/avif" href={BRAND.favicon} />
     <link rel="icon" type="image/png" sizes="32x32" href={BRAND.icon} />
-    <link rel="apple-touch-icon" href={BRAND.icon} />
+    <link rel="icon" type="image/png" sizes="192x192" href={BRAND.iconLarge} />
+    <link rel="apple-touch-icon" sizes="180x180" href={BRAND.iconLarge} />
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#1a1a2e" />
+    <meta name="theme-color" content={SITE.secondaryColor} />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content={SITE.shortName} />
+    <meta name="application-name" content={SITE.shortName} />
+    <meta name="msapplication-TileColor" content={SITE.secondaryColor} />
+    <meta name="msapplication-TileImage" content={BRAND.iconLarge} />
 
-    <!-- DNS Prefetch & Preconnect for external resources -->
+    <!-- DNS Prefetch for Supabase (database only) -->
     <link rel="dns-prefetch" href="https://acxelejbtjjkttfwrdbi.supabase.co" />
     <link rel="preconnect" href="https://acxelejbtjjkttfwrdbi.supabase.co" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Font preload for faster text rendering -->
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <!-- LOCAL FONTS - Preload for faster rendering -->
+    <link rel="preload" href="/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-latin-600.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Local Font Definitions -->
+    <style is:inline>
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/inter-latin-400.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 500;
+        font-display: swap;
+        src: url('/fonts/inter-latin-500.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url('/fonts/inter-latin-600.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url('/fonts/inter-latin-700.woff2') format('woff2');
+      }
+    </style>
+
+    <!-- Schema.org - Organization -->
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+
+    <!-- Schema.org - WebSite -->
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
 
     <!-- View Transitions for smooth page navigation -->
     <ViewTransitions />
 
     <slot name="head" />
   </head>
-  <body class="min-h-screen flex flex-col bg-white text-secondary-500">
+  <body class="min-h-screen flex flex-col bg-white text-secondary-500 font-sans">
     <NavigationLoader />
     <Header />
     <main class:list={['flex-1', className]}>
       <slot />
     </main>
+    <CTABannerBottom />
     <Footer />
+
+    <!-- Cookie Consent Banner (LGPD) - deve vir antes do WhatsApp -->
+    <CookieConsentBanner client:load />
+
+    <!-- WhatsApp Lead Capture -->
+    <WhatsAppLeadCapture client:load />
 
     <!-- Instant navigation on mousedown for faster perceived performance -->
     <script>
@@ -78,5 +164,11 @@ const { class: className = '' } = Astro.props;
 
       initInstantClick();
     </script>
+
+    <!-- modoPAG Tracker Init - End of Body -->
+    <script is:inline src="https://pagamento.modopag.com.br/tracking/modopag-framer-init.js"></script>
+
+    <!-- Reportana Lead Capture Forms -->
+    <script is:inline src="https://cdn.reportana.com/form.js" async></script>
   </body>
 </html>

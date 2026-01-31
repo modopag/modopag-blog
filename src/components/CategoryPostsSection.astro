@@ -1,0 +1,63 @@
+---
+import type { Category, Post } from '@/lib/types';
+import PostCard from './PostCard.astro';
+
+interface Props {
+  category: Category;
+  posts: Post[];
+  showViewAll?: boolean;
+}
+
+const { category, posts, showViewAll = true } = Astro.props;
+
+const categoryColor = category.color || '#6B7280';
+const categoryEmoji = category.emoji || '📄';
+const categorySlug = category.slug;
+---
+
+{posts.length > 0 && (
+  <section class="py-10">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <div class="flex items-center gap-3">
+        <span
+          class="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
+          style={`background-color: ${categoryColor}20;`}
+        >
+          {categoryEmoji}
+        </span>
+        <div>
+          <h2
+            class="text-xl md:text-2xl font-bold"
+            style={`color: ${categoryColor};`}
+          >
+            {category.name}
+          </h2>
+          {category.description && (
+            <p class="text-sm text-secondary-400 hidden sm:block">
+              {category.description}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {showViewAll && (
+        <a
+          href={`/blog/${categorySlug}/`}
+          class="inline-flex items-center gap-2 text-sm font-semibold transition-colors hover:gap-3"
+          style={`color: ${categoryColor};`}
+        >
+          Ver todos
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+      )}
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {posts.slice(0, 4).map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+  </section>
+)}

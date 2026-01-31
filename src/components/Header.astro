@@ -1,10 +1,22 @@
 ---
 import Logo from './Logo.astro';
 
+// UTM for external links
+const utmParams = '?utm_source=blog&utm_medium=header&utm_campaign=navigation';
+
+// Maquininhas dropdown items
+const maquininhasItems = [
+  { label: 'modo MINI', href: `https://modopag.com.br/maquininhas/modo-mini/${utmParams}` },
+  { label: 'modo PRO', href: `https://modopag.com.br/maquininhas/modo-pro/${utmParams}` },
+  { label: 'modo SMART', href: `https://modopag.com.br/maquininhas/modo-smart/${utmParams}` },
+];
+
+// Main nav items
 const navItems = [
   { label: 'Blog', href: '/' },
   { label: 'Calculadoras', href: '/calculadoras/' },
-  { label: 'Guias', href: '/guias/' },
+  { label: 'modo LINK', href: `https://modopag.com.br/modolink/${utmParams}` },
+  { label: 'Planos e Taxas', href: `https://modopag.com.br/maquininhas/taxas/${utmParams}` },
 ];
 ---
 
@@ -12,13 +24,41 @@ const navItems = [
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
       <div class="flex items-center gap-8">
-        <Logo />
-        <nav class="hidden md:flex items-center gap-6">
+        <Logo size="xl" />
+
+        <nav class="hidden md:flex items-center gap-1">
+          <!-- Maquininhas dropdown -->
+          <div class="relative group">
+            <button
+              type="button"
+              class="flex items-center gap-1 px-3 py-2 text-sm font-medium text-secondary-500 hover:text-primary-600 hover:bg-secondary-50 rounded-lg transition-colors"
+            >
+              Maquininhas
+              <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <!-- Dropdown menu -->
+            <div class="absolute left-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <div class="bg-white rounded-xl shadow-lg border border-secondary-100 py-2 min-w-[180px]">
+                {maquininhasItems.map((item) => (
+                  <a
+                    href={item.href}
+                    class="block px-4 py-2.5 text-sm text-secondary-600 hover:bg-secondary-50 hover:text-primary-600 transition-colors"
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <!-- Nav items -->
           {navItems.map((item) => (
             <a
               href={item.href}
-              data-astro-prefetch="viewport"
-              class="text-sm font-medium text-secondary-500 hover:text-primary-600 transition-colors"
+              class="px-3 py-2 text-sm font-medium text-secondary-500 hover:text-primary-600 hover:bg-secondary-50 rounded-lg transition-colors"
             >
               {item.label}
             </a>
@@ -26,13 +66,13 @@ const navItems = [
         </nav>
       </div>
 
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3">
         <a
-          href="https://modopag.com.br"
+          href={`https://conta.modopag.com.br/${utmParams}`}
           class="hidden sm:inline-flex items-center px-4 py-2 text-sm font-semibold text-secondary-500 bg-primary-500 hover:bg-primary-400 rounded-lg transition-colors"
           data-no-instant
         >
-          Acessar modoPAG
+          Fazer login
         </a>
 
         <!-- Mobile menu button -->
@@ -51,24 +91,43 @@ const navItems = [
   </div>
 
   <!-- Mobile menu -->
-  <div id="mobile-menu" class="hidden md:hidden border-t border-secondary-100">
-    <div class="px-4 py-4 space-y-2">
+  <div id="mobile-menu" class="hidden md:hidden border-t border-secondary-100 bg-white">
+    <div class="px-4 py-4 space-y-1">
+      <!-- Maquininhas section -->
+      <div class="pb-2 border-b border-secondary-100 mb-2">
+        <p class="px-4 py-2 text-xs font-semibold text-secondary-400 uppercase tracking-wider">
+          Maquininhas
+        </p>
+        {maquininhasItems.map((item) => (
+          <a
+            href={item.href}
+            class="block px-4 py-2.5 text-sm text-secondary-500 hover:bg-secondary-100 rounded-lg transition-colors"
+          >
+            {item.label}
+          </a>
+        ))}
+      </div>
+
+      <!-- Nav items -->
       {navItems.map((item) => (
         <a
           href={item.href}
-          data-astro-prefetch="viewport"
-          class="block px-4 py-2 text-sm font-medium text-secondary-500 hover:bg-secondary-100 rounded-lg transition-colors"
+          class="block px-4 py-2.5 text-sm font-medium text-secondary-500 hover:bg-secondary-100 rounded-lg transition-colors"
         >
           {item.label}
         </a>
       ))}
-      <a
-        href="https://modopag.com.br"
-        class="block px-4 py-2 text-sm font-semibold text-secondary-500 bg-primary-500 hover:bg-primary-400 rounded-lg text-center transition-colors"
-        data-no-instant
-      >
-        Acessar modoPAG
-      </a>
+
+      <!-- Login CTA -->
+      <div class="pt-2 border-t border-secondary-100 mt-2">
+        <a
+          href={`https://conta.modopag.com.br/${utmParams}`}
+          class="block px-4 py-3 text-sm font-semibold text-secondary-500 bg-primary-500 hover:bg-primary-400 rounded-lg text-center transition-colors"
+          data-no-instant
+        >
+          Fazer login
+        </a>
+      </div>
     </div>
   </div>
 </header>
@@ -80,6 +139,13 @@ const navItems = [
 
     button?.addEventListener('click', () => {
       menu?.classList.toggle('hidden');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!button?.contains(e.target as Node) && !menu?.contains(e.target as Node)) {
+        menu?.classList.add('hidden');
+      }
     });
   }
 

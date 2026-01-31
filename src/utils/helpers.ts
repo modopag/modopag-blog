@@ -1,19 +1,18 @@
 import type { TableOfContentsItem } from '@/lib/types';
 
 /**
- * Extract table of contents from HTML content
+ * Extract table of contents from HTML content (H2 only for cleaner TOC)
  */
 export function extractTableOfContents(html: string): TableOfContentsItem[] {
-  const headingRegex = /<h([2-3])[^>]*id="([^"]*)"[^>]*>(.*?)<\/h\1>/gi;
+  const headingRegex = /<h2[^>]*id="([^"]*)"[^>]*>(.*?)<\/h2>/gi;
   const items: TableOfContentsItem[] = [];
   let match;
 
   while ((match = headingRegex.exec(html)) !== null) {
-    const level = parseInt(match[1], 10);
-    const id = match[2];
-    const text = match[3].replace(/<[^>]*>/g, ''); // Strip any inner HTML tags
+    const id = match[1];
+    const text = match[2].replace(/<[^>]*>/g, ''); // Strip any inner HTML tags
 
-    items.push({ id, text, level });
+    items.push({ id, text, level: 2 });
   }
 
   return items;
@@ -168,4 +167,44 @@ export function insertAtPercentage(html: string, insertContent: string, percenta
 
   paragraphs.splice(actualIndex, 0, `</p>${insertContent}<p>`);
   return paragraphs.join('</p>');
+}
+
+/**
+ * Split HTML content after the introduction (first heading or first 2 paragraphs)
+ * Used for inserting calculator/tools in the "middle" position
+ */
+export function splitContentAfterIntro(htmlContent: string): { intro: string; remaining: string } {
+  // Try to find the first H2 as a natural break point
+  const h2Match = htmlContent.match(/<h2[^>]*>.*?<\/h2>/i);
+  if (h2Match && h2Match.index !== undefined) {
+    const splitPoint = h2Match.index;
+    return {
+      intro: htmlContent.slice(0, splitPoint),
+      remaining: htmlContent.slice(splitPoint),
+    };
+  }
+
+  // Fallback: split after the second paragraph
+  const paragraphRegex = /<\/p>/gi;
+  let match;
+  let count = 0;
+  let lastIndex = 0;
+
+  while ((match = paragraphRegex.exec(htmlContent)) !== null) {
+    count++;
+    if (count === 2) {
+      lastIndex = match.index + match[0].length;
+      break;
+    }
+  }
+
+  if (lastIndex > 0) {
+    return {
+      intro: htmlContent.slice(0, lastIndex),
+      remaining: htmlContent.slice(lastIndex),
+    };
+  }
+
+  // Final fallback: return all as intro
+  return { intro: htmlContent, remaining: '' };
 }
