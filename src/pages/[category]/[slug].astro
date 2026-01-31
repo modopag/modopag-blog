@@ -133,6 +133,17 @@ const breadcrumbItems = [
   />
   <SchemaOrg slot="head" schema={schemas} />
 
+  {/* Preload LCP image for faster rendering */}
+  {!shouldHideHeroImage && post.featured_image && (
+    <link
+      slot="head"
+      rel="preload"
+      as="image"
+      href={post.featured_image}
+      fetchpriority="high"
+    />
+  )}
+
   <!-- Reading Progress Bar -->
   <ReadingProgress />
 
