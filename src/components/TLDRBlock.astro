@@ -25,7 +25,7 @@ const { text, label = "Resumo" } = Astro.props;
 <aside class="tldr-block" role="note" aria-label={label}>
   <div class="tldr-header">
     <span class="tldr-icon" aria-hidden="true">&#128161;</span>
-    <strong class="tldr-label">TL;DR</strong>
+    <strong class="tldr-label">{label}</strong>
   </div>
   <p class="tldr-content">
     {text ? text : <slot />}

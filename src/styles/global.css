@@ -113,8 +113,16 @@
     @apply my-0;
   }
 
+  /* Imagens no conteudo - prevenindo CLS */
   .prose img {
-    @apply rounded-xl my-6;
+    @apply rounded-xl my-6 w-full h-auto;
+    max-width: 100%;
+    background-color: #f3f4f6;
+  }
+
+  .prose img[loading="lazy"] {
+    min-height: 200px;
+    object-fit: cover;
   }
 
   /* Table styles */

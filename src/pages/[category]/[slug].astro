@@ -13,6 +13,7 @@ import RelatedPosts from '@/components/RelatedPosts.astro';
 import ReadingProgress from '@/components/ReadingProgress.astro';
 import BackToTop from '@/components/BackToTop.astro';
 import TLDRBlock from '@/components/TLDRBlock.astro';
+import OptimizedImage from '@/components/OptimizedImage.astro';
 import {
   getPostBySlug,
   getFaqsByPostId,
@@ -216,15 +217,14 @@ const breadcrumbItems = [
     <!-- Featured Image (hidden for calculator posts and calculadoras category) -->
     {!shouldHideHeroImage && post.featured_image && (
       <figure class="mb-8 -mx-4 sm:mx-0">
-        <img
+        <OptimizedImage
           src={post.featured_image}
           alt={post.featured_image_alt || post.title}
-          width="1200"
-          height="630"
-          class="w-full sm:rounded-2xl aspect-[1200/630] object-cover bg-secondary-100"
-          loading="eager"
-          decoding="async"
-          fetchpriority="high"
+          width={1200}
+          height={630}
+          wrapperClass="sm:rounded-2xl"
+          rounded={false}
+          priority={true}
         />
       </figure>
     )}
