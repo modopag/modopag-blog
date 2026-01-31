@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCategories, getAllPostsForSitemap } from '@/lib/database';
 
-const SITE_URL = 'https://modopag.com.br';
+const SITE_URL = 'https://blog.modopag.com.br';
 
 export const GET: APIRoute = async () => {
   try {
@@ -23,14 +23,6 @@ export const GET: APIRoute = async () => {
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-
-  <!-- Blog Home -->
-  <url>
-    <loc>${SITE_URL}/blog/</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
 `;
 
     // Add categories
@@ -38,7 +30,7 @@ export const GET: APIRoute = async () => {
       for (const category of categories) {
         xml += `
   <url>
-    <loc>${SITE_URL}/blog/${category.slug}/</loc>
+    <loc>${SITE_URL}/${category.slug}/</loc>
     <lastmod>${now}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -50,7 +42,7 @@ export const GET: APIRoute = async () => {
     if (posts && posts.length > 0) {
       for (const post of posts) {
         const categorySlug = (post.category as { slug: string })?.slug || 'artigos';
-        const postUrl = `${SITE_URL}/blog/${categorySlug}/${post.slug}/`;
+        const postUrl = `${SITE_URL}/${categorySlug}/${post.slug}/`;
         const lastmod = post.updated_at || now;
         const priority = post.featured ? '0.9' : '0.7';
 

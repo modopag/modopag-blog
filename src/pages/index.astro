@@ -87,7 +87,7 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
         {heroPost && (
           <div class="max-w-4xl mx-auto reveal-up" style="animation-delay: 300ms">
             <a
-              href={`/blog/${heroPost.category?.slug || 'artigos'}/${heroPost.slug}/`}
+              href={`/${heroPost.category?.slug || 'artigos'}/${heroPost.slug}/`}
               data-astro-prefetch="viewport"
               class="group block relative"
             >
@@ -162,14 +162,14 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center gap-2 py-4 overflow-x-auto scrollbar-hide">
           <a
-            href="/blog/"
+            href="/"
             class="magnetic-element flex-shrink-0 px-5 py-2.5 bg-black text-white text-sm font-medium rounded-full transition-all duration-300 hover:scale-105 active:scale-95"
           >
             Todos
           </a>
           {categories.map((category) => (
             <a
-              href={`/blog/${category.slug}/`}
+              href={`/${category.slug}/`}
               class="magnetic-element flex-shrink-0 px-5 py-2.5 bg-gray-100 text-gray-600 text-sm font-medium rounded-full transition-all duration-300 hover:bg-gray-200 hover:text-black hover:scale-105 active:scale-95"
             >
               {category.emoji && <span class="mr-1.5">{category.emoji}</span>}
@@ -189,7 +189,7 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
           <div class="grid md:grid-cols-2 gap-6 lg:gap-8">
             {secondaryPosts.map((post, index) => (
               <a
-                href={`/blog/${post.category?.slug || 'artigos'}/${post.slug}/`}
+                href={`/${post.category?.slug || 'artigos'}/${post.slug}/`}
                 data-astro-prefetch="viewport"
                 class="group relative block reveal-up"
                 style={`animation-delay: ${index * 100}ms`}
@@ -260,7 +260,7 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
           {latestPosts.slice(0, 8).map((post, index) => (
             <article class="group reveal-up" style={`animation-delay: ${index * 50}ms`}>
               <a
-                href={`/blog/${post.category?.slug || 'artigos'}/${post.slug}/`}
+                href={`/${post.category?.slug || 'artigos'}/${post.slug}/`}
                 data-astro-prefetch="viewport"
                 class="block h-full"
               >
@@ -425,7 +425,7 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
             </div>
 
             <a
-              href="/blog/calculadoras/"
+              href="/calculadoras/"
               class="magnetic-element inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-medium rounded-xl hover:bg-gray-800 transition-all duration-300 reveal-up"
               style="animation-delay: 100ms"
             >
@@ -440,7 +440,7 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
           <div class="grid md:grid-cols-3 gap-6">
             {calculatorPosts.map((post, index) => (
               <a
-                href={`/blog/calculadoras/${post.slug}/`}
+                href={`/calculadoras/${post.slug}/`}
                 data-astro-prefetch="viewport"
                 class="group relative reveal-up"
                 style={`animation-delay: ${index * 100}ms`}
@@ -568,7 +568,7 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
                 <div class="absolute inset-0 bg-white/30 rounded-full blur-3xl scale-75"></div>
 
                 <img
-                  src="/blog/images/maquininhas/Maquininhas.png"
+                  src="/images/maquininhas/Maquininhas.png"
                   alt="Maquininhas modoPAG"
                   class="relative w-96 h-auto drop-shadow-2xl transform -rotate-6 hover:rotate-0 hover:scale-105 transition-all duration-700 ease-out floating-slow"
                   loading="lazy"
@@ -608,7 +608,7 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
               </div>
             </div>
             <a
-              href={`/blog/${category.slug}/`}
+              href={`/${category.slug}/`}
               class="magnetic-element hidden md:inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-full hover:bg-gray-200 hover:text-black transition-all duration-300"
             >
               Ver todos
@@ -623,7 +623,7 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
             {posts.slice(0, 4).map((post, index) => (
               <article class="group reveal-up" style={`animation-delay: ${index * 50}ms`}>
                 <a
-                  href={`/blog/${category.slug}/${post.slug}/`}
+                  href={`/${category.slug}/${post.slug}/`}
                   data-astro-prefetch="viewport"
                   class="block"
                 >
@@ -654,7 +654,7 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
           <!-- Mobile see all link -->
           <div class="mt-8 text-center md:hidden reveal-up">
             <a
-              href={`/blog/${category.slug}/`}
+              href={`/${category.slug}/`}
               class="inline-flex items-center gap-2 text-primary-600 font-medium"
             >
               Ver todos os artigos

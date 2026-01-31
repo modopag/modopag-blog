@@ -20,21 +20,21 @@ const defaultCalculators = [
     description: 'Compare taxas de diferentes maquininhas e encontre a melhor opção',
     emoji: '💳',
     gradient: 'from-cyan-500 to-blue-600',
-    href: '/blog/calculadoras/',
+    href: '/calculadoras/',
   },
   {
     title: 'Simulador de Antecipação',
     description: 'Simule quanto você recebe ao antecipar suas vendas',
     emoji: '⚡',
     gradient: 'from-amber-500 to-orange-600',
-    href: '/blog/calculadoras/',
+    href: '/calculadoras/',
   },
   {
     title: 'Calculadora de Lucro',
     description: 'Calcule a margem de lucro dos seus produtos',
     emoji: '📊',
     gradient: 'from-emerald-500 to-teal-600',
-    href: '/blog/calculadoras/',
+    href: '/calculadoras/',
   },
 ];
 
@@ -59,7 +59,7 @@ const calculatorPosts = posts.slice(0, 6);
 
         return (
           <a
-            href={`/blog/${categorySlug}/${post.slug}/`}
+            href={`/${categorySlug}/${post.slug}/`}
             data-astro-prefetch="viewport"
             class="group relative bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl p-6 text-white overflow-hidden hover:shadow-xl hover:shadow-cyan-500/20 transition-all duration-300 hover:-translate-y-1"
           >
@@ -142,7 +142,7 @@ const calculatorPosts = posts.slice(0, 6);
 
   <div class="mt-8 text-center">
     <a
-      href="/blog/calculadoras/"
+      href="/calculadoras/"
       class="inline-flex items-center gap-2 px-6 py-3 bg-secondary-100 hover:bg-secondary-200 text-secondary-600 font-semibold rounded-lg transition-colors"
     >
       Ver todas as calculadoras

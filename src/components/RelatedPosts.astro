@@ -22,7 +22,7 @@ const { posts, category } = Astro.props;
       </h2>
       {category?.slug && (
         <a
-          href={`/blog/${category.slug}/`}
+          href={`/${category.slug}/`}
           class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-secondary-500 border border-secondary-200 rounded-full hover:bg-secondary-50 hover:border-secondary-300 transition-colors"
         >
           Ir para a categoria
