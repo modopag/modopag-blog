@@ -15,7 +15,8 @@
       "Bash(git commit:*)",
       "Bash(npm run build:*)",
       "Bash(git checkout:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(DR\" to \"Resumo\" \\(more accessible for\n  Brazilian audience\\)\n- Keep internal naming \\(TLDRBlock.astro\\) for GEO optimization\n- Label is now dynamic via prop \\(default: \"Resumo\"\\)\n\n## Part B: Image Optimization\n- Create OptimizedImage.astro component with:\n  - CSS aspect-ratio for CLS prevention\n  - Background placeholder while loading\n  - Configurable priority \\(eager/lazy loading\\)\n  - fetchpriority support for LCP images\n  - Dark mode placeholder color\n\n- Update post page to use OptimizedImage for featured image\n\n- Enhance prose images in global.css:\n  - Add min-height for lazy-loaded images\n  - Add background placeholder color\n  - Prevent CLS on content images\n\nFiles changed:\n- src/components/TLDRBlock.astro: Use label prop\n- src/components/OptimizedImage.astro: New component\n- src/pages/[category]/[slug].astro: Use OptimizedImage\n- src/styles/global.css: Enhanced prose img styles\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }

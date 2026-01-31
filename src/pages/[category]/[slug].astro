@@ -209,11 +209,6 @@ const breadcrumbItems = [
       </div>
     </header>
 
-    <!-- TL;DR Block (GEO - optimized for LLM citation) -->
-    {post.tldr && (
-      <TLDRBlock text={post.tldr} />
-    )}
-
     <!-- Featured Image (hidden for calculator posts and calculadoras category) -->
     {!shouldHideHeroImage && post.featured_image && (
       <figure class="mb-8 -mx-4 sm:mx-0">
@@ -240,6 +235,11 @@ const breadcrumbItems = [
 
     <!-- Table of Contents (Collapsible) - After cover image and calculator -->
     <TableOfContentsSidebar items={toc} />
+
+    <!-- Resumo do artigo (GEO - optimized for LLM citation) -->
+    {post.tldr && (
+      <TLDRBlock text={post.tldr} />
+    )}
 
     <!-- Article Content -->
     {showCalculator && calculatorPosition === 'middle' ? (
