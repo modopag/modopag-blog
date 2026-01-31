@@ -352,15 +352,6 @@ export default function CookieConsentBanner() {
                 }
             `}</style>
 
-            {/* Botao flutuante (quando ja tem consentimento) */}
-            {hasExistingConsent && !showBanner && (
-                <div style={{ position: "fixed", bottom: isMobile ? "16px" : "24px", ...floatingPosition, zIndex: 2147483640 }}>
-                    <button className="mpcc-floating-btn" onClick={handleOpenSettings} aria-label="Configuracoes de cookies" title="Configuracoes de cookies">
-                        <CookieIcon size={22} />
-                    </button>
-                </div>
-            )}
-
             {/* Overlay */}
             {showBanner && (
                 <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 2147483644, opacity: isAnimating ? 1 : 0, transition: "opacity 0.3s ease" }} />

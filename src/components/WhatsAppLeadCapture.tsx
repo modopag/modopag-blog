@@ -22,7 +22,7 @@ const CONFIG = {
     },
     termsUrl: "https://modopag.com.br/termos-de-uso-e-condicoes-de-uso/",
     privacyUrl: "https://modopag.com.br/politicas-de-privacidade/",
-    position: "right" as const,
+    position: "left" as const,
     interceptWhatsAppLinks: true,
     debug: false,
 }
