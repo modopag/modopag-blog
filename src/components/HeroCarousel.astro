@@ -74,12 +74,16 @@ const featuredPosts = posts.slice(0, 3);
                   <!-- Image -->
                   <div class="relative order-1 md:order-2">
                     {post.featured_image ? (
-                      <div class="aspect-[16/10] rounded-xl overflow-hidden shadow-2xl">
+                      <div class="aspect-[16/10] rounded-xl overflow-hidden shadow-2xl bg-secondary-100">
                         <img
                           src={post.featured_image}
                           alt={post.featured_image_alt || post.title}
+                          width="640"
+                          height="400"
                           class="w-full h-full object-cover"
                           loading={index === 0 ? 'eager' : 'lazy'}
+                          decoding="async"
+                          fetchpriority={index === 0 ? 'high' : 'auto'}
                         />
                       </div>
                     ) : (

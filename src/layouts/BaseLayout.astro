@@ -61,9 +61,6 @@ const websiteSchema = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- modoPAG Tracker - Start of Head -->
-    <script is:inline src="https://pagamento.modopag.com.br/tracking/modopag-tracker.js"></script>
-
     <!-- Favicon and App Icons -->
     <link rel="icon" type="image/avif" href={BRAND.favicon} />
     <link rel="icon" type="image/png" sizes="32x32" href={BRAND.icon} />
@@ -80,9 +77,18 @@ const websiteSchema = {
     <meta name="msapplication-TileColor" content={SITE.secondaryColor} />
     <meta name="msapplication-TileImage" content={BRAND.iconLarge} />
 
-    <!-- DNS Prefetch for Supabase (database only) -->
+    <!-- DNS Prefetch and Preconnect for external resources -->
+    <!-- Supabase (database + storage) -->
     <link rel="dns-prefetch" href="https://acxelejbtjjkttfwrdbi.supabase.co" />
-    <link rel="preconnect" href="https://acxelejbtjjkttfwrdbi.supabase.co" />
+    <link rel="preconnect" href="https://acxelejbtjjkttfwrdbi.supabase.co" crossorigin />
+
+    <!-- modoPAG Tracker -->
+    <link rel="dns-prefetch" href="https://pagamento.modopag.com.br" />
+    <link rel="preconnect" href="https://pagamento.modopag.com.br" />
+
+    <!-- Reportana (lead forms) -->
+    <link rel="dns-prefetch" href="https://cdn.reportana.com" />
+    <link rel="preconnect" href="https://cdn.reportana.com" crossorigin />
 
     <!-- LOCAL FONTS - Preload for faster rendering -->
     <link rel="preload" href="/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin />
@@ -165,8 +171,9 @@ const websiteSchema = {
       initInstantClick();
     </script>
 
-    <!-- modoPAG Tracker Init - End of Body -->
-    <script is:inline src="https://pagamento.modopag.com.br/tracking/modopag-framer-init.js"></script>
+    <!-- modoPAG Tracker - Non-blocking load at end of body -->
+    <script is:inline src="https://pagamento.modopag.com.br/tracking/modopag-tracker.js" defer></script>
+    <script is:inline src="https://pagamento.modopag.com.br/tracking/modopag-framer-init.js" defer></script>
 
     <!-- Reportana Lead Capture Forms -->
     <script is:inline src="https://cdn.reportana.com/form.js" async></script>

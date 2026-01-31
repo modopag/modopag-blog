@@ -22,10 +22,12 @@ const hasImage = !!post.featured_image;
   >
     <!-- Featured Image (only if exists) -->
     {hasImage && (
-      <div class="aspect-[16/9] relative overflow-hidden">
+      <div class="aspect-[16/9] relative overflow-hidden bg-secondary-100">
         <img
           src={post.featured_image}
           alt={post.featured_image_alt || post.title}
+          width="640"
+          height="360"
           class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
           decoding="async"

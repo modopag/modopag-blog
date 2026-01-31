@@ -97,8 +97,12 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
                   <img
                     src={heroPost.featured_image}
                     alt={heroPost.featured_image_alt || heroPost.title}
+                    width="1200"
+                    height="480"
                     class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700 ease-out"
                     loading="eager"
+                    decoding="async"
+                    fetchpriority="high"
                   />
                 ) : (
                   <div class="absolute inset-0 bg-gradient-to-br from-primary-500 to-primary-600"></div>
@@ -199,8 +203,11 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
                     <img
                       src={post.featured_image}
                       alt={post.featured_image_alt || post.title}
+                      width="600"
+                      height="450"
                       class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                       loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div class="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
@@ -270,8 +277,11 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
                     <img
                       src={post.featured_image}
                       alt={post.featured_image_alt || post.title}
+                      width="400"
+                      height="300"
                       class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                       loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div class="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
@@ -570,8 +580,11 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
                 <img
                   src="/images/maquininhas/Maquininhas.png"
                   alt="Maquininhas modoPAG"
+                  width="384"
+                  height="400"
                   class="relative w-96 h-auto drop-shadow-2xl transform -rotate-6 hover:rotate-0 hover:scale-105 transition-all duration-700 ease-out floating-slow"
                   loading="lazy"
+                  decoding="async"
                   onerror="this.parentElement.style.display='none'"
                 />
 
@@ -632,8 +645,11 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
                       <img
                         src={post.featured_image}
                         alt={post.featured_image_alt || post.title}
+                        width="400"
+                        height="300"
                         class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                         loading="lazy"
+                        decoding="async"
                       />
                     ) : (
                       <div class="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
