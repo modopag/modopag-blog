@@ -1,14 +1,18 @@
 import { supabase } from './supabase';
+import { toProxyImageUrl } from './images';
 import type { Category, Post, PostFaq, GetPostsOptions, Comment, CreateCommentInput } from './types';
 
 /**
  * Map database field names to TypeScript interface names
  * Handles: image_url -> featured_image, image_alt -> featured_image_alt
+ * Also converts Supabase image URLs to proxy URLs (/img/...)
  */
 function mapPostFields(post: Record<string, unknown>): Post {
+  const imageUrl = (post.image_url ?? post.featured_image ?? null) as string | null;
+
   return {
     ...post,
-    featured_image: post.image_url ?? post.featured_image ?? null,
+    featured_image: toProxyImageUrl(imageUrl),
     featured_image_alt: post.image_alt ?? post.featured_image_alt ?? null,
   } as Post;
 }

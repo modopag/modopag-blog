@@ -75,8 +75,38 @@ export function getPostImageUrl(slug: string, filename = 'featured.webp'): strin
 }
 
 /**
+ * Convert Supabase storage URL to proxy URL (/img/...)
+ * This allows serving images via blog.modopag.com.br/img/ instead of direct Supabase URLs
+ *
+ * @param url - Original image URL (can be Supabase URL or already a proxy URL)
+ * @returns Proxy URL path or original URL if not from Supabase blog-images bucket
+ *
+ * @example
+ * toProxyImageUrl('https://acxelejbtjjkttfwrdbi.supabase.co/storage/v1/object/public/blog-images/posts/foo.webp')
+ * // Returns: '/img/posts/foo.webp'
+ */
+export function toProxyImageUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+
+  // Already a proxy URL
+  if (url.startsWith('/img/')) return url;
+
+  // Convert Supabase blog-images URL to proxy
+  if (url.includes('supabase.co') && url.includes('/blog-images/')) {
+    const match = url.match(/\/blog-images\/(.+)$/);
+    if (match) {
+      return `/img/${match[1]}`;
+    }
+  }
+
+  // Return original URL for non-Supabase images
+  return url;
+}
+
+/**
  * Get full URL for an image path (for social sharing)
- * @param path - Local image path
+ * Handles both local paths and proxy paths
+ * @param path - Local image path or proxy path
  */
 export function getFullImageUrl(path: string): string {
   if (path.startsWith('http')) return path;

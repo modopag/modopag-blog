@@ -1,4 +1,5 @@
 import type { Post, PostFaq, Category } from '@/lib/types';
+import { getFullImageUrl } from '@/lib/images';
 
 const SITE_URL = 'https://blog.modopag.com.br';
 const SITE_NAME = 'modoPAG Blog';
@@ -47,7 +48,7 @@ export function generateArticleSchema(
     '@type': 'Article',
     headline: post.title,
     description: post.meta_description || post.description,
-    image: post.featured_image || `${SITE_URL}${DEFAULT_OG_IMAGE}`,
+    image: post.featured_image ? getFullImageUrl(post.featured_image) : `${SITE_URL}${DEFAULT_OG_IMAGE}`,
     datePublished: post.created_at,
     dateModified: post.updated_at,
     wordCount: post.content ? post.content.split(/\s+/).length : undefined,
