@@ -2,7 +2,6 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import SEOHead from '@/components/SEOHead.astro';
 import SchemaOrg from '@/components/SchemaOrg.astro';
-import YouTubeSection from '@/components/YouTubeSection.astro';
 import { getCategories, getPosts } from '@/lib/database';
 import { generateWebSiteSchema, generateOrganizationSchema } from '@/utils/seo';
 import { truncate } from '@/utils/helpers';
@@ -483,11 +482,6 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
         </div>
       </section>
     )}
-
-    <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    <!-- YOUTUBE SECTION - Videos do canal modoPAG -->
-    <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    <YouTubeSection />
 
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- CTA SECTION - Yellow, bold, conversion-focused -->
