@@ -6,6 +6,7 @@ import CTABannerBottom from '@/components/CTABannerBottom.astro';
 import NavigationLoader from '@/components/NavigationLoader.astro';
 import CookieConsentBanner from '@/components/CookieConsentBanner';
 import WhatsAppLeadCapture from '@/components/WhatsAppLeadCapture';
+import ExitModal from '@/components/ExitModal.astro';
 import { BRAND, SITE } from '@/lib/images';
 import '@/styles/global.css';
 
@@ -170,6 +171,9 @@ const websiteSchema = {
 
       initInstantClick();
     </script>
+
+    <!-- Exit Modal para links externos -->
+    <ExitModal />
 
     <!-- modoPAG Tracker - Non-blocking load at end of body -->
     <script is:inline src="https://pagamento.modopag.com.br/tracking/modopag-tracker.js" defer></script>

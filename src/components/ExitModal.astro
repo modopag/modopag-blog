@@ -1,0 +1,237 @@
+---
+/**
+ * ExitModal.astro
+ * Modal de aviso quando usuario clica em link externo
+ * Nao bloqueia, apenas informa - clique imediato para continuar
+ */
+---
+
+<!-- Exit Modal Overlay -->
+<div id="exit-modal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
+    <!-- Header -->
+    <div class="flex items-center gap-3 mb-4">
+      <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+        <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-secondary-500">
+        Voce esta saindo do Blog modoPAG
+      </h3>
+    </div>
+
+    <!-- Destination URL -->
+    <div class="mb-6">
+      <p class="text-sm text-secondary-400 mb-2">
+        Voce sera redirecionado para:
+      </p>
+      <div class="p-3 bg-secondary-50 rounded-lg">
+        <p id="exit-modal-url" class="text-sm text-secondary-600 break-all font-mono">
+          <!-- URL sera inserida via JS -->
+        </p>
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <p class="text-xs text-secondary-400 mb-6">
+      Este link leva a um site externo. O modoPAG nao se responsabiliza pelo conteudo de sites de terceiros.
+    </p>
+
+    <!-- Actions -->
+    <div class="flex flex-col sm:flex-row gap-3">
+      <button
+        id="exit-modal-continue"
+        type="button"
+        class="flex-1 px-4 py-2.5 bg-primary-500 hover:bg-primary-400 text-secondary-500 font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+      >
+        Continuar
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+        </svg>
+      </button>
+      <button
+        id="exit-modal-cancel"
+        type="button"
+        class="flex-1 px-4 py-2.5 border border-secondary-200 text-secondary-500 hover:bg-secondary-50 font-medium rounded-lg transition-colors"
+      >
+        Voltar ao blog
+      </button>
+    </div>
+
+    <!-- Remember choice -->
+    <label class="flex items-center gap-2 mt-4 cursor-pointer">
+      <input
+        type="checkbox"
+        id="exit-modal-remember"
+        class="w-4 h-4 rounded border-secondary-300 text-primary-500 focus:ring-primary-500"
+      >
+      <span class="text-xs text-secondary-400">
+        Nao mostrar novamente nesta sessao
+      </span>
+    </label>
+  </div>
+</div>
+
+<script>
+  function initExitModal() {
+    const modal = document.getElementById('exit-modal');
+    const urlDisplay = document.getElementById('exit-modal-url');
+    const continueBtn = document.getElementById('exit-modal-continue');
+    const cancelBtn = document.getElementById('exit-modal-cancel');
+    const rememberCheckbox = document.getElementById('exit-modal-remember') as HTMLInputElement;
+
+    if (!modal || !urlDisplay || !continueBtn || !cancelBtn || !rememberCheckbox) return;
+
+    let pendingUrl: string | null = null;
+
+    // Dominios que NAO devem mostrar o modal (dominios proprios)
+    const trustedDomains = [
+      'modopag.com.br',
+      'blog.modopag.com.br',
+      'conta.modopag.com.br',
+      'pagamento.modopag.com.br',
+      'ajuda.modopag.com.br',
+      'afiliados.modopag.com.br'
+    ];
+
+    // Verificar se deve pular o modal (sessao)
+    const shouldSkip = () => sessionStorage.getItem('skipExitModal') === 'true';
+
+    // Verificar se e link externo
+    const isExternalLink = (url: string): boolean => {
+      try {
+        const linkUrl = new URL(url, window.location.origin);
+        const currentHost = window.location.hostname;
+
+        // Se for mesmo dominio, nao e externo
+        if (linkUrl.hostname === currentHost) return false;
+
+        // Se for dominio confiavel, nao mostrar modal
+        if (trustedDomains.some(domain => linkUrl.hostname.endsWith(domain))) return false;
+
+        // E externo
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    // Formatar URL para exibicao
+    const formatUrl = (url: string): string => {
+      try {
+        const parsed = new URL(url);
+        let display = parsed.hostname + parsed.pathname;
+        if (display.length > 50) {
+          display = display.substring(0, 47) + '...';
+        }
+        return display;
+      } catch {
+        return url.substring(0, 50);
+      }
+    };
+
+    // Mostrar modal
+    const showModal = (url: string) => {
+      pendingUrl = url;
+      urlDisplay.textContent = formatUrl(url);
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    };
+
+    // Esconder modal
+    const hideModal = () => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = '';
+      pendingUrl = null;
+    };
+
+    // Continuar para o link
+    const continueToLink = () => {
+      if (rememberCheckbox.checked) {
+        sessionStorage.setItem('skipExitModal', 'true');
+      }
+      if (pendingUrl) {
+        window.open(pendingUrl, '_blank', 'noopener,noreferrer');
+      }
+      hideModal();
+    };
+
+    // Event listeners
+    continueBtn.addEventListener('click', continueToLink);
+    cancelBtn.addEventListener('click', hideModal);
+
+    // Fechar com ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        hideModal();
+      }
+    });
+
+    // Fechar clicando fora
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        hideModal();
+      }
+    });
+
+    // Interceptar cliques em links externos
+    document.addEventListener('click', (e) => {
+      const link = (e.target as HTMLElement).closest('a[href]') as HTMLAnchorElement;
+
+      if (!link) return;
+
+      const href = link.getAttribute('href');
+      if (!href) return;
+
+      // Ignorar links com data-no-exit-modal
+      if (link.hasAttribute('data-no-exit-modal')) return;
+
+      // Verificar se e externo
+      if (isExternalLink(href)) {
+        // Verificar se deve pular
+        if (shouldSkip()) return;
+
+        // Prevenir navegacao padrao
+        e.preventDefault();
+
+        // Mostrar modal
+        showModal(href);
+      }
+    });
+  }
+
+  // Inicializar
+  initExitModal();
+
+  // Re-inicializar apos navegacao Astro
+  document.addEventListener('astro:after-swap', initExitModal);
+</script>
+
+<style>
+  #exit-modal {
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  #exit-modal > div {
+    animation: slideUp 0.2s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

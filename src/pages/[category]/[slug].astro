@@ -5,7 +5,7 @@ import SchemaOrg from '@/components/SchemaOrg.astro';
 import Breadcrumb from '@/components/Breadcrumb.astro';
 import TableOfContentsSidebar from '@/components/TableOfContentsSidebar.astro';
 import CalculatorEmbed from '@/components/CalculatorEmbed.astro';
-import FAQAccordion from '@/components/FAQAccordion';
+import FAQAccordionCSS from '@/components/FAQAccordionCSS.astro';
 import AuthorSection from '@/components/AuthorSection.astro';
 import CTABox from '@/components/CTABox.astro';
 import ShareButtons from '@/components/ShareButtons.astro';
@@ -282,7 +282,7 @@ const breadcrumbItems = [
     )}
 
     <!-- FAQ Section -->
-    {faqs.length > 0 && <FAQAccordion client:visible faqs={faqs} />}
+    {faqs.length > 0 && <FAQAccordionCSS faqs={faqs} />}
 
     <!-- Author Section -->
     <AuthorSection
