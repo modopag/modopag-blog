@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 
-const SITE_URL = 'https://modopag.com.br';
-const SITEMAP_URL = `${SITE_URL}/blog/sitemap.xml`;
+const SITE_URL = 'https://blog.modopag.com.br';
+const SITEMAP_URL = `${SITE_URL}/sitemap.xml`;
 
 const PING_ENDPOINTS = [
   {

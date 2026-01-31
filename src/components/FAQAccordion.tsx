@@ -22,8 +22,28 @@ export default function FAQAccordion({ faqs }: Props) {
     });
   };
 
+  // Schema FAQPage para GEO (Generative Engine Optimization)
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+
   return (
     <section className="my-12">
+      {/* Schema JSON-LD para SEO/GEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       <h2 className="text-2xl font-bold text-secondary-500 dark:text-white mb-6">
         Perguntas Frequentes
       </h2>

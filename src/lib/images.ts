@@ -14,18 +14,18 @@
  * https://acxelejbtjjkttfwrdbi.supabase.co/storage/v1/object/public/blog-images/posts/
  */
 
-// Base path for local images (includes /blog base)
-const LOCAL_BASE = '/blog/images';
+// Base path for local images
+const LOCAL_BASE = '/images';
 const SUPABASE_STORAGE_URL = 'https://acxelejbtjjkttfwrdbi.supabase.co/storage/v1/object/public/blog-images';
 
 // Brand assets (local - served from Vercel CDN)
 export const BRAND = {
-  favicon: '/blog/favicon.svg',
+  favicon: '/favicon.svg',
   icon: `${LOCAL_BASE}/brand/modopag-icon.png`,
   logoDark: `${LOCAL_BASE}/brand/modopag-logo-dark.png`,
   logoYellow: `${LOCAL_BASE}/brand/modopag-logo-yellow.png`,
   // OG image uses full URL for social sharing
-  ogDefault: 'https://modopag.com.br/blog/images/brand/modopag-icon.png',
+  ogDefault: 'https://blog.modopag.com.br/images/brand/modopag-icon.png',
 } as const;
 
 /**

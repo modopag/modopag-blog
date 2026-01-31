@@ -1,8 +1,8 @@
 import type { Post, PostFaq, Category } from '@/lib/types';
 
-const SITE_URL = 'https://modopag.com.br';
+const SITE_URL = 'https://blog.modopag.com.br';
 const SITE_NAME = 'modoPAG Blog';
-const DEFAULT_OG_IMAGE = '/blog/images/og-default.jpg';
+const DEFAULT_OG_IMAGE = '/images/og-default.jpg';
 
 export interface SEOProps {
   title: string;
@@ -40,8 +40,9 @@ export function generateArticleSchema(
   author?: AuthorInfo
 ): string {
   const authorName = author?.name || 'Equipe modoPAG';
+  const postUrl = `${SITE_URL}/${categorySlug}/${post.slug}/`;
 
-  const schema = {
+  const schema: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: post.title,
@@ -54,6 +55,22 @@ export function generateArticleSchema(
       '@type': 'Person',
       name: authorName,
       url: SITE_URL,
+      jobTitle: 'Especialista em Meios de Pagamento',
+      worksFor: {
+        '@type': 'Organization',
+        name: 'modoPAG',
+        url: SITE_URL,
+      },
+      knowsAbout: [
+        'Maquininhas de cartao',
+        'Meios de pagamento',
+        'Fintech',
+        'MEI',
+        'Empreendedorismo',
+      ],
+      sameAs: [
+        'https://www.youtube.com/@MaquinadeCartaoBoa',
+      ],
     },
     publisher: {
       '@type': 'Organization',
@@ -61,18 +78,42 @@ export function generateArticleSchema(
       url: SITE_URL,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_URL}/blog/images/logo.png`,
+        url: `${SITE_URL}/images/logo.png`,
         width: 200,
         height: 60,
       },
+      sameAs: [
+        'https://www.youtube.com/@MaquinadeCartaoBoa',
+        'https://www.instagram.com/modopag',
+      ],
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `${SITE_URL}/blog/${categorySlug}/${post.slug}/`,
+      '@id': postUrl,
     },
+    url: postUrl,
     articleSection: post.category?.name,
     inLanguage: 'pt-BR',
+    isAccessibleForFree: true,
+
+    // GEO: Campo about para contexto semantico
+    about: {
+      '@type': 'Thing',
+      name: 'Maquininhas de Cartao e Meios de Pagamento',
+      description: 'Dispositivos e servicos para processamento de pagamentos com cartao de credito e debito no Brasil',
+    },
+
+    // GEO: Speakable para assistentes de voz e LLMs
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['.tldr-content', '.faq-answer', 'h1', 'h2', '.prose p:first-of-type'],
+    },
   };
+
+  // Adicionar keywords se a categoria existir
+  if (post.category?.name) {
+    schema.keywords = `${post.category.name}, maquininha de cartao, taxas, modoPAG`;
+  }
 
   return JSON.stringify(schema);
 }
@@ -84,22 +125,40 @@ export function generatePersonSchema(author: AuthorInfo): string {
     name: author.name,
     description: author.bio,
     url: SITE_URL,
+
+    // GEO: Expertise e conhecimento
+    jobTitle: 'Especialista em Meios de Pagamento',
+    worksFor: {
+      '@type': 'Organization',
+      name: 'modoPAG',
+      url: SITE_URL,
+    },
+    knowsAbout: [
+      'Maquininhas de cartao',
+      'Meios de pagamento',
+      'Taxas de cartao',
+      'Empreendedorismo',
+      'MEI',
+      'Fintech brasileira',
+    ],
   };
 
   if (author.avatar) {
     schema.image = author.avatar;
   }
 
-  const sameAs: string[] = [];
+  const sameAs: string[] = [
+    'https://www.youtube.com/@MaquinadeCartaoBoa',
+  ];
+
   if (author.twitter) {
     sameAs.push(`https://twitter.com/${author.twitter}`);
   }
   if (author.linkedin) {
     sameAs.push(`https://linkedin.com/in/${author.linkedin}`);
   }
-  if (sameAs.length > 0) {
-    schema.sameAs = sameAs;
-  }
+
+  schema.sameAs = sameAs;
 
   return JSON.stringify(schema);
 }
@@ -145,17 +204,48 @@ export function generateOrganizationSchema(): string {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'modoPAG',
+    alternateName: 'modo PAG',
     url: SITE_URL,
-    logo: `${SITE_URL}/blog/images/logo.png`,
-    sameAs: [
-      'https://www.instagram.com/modopag',
-      'https://www.linkedin.com/company/modopag',
-      'https://twitter.com/modopag',
-    ],
+    logo: `${SITE_URL}/images/logo.png`,
+    description: 'Fintech brasileira especializada em maquininhas de cartao com taxas competitivas: 1,09% no debito e 2,99% no credito a vista.',
+    foundingDate: '2020',
+
+    // Area de atuacao
+    areaServed: {
+      '@type': 'Country',
+      name: 'Brasil',
+    },
+
+    // Contato
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
       availableLanguage: 'Portuguese',
+    },
+
+    // Redes sociais e presenca online
+    sameAs: [
+      'https://www.youtube.com/@MaquinadeCartaoBoa',
+      'https://www.instagram.com/modopag',
+      'https://www.linkedin.com/company/modopag',
+      'https://twitter.com/modopag',
+    ],
+
+    // GEO: Conhecimento especializado
+    knowsAbout: [
+      'Maquininhas de cartao',
+      'Processamento de pagamentos',
+      'Taxas de cartao de credito e debito',
+      'Solucoes para MEI',
+      'Fintech',
+    ],
+
+    // GEO: Ofertas/Produtos
+    makesOffer: {
+      '@type': 'Offer',
+      name: 'Maquininha de Cartao modoPAG',
+      description: 'Maquininha com taxas a partir de 1,09% no debito, sem aluguel e sem mensalidade',
+      priceCurrency: 'BRL',
     },
   };
 
@@ -167,7 +257,7 @@ export function generateWebSiteSchema(): string {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: SITE_NAME,
-    url: `${SITE_URL}/blog/`,
+    url: `${SITE_URL}/`,
     publisher: {
       '@type': 'Organization',
       name: 'modoPAG',
@@ -176,7 +266,7 @@ export function generateWebSiteSchema(): string {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${SITE_URL}/blog/busca?q={search_term_string}`,
+        urlTemplate: `${SITE_URL}/busca?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },

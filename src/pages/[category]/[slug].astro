@@ -12,6 +12,7 @@ import ShareButtons from '@/components/ShareButtons.astro';
 import RelatedPosts from '@/components/RelatedPosts.astro';
 import ReadingProgress from '@/components/ReadingProgress.astro';
 import BackToTop from '@/components/BackToTop.astro';
+import TLDRBlock from '@/components/TLDRBlock.astro';
 import {
   getPostBySlug,
   getFaqsByPostId,
@@ -84,21 +85,21 @@ const author = {
 };
 
 // Schema.org
-const siteUrl = 'https://modopag.com.br';
-const postUrl = `${siteUrl}/blog/${categorySlug}/${slug}/`;
+const siteUrl = 'https://blog.modopag.com.br';
+const postUrl = `${siteUrl}/${categorySlug}/${slug}/`;
 const articleSchema = generateArticleSchema(post, categorySlug, author);
 const faqSchema = faqs.length > 0 ? generateFAQSchema(faqs) : '';
 const personSchema = generatePersonSchema(author);
 const breadcrumbSchema = generateBreadcrumbSchema([
-  { name: 'Blog', url: `${siteUrl}/blog/` },
-  { name: post.category?.name || 'Artigos', url: `${siteUrl}/blog/${categorySlug}/` },
+  { name: 'Blog', url: `${siteUrl}/` },
+  { name: post.category?.name || 'Artigos', url: `${siteUrl}/${categorySlug}/` },
   { name: post.title, url: postUrl },
 ]);
 
 const schemas = [articleSchema, breadcrumbSchema, personSchema, faqSchema].filter(Boolean);
 
 const breadcrumbItems = [
-  { label: post.category?.name || 'Artigos', href: `/blog/${categorySlug}/` },
+  { label: post.category?.name || 'Artigos', href: `/${categorySlug}/` },
   { label: post.title },
 ];
 
@@ -159,7 +160,7 @@ if (showInlineCTA) {
       <div class="flex flex-wrap items-center gap-3 mb-4">
         {post.category && (
           <a
-            href={`/blog/${categorySlug}/`}
+            href={`/${categorySlug}/`}
             class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium transition-colors hover:opacity-80"
             style={`background-color: ${post.category.color}20; color: ${post.category.color};`}
           >
@@ -224,6 +225,11 @@ if (showInlineCTA) {
         </a>
       </div>
     </header>
+
+    <!-- TL;DR Block (GEO - optimized for LLM citation) -->
+    {post.tldr && (
+      <TLDRBlock text={post.tldr} />
+    )}
 
     <!-- Table of Contents (Mobile) -->
     <div class="lg:hidden">

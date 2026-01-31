@@ -6,7 +6,7 @@ const INDEXNOW_ENDPOINTS = [
   'https://yandex.com/indexnow',
 ];
 
-const SITE_URL = 'https://modopag.com.br';
+const SITE_URL = 'https://blog.modopag.com.br';
 
 interface IndexNowRequest {
   url?: string;
@@ -43,9 +43,9 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const payload = {
-    host: 'modopag.com.br',
+    host: 'blog.modopag.com.br',
     key: indexNowKey,
-    keyLocation: `${SITE_URL}/blog/${indexNowKey}.txt`,
+    keyLocation: `${SITE_URL}/${indexNowKey}.txt`,
     urlList: urls,
   };
 

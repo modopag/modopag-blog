@@ -11,7 +11,7 @@ const { categories, activeSlug } = Astro.props;
 
 <div class="flex flex-wrap gap-2 mb-8">
   <a
-    href="/blog/"
+    href="/"
     class:list={[
       'px-4 py-2 rounded-full text-sm font-medium transition-all',
       !activeSlug
@@ -23,7 +23,7 @@ const { categories, activeSlug } = Astro.props;
   </a>
   {categories.map((category) => (
     <a
-      href={`/blog/${category.slug}/`}
+      href={`/${category.slug}/`}
       class:list={[
         'px-4 py-2 rounded-full text-sm font-medium transition-all',
         activeSlug === category.slug

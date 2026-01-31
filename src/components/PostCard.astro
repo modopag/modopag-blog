@@ -11,55 +11,50 @@ const categorySlug = post.category?.slug || 'artigos';
 const categoryName = post.category?.name || 'Artigos';
 const categoryEmoji = post.category?.emoji || '📄';
 const categoryColor = post.category?.color || '#6B7280';
-
-// Category-based gradient backgrounds for posts without images
-const categoryGradients: Record<string, string> = {
-  'calculadoras': 'from-cyan-400 to-blue-500',
-  'guias': 'from-emerald-400 to-teal-500',
-  'artigos': 'from-violet-400 to-purple-500',
-  'noticias': 'from-orange-400 to-red-500',
-  'tutoriais': 'from-pink-400 to-rose-500',
-  'default': 'from-primary-400 to-primary-600'
-};
-
-const gradient = categoryGradients[categorySlug] || categoryGradients['default'];
+const hasImage = !!post.featured_image;
 ---
 
 <article class="group h-full">
   <a
-    href={`/blog/${categorySlug}/${post.slug}/`}
+    href={`/${categorySlug}/${post.slug}/`}
     data-astro-prefetch="viewport"
     class="flex flex-col h-full bg-white rounded-2xl border border-secondary-100 overflow-hidden transition-all duration-300 hover:translate-y-[-4px] hover:shadow-xl hover:shadow-secondary-200/50 hover:border-primary-200"
   >
-    <!-- Image or Gradient Placeholder -->
-    <div class="aspect-[16/9] relative overflow-hidden">
-      {post.featured_image ? (
+    <!-- Featured Image (only if exists) -->
+    {hasImage && (
+      <div class="aspect-[16/9] relative overflow-hidden">
         <img
           src={post.featured_image}
-          alt={post.title}
+          alt={post.featured_image_alt || post.title}
           class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
           decoding="async"
         />
-      ) : (
-        <div class={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-          <span class="text-5xl opacity-80">{categoryEmoji}</span>
+        <!-- Category badge on image -->
+        <div class="absolute top-3 left-3">
+          <span
+            class="px-2.5 py-1 text-xs font-semibold rounded-full bg-white/90 backdrop-blur-sm shadow-sm"
+            style={`color: ${categoryColor};`}
+          >
+            {categoryEmoji} {categoryName}
+          </span>
         </div>
-      )}
-
-      <!-- Category badge -->
-      <div class="absolute top-3 left-3">
-        <span
-          class="px-2.5 py-1 text-xs font-semibold rounded-full bg-white/90 backdrop-blur-sm shadow-sm"
-          style={`color: ${categoryColor};`}
-        >
-          {categoryEmoji} {categoryName}
-        </span>
       </div>
-    </div>
+    )}
 
     <!-- Content -->
     <div class="flex flex-col flex-1 p-5">
+      <!-- Category badge (when no image) -->
+      {!hasImage && (
+        <div class="mb-3">
+          <span
+            class="inline-flex px-2.5 py-1 text-xs font-semibold rounded-full"
+            style={`background-color: ${categoryColor}15; color: ${categoryColor};`}
+          >
+            {categoryEmoji} {categoryName}
+          </span>
+        </div>
+      )}
       <!-- Title -->
       <h3 class="text-lg font-semibold text-secondary-500 mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">
         {post.title}

@@ -43,7 +43,7 @@ const popularPosts = await getPosts({ limit: 4, published: true, featured: true 
       <!-- Quick links -->
       <div class="flex flex-wrap justify-center gap-3 mb-12">
         <a
-          href="/blog/"
+          href="/"
           class="px-6 py-3 bg-primary-500 hover:bg-primary-400 text-secondary-500 font-semibold rounded-lg transition-colors"
         >
           ← Voltar ao Blog
@@ -67,7 +67,7 @@ const popularPosts = await getPosts({ limit: 4, published: true, featured: true 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {popularPosts.map(post => (
           <a
-            href={`/blog/${post.category?.slug}/${post.slug}/`}
+            href={`/${post.category?.slug}/${post.slug}/`}
             class="block p-4 bg-white rounded-xl border border-secondary-100 hover:shadow-lg transition-shadow"
           >
             <div class="text-2xl mb-2">{post.category?.emoji || '📄'}</div>
@@ -89,7 +89,7 @@ const popularPosts = await getPosts({ limit: 4, published: true, featured: true 
       <div class="flex flex-wrap justify-center gap-3">
         {categories.map(cat => (
           <a
-            href={`/blog/${cat.slug}/`}
+            href={`/${cat.slug}/`}
             class="px-4 py-2 bg-white border border-secondary-200 rounded-full text-sm font-medium text-secondary-600 hover:border-primary-500 hover:text-primary-600 transition-colors"
           >
             {cat.emoji} {cat.name}

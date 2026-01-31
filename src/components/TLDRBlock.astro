@@ -1,0 +1,84 @@
+---
+/**
+ * TLDRBlock.astro
+ * Bloco de resumo otimizado para citacao por LLMs
+ *
+ * Recomendacao: 50-60 palavras, resposta direta e autocontida
+ *
+ * Uso com prop:
+ * <TLDRBlock text="MEIs devem priorizar maquininhas..." />
+ *
+ * Uso com slot:
+ * <TLDRBlock>
+ *   MEIs devem priorizar maquininhas com taxa abaixo de 1,5%...
+ * </TLDRBlock>
+ */
+
+interface Props {
+  text?: string;
+  label?: string;
+}
+
+const { text, label = "Resumo" } = Astro.props;
+---
+
+<aside class="tldr-block" role="note" aria-label={label}>
+  <div class="tldr-header">
+    <span class="tldr-icon" aria-hidden="true">&#128161;</span>
+    <strong class="tldr-label">TL;DR</strong>
+  </div>
+  <p class="tldr-content">
+    {text ? text : <slot />}
+  </p>
+</aside>
+
+<style>
+  .tldr-block {
+    margin: 1.5rem 0;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-left: 4px solid #f59e0b;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .tldr-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .tldr-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  .tldr-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #92400e;
+  }
+
+  .tldr-content {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: #78350f;
+  }
+
+  /* Dark mode */
+  :global(.dark) .tldr-block {
+    background: linear-gradient(135deg, #451a03 0%, #78350f 100%);
+    border-left-color: #fbbf24;
+  }
+
+  :global(.dark) .tldr-label {
+    color: #fef3c7;
+  }
+
+  :global(.dark) .tldr-content {
+    color: #fde68a;
+  }
+</style>

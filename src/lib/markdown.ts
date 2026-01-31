@@ -13,19 +13,6 @@ export async function parseMarkdown(content: string): Promise<string> {
   if (!content) return '';
 
   try {
-    // Debug: Check if content already has HTML
-    const hasHtmlTags = /<[^>]+>/.test(content);
-    const hasPipeTables = /\|.*\|/.test(content);
-
-    console.log('=== MARKDOWN DEBUG ===');
-    console.log('Content length:', content.length);
-    console.log('Has HTML tags:', hasHtmlTags);
-    console.log('Has pipe tables:', hasPipeTables);
-    console.log('First 300 chars:', content.substring(0, 300));
-
-    // If content already has HTML, it might be pre-processed
-    // In that case, just return it as-is or try to parse anyway
-
     // Normalize line endings
     const normalizedContent = content
       .replace(/\r\n/g, '\n')
@@ -34,20 +21,10 @@ export async function parseMarkdown(content: string): Promise<string> {
     const result = marked.parse(normalizedContent);
 
     // Handle both sync and async results
-    let htmlResult: string;
     if (result instanceof Promise) {
-      htmlResult = await result;
-    } else {
-      htmlResult = result;
+      return await result;
     }
-
-    // Debug: Check output
-    const outputHasTable = /<table/.test(htmlResult);
-    console.log('Output has <table>:', outputHasTable);
-    console.log('Output first 300 chars:', htmlResult.substring(0, 300));
-    console.log('=== END DEBUG ===');
-
-    return htmlResult;
+    return result;
   } catch (error) {
     console.error('Error parsing markdown:', error);
     return content;

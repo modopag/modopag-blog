@@ -4,8 +4,9 @@ import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
 
 export default defineConfig({
-  site: 'https://modopag.com.br',
-  base: '/blog',
+  site: 'https://blog.modopag.com.br',
+  base: '/',
+  trailingSlash: 'always',
   output: 'server',
   adapter: vercel({
     maxDuration: 30,

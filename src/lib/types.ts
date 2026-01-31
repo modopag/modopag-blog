@@ -28,6 +28,8 @@ export interface Post {
   published_at: string | null;
   created_at: string;
   updated_at: string;
+  // GEO: TL;DR summary for LLM citation
+  tldr: string | null;
 }
 
 export interface PostFaq {

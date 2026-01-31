@@ -27,7 +27,7 @@ const {
   noindex = false,
 } = Astro.props;
 
-const siteUrl = 'https://modopag.com.br';
+const siteUrl = 'https://blog.modopag.com.br';
 const siteName = 'modoPAG Blog';
 const canonicalUrl = canonical || new URL(Astro.url.pathname, siteUrl).href;
 const ogImageUrl = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteUrl).href;
@@ -47,10 +47,10 @@ const ogImageUrl = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteU
 )}
 
 <!-- Sitemap -->
-<link rel="sitemap" type="application/xml" href="/blog/sitemap.xml" />
+<link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 
 <!-- RSS Feed Auto-Discovery -->
-<link rel="alternate" type="application/rss+xml" title={`${siteName} RSS Feed`} href="/blog/rss.xml" />
+<link rel="alternate" type="application/rss+xml" title={`${siteName} RSS Feed`} href="/rss.xml" />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={ogType} />

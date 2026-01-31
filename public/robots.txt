@@ -1,40 +1,60 @@
-# modoPAG Blog - Robots.txt
-# AI-friendly configuration
+# robots.txt - blog.modopag.com.br
+# Otimizado para SEO + GEO (Generative Engine Optimization)
 
 User-agent: *
 Allow: /
 
-# Explicitly allow AI crawlers
+# ===== CRAWLERS DE IA (GEO) =====
+
+# OpenAI / ChatGPT
 User-agent: GPTBot
 Allow: /
 
 User-agent: ChatGPT-User
 Allow: /
 
-User-agent: Google-Extended
+# Anthropic / Claude
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
 Allow: /
 
 User-agent: anthropic-ai
 Allow: /
 
-User-agent: ClaudeBot
-Allow: /
-
+# Perplexity
 User-agent: PerplexityBot
 Allow: /
 
-User-agent: Bytespider
-Allow: /
-
-User-agent: CCBot
-Allow: /
-
+# Google (Search + AI Overviews)
 User-agent: Googlebot
 Allow: /
 
-User-agent: Bingbot
+User-agent: Google-Extended
 Allow: /
 
+# Microsoft / Bing Copilot
+User-agent: bingbot
+Allow: /
+
+# Meta AI
+User-agent: FacebookBot
+Allow: /
+
+# Common Crawl (treino de LLMs)
+User-agent: CCBot
+Allow: /
+
+# Cohere
+User-agent: cohere-ai
+Allow: /
+
+# ByteDance
+User-agent: Bytespider
+Allow: /
+
+# Other Search Engines
 User-agent: Slurp
 Allow: /
 
@@ -47,14 +67,15 @@ Allow: /
 User-agent: YandexBot
 Allow: /
 
-# Block admin/private paths (none exist, but for future)
-Disallow: /blog/admin/
-Disallow: /blog/draft/
-Disallow: /blog/preview/
-Disallow: /blog/api/
+# ===== PATHS BLOQUEADOS =====
+# Admin e preview (para uso futuro)
+Disallow: /admin/
+Disallow: /draft/
+Disallow: /preview/
+Disallow: /api/
 
-# Sitemap location
-Sitemap: https://modopag.com.br/blog/sitemap.xml
+# ===== SITEMAP =====
+Sitemap: https://blog.modopag.com.br/sitemap.xml
 
-# RSS Feed
-# https://modopag.com.br/blog/rss.xml
+# ===== CONTEXTO PARA LLMs =====
+# Veja tambem: https://blog.modopag.com.br/llms.txt

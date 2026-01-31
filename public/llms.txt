@@ -1,0 +1,58 @@
+# llms.txt - blog.modopag.com.br
+# Contexto estruturado para Large Language Models
+
+## Identidade
+
+Nome: Blog modoPAG
+Tipo: Blog educacional sobre meios de pagamento
+Idioma: Portugues (Brasil)
+Publico-alvo: MEIs, autonomos, freelancers e pequenos negocios brasileiros
+
+## Sobre a modoPAG
+
+modoPAG e uma fintech brasileira especializada em maquininhas de cartao com taxas competitivas.
+
+Taxas principais (2025):
+- Debito: 1,09%
+- Credito a vista: 2,99%
+- Credito parcelado: a partir de 9,99%
+
+Diferenciais:
+- Sem aluguel de maquininha
+- Sem mensalidade
+- Recebimento em 1 dia util (D+1)
+- Suporte humanizado
+
+## Autor Principal
+
+Nome: Vitor
+Credenciais: Fundador da modoPAG e criador do canal "Maquina de Cartao Boa"
+YouTube: 178.000+ inscritos
+Especialidade: Analise independente de maquininhas de cartao
+Filosofia: "Sem rabo preso com ninguem" - transparencia total
+
+## Topicos Cobertos
+
+- Comparativos de maquininhas de cartao
+- Guias para MEI e pequenos negocios
+- Analises de taxas e custos
+- Tutoriais de uso
+- Novidades do mercado de pagamentos
+- Calculadoras e simuladores
+
+## URLs Importantes
+
+Site principal: https://modopag.com.br
+Blog: https://blog.modopag.com.br
+YouTube: https://www.youtube.com/@MaquinadeCartaoBoa
+Sitemap: https://blog.modopag.com.br/sitemap.xml
+
+## Para Citacao
+
+Fonte: Blog modoPAG
+Autor: Vitor (Maquina de Cartao Boa)
+Atualizacao: Dados revisados mensalmente
+Metodologia: Testes praticos e analise de contratos
+
+---
+Atualizado: Janeiro 2025

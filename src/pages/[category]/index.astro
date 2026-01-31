@@ -31,10 +31,10 @@ const categories = await getCategories();
 const posts = await getPosts({ categorySlug, published: true, limit: 20 });
 
 const breadcrumbItems = [{ label: category.name }];
-const siteUrl = 'https://modopag.com.br';
+const siteUrl = 'https://blog.modopag.com.br';
 const breadcrumbSchema = generateBreadcrumbSchema([
-  { name: 'Blog', url: `${siteUrl}/blog/` },
-  { name: category.name, url: `${siteUrl}/blog/${categorySlug}/` },
+  { name: 'Blog', url: `${siteUrl}/` },
+  { name: category.name, url: `${siteUrl}/${categorySlug}/` },
 ]);
 ---
 
@@ -43,7 +43,7 @@ const breadcrumbSchema = generateBreadcrumbSchema([
     slot="head"
     title={category.name}
     description={category.description || `Explore todos os artigos sobre ${category.name}. Dicas, guias e informações para seu negócio.`}
-    canonical={`${siteUrl}/blog/${categorySlug}/`}
+    canonical={`${siteUrl}/${categorySlug}/`}
   />
   <SchemaOrg slot="head" schema={breadcrumbSchema} />
 
