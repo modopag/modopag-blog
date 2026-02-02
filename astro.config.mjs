@@ -12,10 +12,9 @@ export default defineConfig({
     maxDuration: 30,
   }),
   prefetch: {
-    // Prefetch links on hover (fastest perceived performance)
+    // Prefetch only on hover (reduces network requests)
     defaultStrategy: 'hover',
-    // Also prefetch links when they enter viewport
-    prefetchAll: true,
+    prefetchAll: false,
   },
   integrations: [tailwind(), react()],
   build: {

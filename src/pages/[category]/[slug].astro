@@ -179,44 +179,45 @@ const breadcrumbItems = [
         </p>
       )}
 
-      <!-- Meta Info -->
-      <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-secondary-400">
-        <!-- Author -->
+      <!-- Meta Info - Reorganizado em 2 linhas -->
+      <div class="flex flex-col gap-2 text-sm text-secondary-400">
+        <!-- Linha 1: Autor -->
         <div class="flex items-center gap-2">
-          <div class="w-6 h-6 rounded-full bg-primary-500 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0">
             <span class="text-xs font-bold text-secondary-500">EM</span>
           </div>
           <span class="font-medium text-secondary-500">{author.name}</span>
         </div>
 
-        <span class="text-secondary-300">•</span>
+        <!-- Linha 2: Datas e ações -->
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <!-- Published Date -->
+          <time datetime={post.created_at}>
+            {formatDateShort(post.created_at)}
+          </time>
 
-        <!-- Published Date -->
-        <time datetime={post.created_at}>
-          Publicado em {formatDateShort(post.created_at)}
-        </time>
+          <!-- Updated Date (if different) -->
+          {wasUpdated && (
+            <>
+              <span class="text-secondary-300">•</span>
+              <span class="text-primary-600">
+                Atualizado {formatDateShort(post.updated_at)}
+              </span>
+            </>
+          )}
 
-        <!-- Updated Date (if different) -->
-        {wasUpdated && (
-          <>
-            <span class="text-secondary-300">•</span>
-            <time datetime={post.updated_at} class="text-primary-600">
-              Atualizado em {formatDateShort(post.updated_at)}
-            </time>
-          </>
-        )}
+          <span class="text-secondary-300">•</span>
 
-        <span class="text-secondary-300">•</span>
+          <!-- Reading Time -->
+          <span>{readingTime} min</span>
 
-        <!-- Reading Time -->
-        <span>{readingTime} min de leitura</span>
+          <span class="text-secondary-300">•</span>
 
-        <span class="text-secondary-300">•</span>
-
-        <!-- Comment Count -->
-        <a href="#comments" class="hover:text-primary-600 transition-colors">
-          {commentCount === 0 ? 'Comentar' : `${commentCount} ${commentCount === 1 ? 'comentário' : 'comentários'}`}
-        </a>
+          <!-- Comment Count -->
+          <a href="#comments" class="hover:text-primary-600 transition-colors">
+            {commentCount === 0 ? 'Comentar' : `${commentCount} ${commentCount === 1 ? 'comentário' : 'comentários'}`}
+          </a>
+        </div>
       </div>
     </header>
 

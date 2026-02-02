@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* View Transitions - Faster animations for better perceived performance */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 150ms;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;

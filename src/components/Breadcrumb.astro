@@ -69,7 +69,7 @@ const { items } = Astro.props;
             <span itemprop="name">{item.label}</span>
           </a>
         ) : (
-          <span itemprop="name" class="text-secondary-600 dark:text-secondary-200 font-medium">
+          <span itemprop="name" class="text-secondary-600 dark:text-secondary-200 font-medium truncate max-w-[200px] sm:max-w-[300px] md:max-w-none">
             {item.label}
           </span>
         )}
