@@ -208,6 +208,7 @@ function identifySection(element: HTMLElement): string {
 
 export default function WhatsAppLeadCapture() {
     const [isMounted, setIsMounted] = useState(false)
+    const [isVisible, setIsVisible] = useState(false)
     const [isMobile, setIsMobile] = useState(false)
     const tracker = useModoPAGTracker()
     const [isOpen, setIsOpen] = useState(false)
@@ -224,11 +225,16 @@ export default function WhatsAppLeadCapture() {
         setIsMounted(true)
         setIsMobile(window.innerWidth <= 768)
         setUtmData(getUTMData(null))
+
+        // Delay de 10 segundos antes de mostrar o widget
+        const showTimer = setTimeout(() => setIsVisible(true), 10000)
+
         const handleResize = () => setIsMobile(window.innerWidth <= 768)
         const handleEsc = (e: KeyboardEvent) => { if (e.key === "Escape") setIsOpen(false) }
         window.addEventListener("resize", handleResize)
         window.addEventListener("keydown", handleEsc)
         return () => {
+            clearTimeout(showTimer)
             window.removeEventListener("resize", handleResize)
             window.removeEventListener("keydown", handleEsc)
         }
@@ -287,7 +293,7 @@ export default function WhatsAppLeadCapture() {
     }
 
     const isFormValid = formData.name && formData.email && formData.phone && acceptedTerms
-    if (!isMounted) return null
+    if (!isMounted || !isVisible) return null
 
     const isRight = CONFIG.position === "right"
     const posStyle = isRight ? { right: isMobile ? "16px" : "24px", left: "auto" } : { left: isMobile ? "16px" : "24px", right: "auto" }
