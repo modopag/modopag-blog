@@ -446,34 +446,54 @@ const utmParams = '?utm_source=blog&utm_medium=cta_content&utm_campaign=homepage
                 style={`animation-delay: ${index * 100}ms`}
               >
                 <div class="absolute -inset-0.5 bg-gradient-to-r from-primary-500 to-primary-600 rounded-3xl opacity-0 group-hover:opacity-100 blur transition-all duration-500"></div>
-                <div class="relative h-full bg-white rounded-[1.4rem] p-8 border border-gray-200 group-hover:border-transparent transition-all duration-300 hover-lift">
-                  <!-- Icon -->
-                  <div class="w-14 h-14 bg-primary-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary-500 group-hover:scale-110 transition-all duration-300">
-                    <span class="text-3xl group-hover:scale-110 transition-transform duration-300">🧮</span>
-                  </div>
-
-                  <!-- Content -->
-                  <h3 class="text-xl font-bold text-black mb-3 group-hover:text-primary-600 transition-colors duration-300">
-                    {post.title}
-                  </h3>
-
-                  {post.description && (
-                    <p class="text-gray-500 text-sm line-clamp-2 mb-6">
-                      {truncate(post.description, 100)}
-                    </p>
+                <div class="relative h-full bg-white rounded-[1.4rem] overflow-hidden border border-gray-200 group-hover:border-transparent transition-all duration-300 hover-lift">
+                  <!-- Featured Image -->
+                  {post.featured_image ? (
+                    <div class="relative aspect-[16/9] overflow-hidden">
+                      <img
+                        src={post.featured_image}
+                        alt={post.featured_image_alt || post.title}
+                        width="400"
+                        height="225"
+                        class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <!-- Gradient overlay -->
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <!-- Badge -->
+                      <span class="absolute top-3 right-3 px-2.5 py-1 bg-green-500 text-white text-xs font-bold rounded-full shadow-lg">
+                        Grátis
+                      </span>
+                    </div>
+                  ) : (
+                    <div class="relative aspect-[16/9] bg-primary-100 flex items-center justify-center">
+                      <span class="text-5xl">🧮</span>
+                      <span class="absolute top-3 right-3 px-2.5 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
+                        Grátis
+                      </span>
+                    </div>
                   )}
 
-                  <!-- CTA -->
-                  <div class="flex items-center justify-between">
-                    <span class="inline-flex items-center gap-2 text-primary-600 font-medium text-sm">
+                  <!-- Content -->
+                  <div class="p-6">
+                    <h3 class="text-lg font-bold text-black mb-2 group-hover:text-primary-600 transition-colors duration-300 line-clamp-2">
+                      {post.title}
+                    </h3>
+
+                    {post.description && (
+                      <p class="text-gray-500 text-sm line-clamp-2 mb-4">
+                        {truncate(post.description, 80)}
+                      </p>
+                    )}
+
+                    <!-- CTA -->
+                    <div class="flex items-center gap-2 text-primary-600 font-medium text-sm">
                       <span>Usar agora</span>
                       <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                       </svg>
-                    </span>
-                    <span class="px-2.5 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                      Grátis
-                    </span>
+                    </div>
                   </div>
                 </div>
               </a>
