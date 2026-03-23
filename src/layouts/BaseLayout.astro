@@ -4,7 +4,7 @@ import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import CTABannerBottom from '@/components/CTABannerBottom.astro';
 import NavigationLoader from '@/components/NavigationLoader.astro';
-import CookieConsentBanner from '@/components/CookieConsentBanner';
+
 import WhatsAppLeadCapture from '@/components/WhatsAppLeadCapture';
 import ExitModal from '@/components/ExitModal.astro';
 import { BRAND, SITE } from '@/lib/images';
@@ -76,9 +76,9 @@ const websiteSchema = {
     <link rel="dns-prefetch" href="https://acxelejbtjjkttfwrdbi.supabase.co" />
     <link rel="preconnect" href="https://acxelejbtjjkttfwrdbi.supabase.co" crossorigin />
 
-    <!-- modoPAG Tracker -->
-    <link rel="dns-prefetch" href="https://pagamento.modopag.com.br" />
-    <link rel="preconnect" href="https://pagamento.modopag.com.br" />
+    <!-- modoPAG Tracker (disabled - tracking only on main site) -->
+    <!-- <link rel="dns-prefetch" href="https://pagamento.modopag.com.br" /> -->
+    <!-- <link rel="preconnect" href="https://pagamento.modopag.com.br" /> -->
 
     <!-- LOCAL FONTS - Preload for faster rendering -->
     <link rel="preload" href="/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin />
@@ -136,8 +136,8 @@ const websiteSchema = {
     <CTABannerBottom />
     <Footer />
 
-    <!-- Cookie Consent Banner (LGPD) - deve vir antes do WhatsApp -->
-    <CookieConsentBanner client:idle />
+    <!-- Cookie Consent Banner (LGPD) - disabled while tracking is off -->
+    <!-- <CookieConsentBanner client:idle /> -->
 
     <!-- WhatsApp Lead Capture -->
     <WhatsAppLeadCapture client:idle />
@@ -164,9 +164,9 @@ const websiteSchema = {
     <!-- Exit Modal para links externos -->
     <ExitModal />
 
-    <!-- modoPAG Tracker - Non-blocking load at end of body -->
-    <script is:inline src="https://pagamento.modopag.com.br/tracking/modopag-tracker.js" defer></script>
-    <script is:inline src="https://pagamento.modopag.com.br/tracking/modopag-framer-init.js" defer></script>
+    <!-- modoPAG Tracker - disabled, tracking only on main site -->
+    <!-- <script is:inline src="https://pagamento.modopag.com.br/tracking/modopag-tracker.js" defer></script> -->
+    <!-- <script is:inline src="https://pagamento.modopag.com.br/tracking/modopag-framer-init.js" defer></script> -->
 
   </body>
 </html>
