@@ -32,10 +32,38 @@ const posts = await getPosts({ categorySlug, published: true, limit: 20 });
 
 const breadcrumbItems = [{ label: category.name }];
 const siteUrl = 'https://blog.modopag.com.br';
+const categoryUrl = `${siteUrl}/${categorySlug}/`;
 const breadcrumbSchema = generateBreadcrumbSchema([
   { name: 'Blog', url: `${siteUrl}/` },
-  { name: category.name, url: `${siteUrl}/${categorySlug}/` },
+  { name: category.name, url: categoryUrl },
 ]);
+
+// CollectionPage schema for category listing
+const collectionSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: category.name,
+  description: category.description || `Artigos sobre ${category.name}`,
+  url: categoryUrl,
+  inLanguage: 'pt-BR',
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'modoPAG Blog',
+    url: `${siteUrl}/`,
+  },
+  ...(posts.length > 0 && {
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: posts.length,
+      itemListElement: posts.map((post, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        url: `${siteUrl}/${categorySlug}/${post.slug}/`,
+        name: post.title,
+      })),
+    },
+  }),
+});
 ---
 
 <BaseLayout>
@@ -45,7 +73,7 @@ const breadcrumbSchema = generateBreadcrumbSchema([
     description={category.description || `Explore todos os artigos sobre ${category.name}. Dicas, guias e informações para seu negócio.`}
     canonical={`${siteUrl}/${categorySlug}/`}
   />
-  <SchemaOrg slot="head" schema={breadcrumbSchema} />
+  <SchemaOrg slot="head" schema={[breadcrumbSchema, collectionSchema]} />
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
     <div class="pt-8">
