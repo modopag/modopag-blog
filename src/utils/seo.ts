@@ -72,12 +72,6 @@ export function generateArticleSchema(
     url: postUrl,
     articleSection: post.category?.name,
     inLanguage: 'pt-BR',
-
-    // GEO: Speakable para assistentes de voz e LLMs
-    speakable: {
-      '@type': 'SpeakableSpecification',
-      cssSelector: ['.tldr-content', '.faq-answer', 'h1', 'h2', '.prose p:first-of-type'],
-    },
   };
 
   // Adicionar keywords se a categoria existir
