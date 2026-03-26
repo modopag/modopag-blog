@@ -6,6 +6,29 @@ interface Props {
 }
 
 const { title, description, code } = Astro.props;
+
+/**
+ * Sanitize calculator HTML code from the database.
+ * Calculator code is often stored as a complete HTML document with <head> tags,
+ * meta tags, external fonts, and global CSS resets that break the page when
+ * injected into the body. This strips those problematic elements.
+ */
+function sanitizeCalculatorCode(html: string): string {
+  return html
+    // Remove <title> tags (causes duplicate titles)
+    .replace(/<title[^>]*>[\s\S]*?<\/title>/gi, '')
+    // Remove <meta> tags (duplicate/invalid in body)
+    .replace(/<meta[^>]*\/?>/gi, '')
+    // Remove <link> tags for external resources (Google Fonts, preconnect, etc.)
+    .replace(/<link[^>]*\/?>/gi, '')
+    // Remove ld+json scripts (schemas should be in <head> via SchemaOrg component)
+    .replace(/<script[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/gi, '')
+    // Scope the global CSS reset: remove bare *, body, html selectors that break the page
+    .replace(/(\*\s*\{[^}]*\})/g, '.calculator-embed-wrapper $1')
+    .replace(/(body\s*\{[^}]*\})/gi, '.calculator-embed-wrapper $1');
+}
+
+const sanitizedCode = sanitizeCalculatorCode(code);
 ---
 
 <section class="calculator-section my-12 relative">
@@ -30,7 +53,7 @@ const { title, description, code } = Astro.props;
       <p class="text-secondary-400 mb-6">{description}</p>
     )}
 
-    <div class="calculator-embed-wrapper" set:html={code} />
+    <div class="calculator-embed-wrapper" set:html={sanitizedCode} />
   </div>
 </section>
 
