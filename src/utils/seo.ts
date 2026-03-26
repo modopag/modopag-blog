@@ -95,7 +95,6 @@ export function generateArticleSchema(
     url: postUrl,
     articleSection: post.category?.name,
     inLanguage: 'pt-BR',
-    isAccessibleForFree: true,
 
     // GEO: Campo about para contexto semantico
     about: {
