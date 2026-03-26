@@ -103,14 +103,13 @@ const siteUrl = 'https://blog.modopag.com.br';
 const postUrl = `${siteUrl}/${categorySlug}/${slug}/`;
 const articleSchema = generateArticleSchema(post, categorySlug, author);
 const faqSchema = faqs.length > 0 ? generateFAQSchema(faqs) : '';
-const personSchema = generatePersonSchema(author);
 const breadcrumbSchema = generateBreadcrumbSchema([
   { name: 'Blog', url: `${siteUrl}/` },
   { name: post.category?.name || 'Artigos', url: `${siteUrl}/${categorySlug}/` },
   { name: post.title, url: postUrl },
 ]);
 
-const schemas = [articleSchema, breadcrumbSchema, personSchema, faqSchema].filter(Boolean);
+const schemas = [articleSchema, breadcrumbSchema, faqSchema].filter(Boolean);
 
 const breadcrumbItems = [
   { label: post.category?.name || 'Artigos', href: `/${categorySlug}/` },

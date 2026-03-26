@@ -51,27 +51,10 @@ export function generateArticleSchema(
     image: post.featured_image ? getFullImageUrl(post.featured_image) : `${SITE_URL}${DEFAULT_OG_IMAGE}`,
     datePublished: post.created_at,
     dateModified: post.updated_at,
-    wordCount: post.content ? post.content.split(/\s+/).length : undefined,
     author: {
       '@type': 'Person',
       name: authorName,
       url: SITE_URL,
-      jobTitle: 'Especialista em Meios de Pagamento',
-      worksFor: {
-        '@type': 'Organization',
-        name: 'modoPAG',
-        url: SITE_URL,
-      },
-      knowsAbout: [
-        'Maquininhas de cartao',
-        'Meios de pagamento',
-        'Fintech',
-        'MEI',
-        'Empreendedorismo',
-      ],
-      sameAs: [
-        'https://www.youtube.com/@MaquinadeCartaoBoa',
-      ],
     },
     publisher: {
       '@type': 'Organization',
@@ -79,14 +62,8 @@ export function generateArticleSchema(
       url: SITE_URL,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_URL}/images/logo.png`,
-        width: 200,
-        height: 60,
+        url: `${SITE_URL}/images/brand/modopag-square-light.png`,
       },
-      sameAs: [
-        'https://www.youtube.com/@MaquinadeCartaoBoa',
-        'https://www.instagram.com/modopag',
-      ],
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
@@ -95,13 +72,6 @@ export function generateArticleSchema(
     url: postUrl,
     articleSection: post.category?.name,
     inLanguage: 'pt-BR',
-
-    // GEO: Campo about para contexto semantico
-    about: {
-      '@type': 'Thing',
-      name: 'Maquininhas de Cartao e Meios de Pagamento',
-      description: 'Dispositivos e servicos para processamento de pagamentos com cartao de credito e debito no Brasil',
-    },
 
     // GEO: Speakable para assistentes de voz e LLMs
     speakable: {
