@@ -3,7 +3,7 @@ import { getFullImageUrl } from '@/lib/images';
 
 const SITE_URL = 'https://blog.modopag.com.br';
 const SITE_NAME = 'modoPAG Blog';
-const DEFAULT_OG_IMAGE = '/images/og-default.jpg';
+const DEFAULT_OG_IMAGE = '/images/brand/modopag-square-light.png';
 
 export interface SEOProps {
   title: string;
@@ -225,14 +225,6 @@ export function generateWebSiteSchema(): string {
     publisher: {
       '@type': 'Organization',
       name: 'modoPAG',
-    },
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${SITE_URL}/busca?q={search_term_string}`,
-      },
-      'query-input': 'required name=search_term_string',
     },
   };
 

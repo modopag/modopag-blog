@@ -55,8 +55,8 @@ const fullTitle = `${title} | ${SITE.name}`;
 <!-- Sitemap -->
 <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 
-<!-- RSS Feed Auto-Discovery -->
-<link rel="alternate" type="application/rss+xml" title={`${SITE.name} RSS Feed`} href="/rss.xml" />
+<!-- RSS Feed Auto-Discovery (disabled - no RSS endpoint yet) -->
+<!-- <link rel="alternate" type="application/rss+xml" title={`${SITE.name} RSS Feed`} href="/rss.xml" /> -->
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={ogType} />
@@ -64,8 +64,17 @@ const fullTitle = `${title} | ${SITE.name}`;
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={ogImageUrl} />
-<meta property="og:image:width" content="1000" />
-<meta property="og:image:height" content="1000" />
+{ogImage !== BRAND.ogDefault ? (
+  <>
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+  </>
+) : (
+  <>
+    <meta property="og:image:width" content="1000" />
+    <meta property="og:image:height" content="1000" />
+  </>
+)}
 <meta property="og:image:alt" content={`${title} - ${SITE.name}`} />
 <meta property="og:site_name" content={SITE.name} />
 <meta property="og:locale" content={SITE.locale} />
