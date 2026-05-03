@@ -23,9 +23,12 @@ function sanitizeCalculatorCode(html: string): string {
     .replace(/<link[^>]*\/?>/gi, '')
     // Remove ld+json scripts (schemas should be in <head> via SchemaOrg component)
     .replace(/<script[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/gi, '')
-    // Scope the global CSS reset: remove bare *, body, html selectors that break the page
-    .replace(/(\*\s*\{[^}]*\})/g, '.calculator-embed-wrapper $1')
-    .replace(/(body\s*\{[^}]*\})/gi, '.calculator-embed-wrapper $1');
+    // Scope the global CSS reset: only match * or body when they appear as a
+    // standalone selector (preceded by start, whitespace, comma, combinator,
+    // or }). The look-behind avoids matching inside class names like
+    // .tm-template-body, which the previous regex was mangling.
+    .replace(/(?<=^|[\s,>~+}])(\*\s*\{[^}]*\})/g, '.calculator-embed-wrapper $1')
+    .replace(/(?<=^|[\s,>~+}])(body\s*\{[^}]*\})/gi, '.calculator-embed-wrapper $1');
 }
 
 const sanitizedCode = sanitizeCalculatorCode(code);
@@ -58,10 +61,12 @@ const sanitizedCode = sanitizeCalculatorCode(code);
 </section>
 
 <script>
-  // HTML5: <script> inseridos via set:html / innerHTML são marcados como
-  // "already started" e não executam. ViewTransitions do Astro reforça isso
-  // ao trocar o DOM via JS em navegações client-side. Fix: clonar cada
-  // <script> em um elemento novo — o clone passa pelo parser e executa.
+  // Re-injeta scripts dentro de .calculator-embed-wrapper APÓS uma transição
+  // do Astro (astro:after-swap). Na carga inicial direta, o parser HTML já
+  // executa o <script> da ferramenta normalmente — re-injetar nesse momento
+  // causaria execução dupla e listeners duplicados. astro:after-swap só
+  // dispara em navegações SPA, que é exatamente quando o DOM swap por JS
+  // marca os scripts como "already started" e precisa do clone para rodar.
   function initCalculatorScripts() {
     const wrappers = document.querySelectorAll<HTMLElement>('.calculator-embed-wrapper');
     wrappers.forEach((wrapper) => {
@@ -85,10 +90,9 @@ const sanitizedCode = sanitizeCalculatorCode(code);
     });
   }
 
-  // Dispara na carga inicial e após cada transição do Astro
-  document.addEventListener('astro:page-load', initCalculatorScripts);
-  // Defesa: se o evento já disparou antes deste script carregar
-  initCalculatorScripts();
+  // Só dispara em transições do Astro (não na carga inicial, onde o parser
+  // já executa o script da ferramenta).
+  document.addEventListener('astro:after-swap', initCalculatorScripts);
 </script>
 
 <style>
