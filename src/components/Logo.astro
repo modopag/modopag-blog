@@ -1,14 +1,12 @@
 ---
+import { BRAND } from '@/lib/images';
 interface Props {
   class?: string;
   variant?: 'dark' | 'yellow';
   size?: 'sm' | 'md' | 'lg' | 'xl';
 }
-
 const { class: className = '', variant = 'dark', size = 'md' } = Astro.props;
-
-const base = `/images/brand/modopag-logo-${variant}`;
-
+const logoUrl = variant === 'yellow' ? BRAND.logoYellow : BRAND.logoDark;
 const sizeClasses = {
   sm: 'h-7',
   md: 'h-9',
@@ -16,22 +14,14 @@ const sizeClasses = {
   xl: 'h-14',
 };
 ---
-
 <a href="/" class:list={['flex items-center', className]}>
-  <picture>
-    <source
-      type="image/webp"
-      srcset={`${base}-160w.webp 1x, ${base}-320w.webp 2x, ${base}-480w.webp 3x`}
-    />
-    <img
-      src={`${base}-320w.png`}
-      srcset={`${base}-160w.png 1x, ${base}-320w.png 2x, ${base}-480w.png 3x`}
-      alt="modoPAG"
-      width="320"
-      height="148"
-      loading="eager"
-      decoding="async"
-      class:list={[sizeClasses[size], 'w-auto object-contain']}
-    />
-  </picture>
+  <img
+    src={logoUrl}
+    alt="modoPAG"
+    width="160"
+    height="40"
+    loading="eager"
+    decoding="async"
+    class:list={[sizeClasses[size], 'w-auto object-contain']}
+  />
 </a>
