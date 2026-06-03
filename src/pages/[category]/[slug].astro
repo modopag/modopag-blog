@@ -38,6 +38,11 @@ import {
   splitContentAfterIntro,
 } from '@/utils/helpers';
 import { parseMarkdown } from '@/lib/markdown';
+import {
+  extractYouTubeVideoIds,
+  processYouTubeEmbeds,
+  generateVideoObjectSchema,
+} from '@/utils/youtube';
 
 const { category: categorySlug, slug } = Astro.params;
 
@@ -71,6 +76,12 @@ const contentWithIds = addHeadingIds(htmlContent);
 const toc = extractTableOfContents(contentWithIds);
 const readingTime = post.reading_time || calculateReadingTime(post.content);
 
+// YouTube Lite — detecta videos no content e processa o markup pra façade.
+// IDs únicos viram preconnects condicionais + VideoObject schemas.
+const youtubeVideoIds = extractYouTubeVideoIds(contentWithIds);
+const hasYouTubeVideos = youtubeVideoIds.length > 0;
+const contentProcessed = hasYouTubeVideos ? processYouTubeEmbeds(contentWithIds) : contentWithIds;
+
 // Calculator setup
 const showCalculator = post.calculator_enabled && post.calculator_code;
 const calculatorPosition = post.calculator_position || 'bottom';
@@ -80,11 +91,11 @@ const isCalculatorPost = post.calculator_enabled === true;
 const isCalculatorCategory = categorySlug === 'calculadoras';
 const shouldHideHeroImage = isCalculatorPost || isCalculatorCategory;
 
-// Split content for "middle" position calculator
+// Split content for "middle" position calculator (usa o já processado pra preservar YouTube Lite)
 let introContent = '';
 let remainingContent = '';
 if (showCalculator && calculatorPosition === 'middle') {
-  const split = splitContentAfterIntro(contentWithIds);
+  const split = splitContentAfterIntro(contentProcessed);
   introContent = split.intro;
   remainingContent = split.remaining;
 }
@@ -109,7 +120,12 @@ const breadcrumbSchema = generateBreadcrumbSchema([
   { name: post.title, url: postUrl },
 ]);
 
-const schemas = [articleSchema, breadcrumbSchema, faqSchema].filter(Boolean);
+// VideoObject schemas — um por vídeo único embedado no post
+const videoSchemas = youtubeVideoIds.map((videoId) =>
+  generateVideoObjectSchema(videoId, post, postUrl)
+);
+
+const schemas = [articleSchema, breadcrumbSchema, faqSchema, ...videoSchemas].filter(Boolean);
 
 const breadcrumbItems = [
   { label: post.category?.name || 'Artigos', href: `/${categorySlug}/` },
@@ -141,6 +157,15 @@ const breadcrumbItems = [
       href={post.featured_image}
       fetchpriority="high"
     />
+  )}
+
+  {/* Preconnects condicionais — só quando o post tem ao menos 1 vídeo embedado.
+       Acelera o handshake quando o usuário clicar pra reproduzir. */}
+  {hasYouTubeVideos && (
+    <Fragment slot="head">
+      <link rel="preconnect" href="https://www.youtube-nocookie.com" />
+      <link rel="preconnect" href="https://i.ytimg.com" />
+    </Fragment>
   )}
 
   <!-- Reading Progress Bar -->
@@ -279,7 +304,7 @@ const breadcrumbItems = [
     ) : (
       <div
         class="prose prose-lg max-w-none prose-headings:scroll-mt-20"
-        set:html={contentWithIds}
+        set:html={contentProcessed}
       />
     )}
 
@@ -326,3 +351,63 @@ const breadcrumbItems = [
     scroll-behavior: smooth;
   }
 </style>
+
+{hasYouTubeVideos && (
+  <script is:inline>
+    /* YouTube Lite façade — monta iframe apenas no clique do usuário.
+       Compatível com View Transitions (re-binda em astro:page-load, dedup por flag). */
+    (function () {
+      function mpYTMount(el) {
+        if (el.dataset.ytMounted === 'true') return;
+        var id = el.dataset.ytId;
+        if (!id) return;
+        var iframe = document.createElement('iframe');
+        iframe.src =
+          'https://www.youtube-nocookie.com/embed/' +
+          encodeURIComponent(id) +
+          '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+        iframe.title = 'Vídeo do YouTube';
+        iframe.setAttribute(
+          'allow',
+          'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share'
+        );
+        iframe.setAttribute('allowfullscreen', '');
+        el.appendChild(iframe);
+        el.dataset.ytMounted = 'true';
+      }
+
+      function mpYTBindAll() {
+        var nodes = document.querySelectorAll('.mp-youtube-lite');
+        for (var i = 0; i < nodes.length; i++) {
+          var el = nodes[i];
+          if (el.dataset.ytBound === '1') continue;
+          el.dataset.ytBound = '1';
+
+          // Botão de play: ativa o iframe
+          var btn = el.querySelector('.mp-yt-play');
+          if (btn) {
+            btn.addEventListener('click', function (e) {
+              e.preventDefault();
+              mpYTMount(this.parentElement);
+            });
+          }
+
+          // Clique na thumbnail: monta inline (mas permite abrir YouTube em nova
+          // aba com ctrl/cmd/shift-click ou clique do meio).
+          var link = el.querySelector('.mp-yt-link');
+          if (link) {
+            link.addEventListener('click', function (e) {
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+              e.preventDefault();
+              mpYTMount(this.parentElement);
+            });
+          }
+        }
+      }
+
+      // Inicial + suporte a View Transitions (Astro re-emite astro:page-load)
+      mpYTBindAll();
+      document.addEventListener('astro:page-load', mpYTBindAll);
+    })();
+  </script>
+)}
