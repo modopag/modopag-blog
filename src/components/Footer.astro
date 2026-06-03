@@ -146,43 +146,50 @@ const termosLinks = [
       <div>
         <h3 class="font-semibold text-white mb-4">Certificados</h3>
 
-        <!-- Selos Reclame Aqui - lado a lado -->
-        <div class="flex items-center gap-3 mb-6">
+        <!-- Selos Reclame Aqui (mesmos do site institucional) — link pra página oficial -->
+        <a
+          href="https://www.reclameaqui.com.br/empresa/modopag/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-3 mb-6 group/ra transition-opacity hover:opacity-90"
+          aria-label="Reputação modoPAG no Reclame Aqui"
+        >
           <img
-            src="/images/footer/ra100-reclameaqui.avif"
-            alt="RA 1000"
-            width="80"
-            height="32"
-            class="h-8 w-auto"
+            src="/images/footer/ra-verificado.svg"
+            alt="Empresa verificada no Reclame Aqui"
+            width="56"
+            height="56"
+            class="h-12 w-12 transition-transform duration-300 group-hover/ra:scale-105"
             loading="lazy"
             decoding="async"
           />
           <img
-            src="/images/footer/premioreclameaqui.avif"
-            alt="Prêmio RA 2024"
-            width="80"
-            height="32"
-            class="h-8 w-auto"
+            src="/images/footer/ra-otimo.png"
+            alt="Reputação ótima — Reclame Aqui"
+            width="56"
+            height="56"
+            class="h-12 w-12 transition-transform duration-300 group-hover/ra:scale-105"
             loading="lazy"
             decoding="async"
           />
-        </div>
+        </a>
 
         <p class="text-gray-400 text-sm mb-3">Baixe nosso app</p>
 
-        <!-- App badges - empilhados -->
+        <!-- App badges (SVG vetorial do site institucional) -->
         <div class="flex flex-col gap-2">
           <a
             href="https://apps.apple.com/br/app/modopag/id6755493173"
             target="_blank"
             rel="noopener noreferrer"
+            class="transition-transform duration-200 hover:-translate-y-0.5"
           >
             <img
-              src="/images/footer/appstore.avif"
-              alt="App Store"
-              width="128"
-              height="40"
-              class="w-32 h-10 object-contain"
+              src="/images/footer/app-store.svg"
+              alt="Baixar na App Store"
+              width="140"
+              height="42"
+              class="w-36 h-auto"
               loading="lazy"
               decoding="async"
             />
@@ -191,13 +198,14 @@ const termosLinks = [
             href="https://play.google.com/store/apps/details?id=app.modopag.vitum6mp"
             target="_blank"
             rel="noopener noreferrer"
+            class="transition-transform duration-200 hover:-translate-y-0.5"
           >
             <img
-              src="/images/footer/googleplay.avif"
-              alt="Google Play"
-              width="128"
-              height="40"
-              class="w-32 h-10 object-contain"
+              src="/images/footer/google-play.svg"
+              alt="Disponível no Google Play"
+              width="140"
+              height="42"
+              class="w-36 h-auto"
               loading="lazy"
               decoding="async"
             />

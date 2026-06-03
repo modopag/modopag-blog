@@ -1,17 +1,21 @@
 ---
 /**
- * TLDRBlock.astro
- * Bloco de resumo otimizado para citacao por LLMs
+ * TLDRBlock.astro — Resumo editorial premium
  *
- * Recomendacao: 50-60 palavras, resposta direta e autocontida
+ * Bloco de resumo otimizado pra citação por LLMs (GEO).
+ * Visual inspirado no estilo modogestor: paper sobre cream com border-left
+ * gold, label mono uppercase tracking, content em Fraunces serif pra um
+ * toque editorial.
+ *
+ * Recomendação: 50-60 palavras, resposta direta e autocontida.
  *
  * Uso com prop:
- * <TLDRBlock text="MEIs devem priorizar maquininhas..." />
+ *   <TLDRBlock text="MEIs devem priorizar maquininhas..." />
  *
  * Uso com slot:
- * <TLDRBlock>
- *   MEIs devem priorizar maquininhas com taxa abaixo de 1,5%...
- * </TLDRBlock>
+ *   <TLDRBlock>
+ *     MEIs devem priorizar maquininhas com taxa abaixo de 1,5%...
+ *   </TLDRBlock>
  */
 
 interface Props {
@@ -19,66 +23,76 @@ interface Props {
   label?: string;
 }
 
-const { text, label = "Resumo" } = Astro.props;
+const { text, label = 'Resumo' } = Astro.props;
 ---
 
-<aside class="tldr-block" role="note" aria-label="Resumo do artigo">
-  <div class="tldr-header">
-    <span class="tldr-icon" aria-hidden="true">&#128161;</span>
-    <strong class="tldr-label">{label}</strong>
-  </div>
-  <p class="tldr-content">
+<aside class="tldr" role="note" aria-label="Resumo do artigo">
+  <span class="tldr__label">
+    <span class="tldr__dot" aria-hidden="true"></span>
+    {label}
+  </span>
+  <p class="tldr__content">
     {text ? text : <slot />}
   </p>
 </aside>
 
 <style>
-  .tldr-block {
-    margin: 1.5rem 0;
-    padding: 1rem 1.25rem;
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-    border-left: 4px solid #f59e0b;
-    border-radius: 0 8px 8px 0;
+  .tldr {
+    position: relative;
+    margin: 1.5rem 0 2.5rem;
+    padding: 1.5rem 1.75rem;
+    background: theme('colors.cream.paper');
+    border: 1px solid theme('colors.line.DEFAULT');
+    border-left: 3px solid theme('colors.gold.DEFAULT');
+    border-radius: 0.875rem;
+    box-shadow: var(--shadow-sm);
   }
 
-  .tldr-header {
-    display: flex;
+  .tldr__label {
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .tldr-icon {
-    font-size: 1.2rem;
-    line-height: 1;
-  }
-
-  .tldr-label {
-    font-size: 0.8rem;
-    font-weight: 700;
+    font-family: ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: theme('colors.gold.deep');
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #92400e;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.875rem;
   }
 
-  .tldr-content {
+  .tldr__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: theme('colors.gold.DEFAULT');
+    box-shadow: 0 0 0 3px rgba(245, 200, 66, 0.18);
+  }
+
+  .tldr__content {
     margin: 0;
-    font-size: 1rem;
-    line-height: 1.65;
-    color: #78350f;
+    font-family: 'Fraunces', ui-serif, Georgia, serif;
+    font-feature-settings: 'ss01', 'ss03';
+    font-optical-sizing: auto;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: theme('colors.ink.DEFAULT');
+    font-weight: 400;
+    letter-spacing: -0.005em;
   }
 
-  /* Dark mode */
-  :global(.dark) .tldr-block {
-    background: linear-gradient(135deg, #451a03 0%, #78350f 100%);
-    border-left-color: #fbbf24;
+  /* Conserva espaços/linhas se o texto vier multilinha do CMS */
+  .tldr__content {
+    white-space: pre-wrap;
   }
 
-  :global(.dark) .tldr-label {
-    color: #fef3c7;
-  }
-
-  :global(.dark) .tldr-content {
-    color: #fde68a;
+  @media (max-width: 640px) {
+    .tldr {
+      padding: 1.25rem 1.25rem;
+      margin: 1.25rem 0 2rem;
+    }
+    .tldr__content {
+      font-size: 1rem;
+    }
   }
 </style>

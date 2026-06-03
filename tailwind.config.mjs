@@ -5,6 +5,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        // ─── Paleta original (mantida pra compatibility com componentes existentes) ───
         primary: {
           50: '#FFFEF0',
           100: '#FFFACC',
@@ -28,6 +29,52 @@ export default {
           700: '#10101C',
           800: '#0B0B13',
           900: '#05050A',
+        },
+
+        // ─── Paleta editorial premium (inspirada no modogestor) ───
+        // Cream: bg base quente (substitui branco puro)
+        cream: {
+          DEFAULT: '#faf6ec',
+          50: '#fdfbf5',
+          100: '#faf6ec',
+          200: '#f2ecd9',
+          paper: '#ffffff', // pra cards que precisam de contraste
+        },
+        // Gold: amarelo sofisticado (alternativa ao primary puro)
+        gold: {
+          DEFAULT: '#f5c842',
+          soft: '#ffe58a',
+          deep: '#e0b020',
+          dark: '#cc9b18',
+        },
+        // Onyx: pretos profundos (alternativa ao secondary escuro)
+        onyx: {
+          DEFAULT: '#0a0a0a',
+          soft: '#141414',
+          2: '#1c1c1c',
+          3: '#2a2a2a',
+        },
+        // Ink: hierarquia de texto
+        ink: {
+          DEFAULT: '#0a0a0a',
+          soft: '#2a2a2a',
+          muted: '#6b6b6b',
+          dim: '#9a9a9a',
+        },
+        // Line: bordas e divisores warm (substitui cinza puro)
+        line: {
+          DEFAULT: '#e6e1d3',
+          strong: '#d4cfb8',
+          dark: '#262626',
+        },
+        // Semantic (sucesso/erro/info)
+        emerald: {
+          DEFAULT: '#1f9d55',
+          soft: '#d7f0df',
+        },
+        coral: {
+          DEFAULT: '#e85a4f',
+          soft: '#ffe4e0',
         },
       },
       fontFamily: {

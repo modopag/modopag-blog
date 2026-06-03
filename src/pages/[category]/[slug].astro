@@ -113,7 +113,6 @@ const schemas = [articleSchema, breadcrumbSchema, faqSchema].filter(Boolean);
 
 const breadcrumbItems = [
   { label: post.category?.name || 'Artigos', href: `/${categorySlug}/` },
-  { label: post.title },
 ];
 ---
 
@@ -150,85 +149,65 @@ const breadcrumbItems = [
     <!-- Breadcrumb -->
     <Breadcrumb items={breadcrumbItems} />
 
-    <!-- Article Header -->
-    <header class="mb-8">
-      <!-- Category Tag -->
-      <div class="flex flex-wrap items-center gap-3 mb-4">
-        {post.category && (
-          <a
-            href={`/${categorySlug}/`}
-            class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium transition-colors hover:opacity-80"
-            style={`background-color: ${post.category.color}20; color: ${post.category.color};`}
-          >
-            {post.category.emoji && <span>{post.category.emoji}</span>}
-            {post.category.name}
-          </a>
-        )}
-      </div>
+    <!-- Article Header — refresh editorial -->
+    <header class="post-header">
+      <!-- Category pill sólida (estilo editorial) -->
+      {post.category && (
+        <a href={`/${categorySlug}/`} class="post-header__category">
+          {post.category.emoji && <span aria-hidden="true">{post.category.emoji}</span>}
+          <span>{post.category.name}</span>
+        </a>
+      )}
 
-      <!-- Title -->
-      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-secondary-500 mb-4 leading-tight">
-        {post.title}
-      </h1>
+      <!-- Title — Fraunces serif premium pra um look editorial -->
+      <h1 class="post-header__title font-serif">{post.title}</h1>
 
       <!-- Description -->
       {post.description && (
-        <p class="text-lg text-secondary-400 mb-6 leading-relaxed">
-          {post.description}
-        </p>
+        <p class="post-header__description">{post.description}</p>
       )}
 
-      <!-- Meta Info - Reorganizado em 2 linhas -->
-      <div class="flex flex-col gap-2 text-sm text-secondary-400">
-        <!-- Linha 1: Autor -->
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0">
-            <span class="text-xs font-bold text-secondary-500">EM</span>
-          </div>
-          <span class="font-medium text-secondary-500">{author.name}</span>
+      <!-- Meta editorial — autor + data em mono uppercase -->
+      <div class="post-header__meta">
+        <div class="post-header__author">
+          <div class="post-header__author-avatar" aria-hidden="true">EM</div>
+          <span class="post-header__author-name">{author.name}</span>
         </div>
 
-        <!-- Linha 2: Datas e ações -->
-        <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <!-- Published Date -->
-          <time datetime={post.created_at}>
-            {formatDateShort(post.created_at)}
-          </time>
+        <span class="post-header__meta-sep" aria-hidden="true">·</span>
 
-          <!-- Updated Date (if different) -->
-          {wasUpdated && (
-            <>
-              <span class="text-secondary-300">•</span>
-              <span class="text-primary-600">
-                Atualizado {formatDateShort(post.updated_at)}
-              </span>
-            </>
-          )}
+        <time datetime={post.created_at} class="post-header__date">
+          {formatDateShort(post.created_at)}
+        </time>
 
-          <span class="text-secondary-300">•</span>
+        {wasUpdated && (
+          <>
+            <span class="post-header__meta-sep" aria-hidden="true">·</span>
+            <span class="post-header__updated">
+              Atualizado {formatDateShort(post.updated_at)}
+            </span>
+          </>
+        )}
 
-          <!-- Reading Time -->
-          <span>{readingTime} min</span>
+        <span class="post-header__meta-sep" aria-hidden="true">·</span>
+        <span class="post-header__reading">{readingTime} min</span>
 
-          <span class="text-secondary-300">•</span>
-
-          <!-- Comment Count -->
-          <a href="#comments" class="hover:text-primary-600 transition-colors">
-            {commentCount === 0 ? 'Comentar' : `${commentCount} ${commentCount === 1 ? 'comentário' : 'comentários'}`}
-          </a>
-        </div>
+        <span class="post-header__meta-sep" aria-hidden="true">·</span>
+        <a href="#comments" class="post-header__comments">
+          {commentCount === 0 ? 'Comentar' : `${commentCount} ${commentCount === 1 ? 'comentário' : 'comentários'}`}
+        </a>
       </div>
     </header>
 
-    <!-- Featured Image (hidden for calculator posts and calculadoras category) -->
+    <!-- Featured Image — altura controlada pra não competir com o título -->
     {!shouldHideHeroImage && post.featured_image && (
-      <figure class="mb-8 -mx-4 sm:mx-0">
+      <figure class="post-hero">
         <OptimizedImage
           src={post.featured_image}
           alt={post.featured_image_alt || post.title}
           width={1200}
           height={630}
-          wrapperClass="sm:rounded-2xl"
+          wrapperClass="post-hero__wrapper"
           rounded={false}
           priority={true}
         />
@@ -324,5 +303,145 @@ const breadcrumbItems = [
   /* Smooth scroll for anchor links */
   :global(html) {
     scroll-behavior: smooth;
+  }
+
+  /* ============================================
+     POST HEADER — refresh editorial (Fraunces + mono meta)
+     ============================================ */
+  .post-header {
+    margin-bottom: 2rem;
+  }
+
+  .post-header__category {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background-color: theme('colors.gold.DEFAULT');
+    color: theme('colors.onyx.DEFAULT');
+    font-family: ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    margin-bottom: 1.25rem;
+    transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
+  }
+  .post-header__category:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-gold);
+  }
+
+  .post-header__title {
+    font-size: clamp(1.875rem, 5vw, 3rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    color: theme('colors.ink.DEFAULT');
+    margin: 0 0 1rem;
+    /* Fraunces opsz axis ajusta automaticamente baseado no tamanho */
+    font-optical-sizing: auto;
+  }
+
+  .post-header__description {
+    font-size: 1.125rem;
+    line-height: 1.55;
+    color: theme('colors.ink.muted');
+    margin: 0 0 1.5rem;
+  }
+
+  .post-header__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, monospace;
+    font-size: 0.7rem;
+    color: theme('colors.ink.muted');
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .post-header__author {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: theme('colors.ink.DEFAULT');
+    text-decoration: none;
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  .post-header__author-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background-color: theme('colors.gold.DEFAULT');
+    color: theme('colors.onyx.DEFAULT');
+    font-size: 10px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+  }
+
+  .post-header__meta-sep {
+    color: theme('colors.line.strong');
+  }
+
+  .post-header__updated {
+    color: theme('colors.gold.deep');
+  }
+
+  .post-header__comments {
+    color: theme('colors.ink.muted');
+    text-decoration: none;
+    transition: color 180ms var(--ease);
+  }
+  .post-header__comments:hover {
+    color: theme('colors.gold.deep');
+  }
+
+  /* ============================================
+     HERO IMAGE — altura controlada com border-radius elegante
+     ============================================ */
+  .post-hero {
+    margin: 1.5rem 0 2.5rem;
+    max-height: 420px;
+    overflow: hidden;
+    border-radius: 1.25rem;
+  }
+  .post-hero :global(.post-hero__wrapper) {
+    border-radius: 1.25rem;
+    overflow: hidden;
+  }
+  .post-hero :global(img) {
+    width: 100%;
+    height: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  @media (max-width: 640px) {
+    .post-hero {
+      margin-left: -1rem;
+      margin-right: -1rem;
+      border-radius: 0;
+      max-height: 280px;
+    }
+    .post-hero :global(.post-hero__wrapper),
+    .post-hero :global(img) {
+      border-radius: 0;
+      max-height: 280px;
+    }
   }
 </style>
