@@ -1,7 +1,6 @@
 import type { Post, PostFaq, Category } from '@/lib/types';
 import { getFullImageUrl } from '@/lib/images';
 
-// Blog hospedado no subdomínio dedicado blog.modopag.com.br
 const SITE_URL = 'https://blog.modopag.com.br';
 const SITE_NAME = 'modoPAG Blog';
 const DEFAULT_OG_IMAGE = '/images/brand/modopag-square-light.png';

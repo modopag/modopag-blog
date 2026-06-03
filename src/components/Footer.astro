@@ -46,6 +46,9 @@ const nossosLinks = [
   { label: 'Sobre nós', href: `https://modopag.com.br/sobre-nos/${utmParams}` },
 ];
 
+// Central de ajuda (subdomain, no UTM, opens in new tab)
+const centralAjudaLink = { label: 'Central de ajuda', href: 'https://ajuda.modopag.com.br' };
+
 // Termos (WITHOUT UTM, NO target="_blank")
 const termosLinks = [
   { label: 'Termos e condições de uso', href: 'https://modopag.com.br/termos-de-uso-e-condicoes-de-uso/' },
@@ -109,6 +112,16 @@ const termosLinks = [
               </a>
             </li>
           ))}
+          <li>
+            <a
+              href={centralAjudaLink.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-sm text-gray-400 hover:text-primary-400 transition-colors"
+            >
+              {centralAjudaLink.label}
+            </a>
+          </li>
         </ul>
       </div>
 

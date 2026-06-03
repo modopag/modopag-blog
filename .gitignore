@@ -1,5 +1,7 @@
 # build output
 dist/
+
+# generated types
 .astro/
 
 # dependencies
@@ -11,25 +13,20 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# environment variables (nunca commitar credenciais)
+# environment variables
 .env
 .env.production
 .env.local
 .env.*.local
-.dev.vars
-.dev.vars.*
-!.dev.vars.example
 
 # macOS
 .DS_Store
 
-# IDEs
-.idea/
+# IDE
 .vscode/
+.idea/
+*.swp
+*.swo
 
-# Cloudflare Pages
-.wrangler/
-.cache/
-
-# Vercel (legacy — projeto migrou pra Cloudflare)
+# Vercel
 .vercel

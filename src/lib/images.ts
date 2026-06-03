@@ -20,7 +20,7 @@
  * https://acxelejbtjjkttfwrdbi.supabase.co/storage/v1/object/public/blog-images/posts/
  */
 
-// Base paths — blog mora em blog.modopag.com.br (subdomínio dedicado).
+// Base paths (updated for subdomain: blog.modopag.com.br)
 const LOCAL_BASE = '/images';
 const BRAND_BASE = `${LOCAL_BASE}/brand`;
 const SITE_URL = 'https://blog.modopag.com.br';
