@@ -127,6 +127,47 @@ export function generatePersonSchema(author: AuthorInfo): string {
   return JSON.stringify(schema);
 }
 
+/**
+ * Schema para posts que embutem uma ferramenta (calculator_enabled).
+ * Sinaliza ao Google que a página é um app gratuito, não só um artigo.
+ * `calculator_title`/`calculator_description` podem vir nulos do banco —
+ * nesse caso caímos no título/descrição do próprio post.
+ */
+export function generateWebApplicationSchema(
+  post: Post,
+  categorySlug: string
+): string {
+  const name = post.calculator_title?.trim() || post.title;
+  const description =
+    post.calculator_description?.trim() ||
+    post.meta_description ||
+    post.description ||
+    '';
+
+  const schema: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name,
+    description,
+    applicationCategory: 'FinanceApplication',
+    operatingSystem: 'Web',
+    url: `${SITE_URL}/${categorySlug}/${post.slug}/`,
+    inLanguage: 'pt-BR',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'BRL',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'modoPAG',
+      url: SITE_URL,
+    },
+  };
+
+  return JSON.stringify(schema);
+}
+
 export function generateFAQSchema(faqs: PostFaq[]): string {
   if (!faqs.length) return '';
 

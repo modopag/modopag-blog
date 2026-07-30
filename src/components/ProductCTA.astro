@@ -1,10 +1,14 @@
 ---
+import type { ResolvedToolCTA } from '@/config/tool-products';
+
 interface Props {
-  variant?: 'full' | 'compact';
+  variant?: 'full' | 'compact' | 'tool';
   utmSource?: string;
   utmMedium?: string;
   utmCampaign?: string;
   image?: string;
+  /** Obrigatório quando variant === 'tool' */
+  product?: ResolvedToolCTA | null;
 }
 
 const {
@@ -13,6 +17,7 @@ const {
   utmMedium = 'cta_content',
   utmCampaign = 'homepage',
   image,
+  product = null,
 } = Astro.props;
 
 const utmParams = `?utm_source=${utmSource}&utm_medium=${utmMedium}&utm_campaign=${utmCampaign}`;
@@ -116,6 +121,34 @@ const maquininhaImage = image || '/images/maquininhas/Maquininhas.png';
   </section>
 )}
 
+{/*
+  Variante "tool": card escuro que entra logo depois do CalculatorEmbed.
+  Espelha o padrão do CTA que vive dentro do calculator_code do gerador de
+  QR Code (fundo #111827, destaque #FFD100), pra que ferramenta e página
+  falem a mesma língua visual.
+*/}
+{variant === 'tool' && product && (
+  <section class="tool-cta">
+    <p class="tool-cta__kicker">{product.kicker}</p>
+    <p class="tool-cta__title">{product.title}</p>
+    <p class="tool-cta__text">{product.text}</p>
+    <a
+      class="tool-cta__btn"
+      href={product.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-no-instant
+    >
+      {product.ctaLabel} &rarr;
+    </a>
+    {product.badges.length > 0 && (
+      <p class="tool-cta__badges">
+        {product.badges.join(' · ')}
+      </p>
+    )}
+  </section>
+)}
+
 {variant === 'compact' && (
   <section class="py-8">
     <div class="bg-gradient-to-r from-primary-400 to-primary-500 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -154,3 +187,92 @@ const maquininhaImage = image || '/images/maquininhas/Maquininhas.png';
     </div>
   </section>
 )}
+
+<style>
+  /* Card do CTA pós-ferramenta — paleta espelhada do CTA interno das tools */
+  .tool-cta {
+    position: relative;
+    overflow: hidden;
+    margin: 0 0 3rem;
+    padding: 1.75rem;
+    border-radius: 14px;
+    background: #111827;
+    text-align: left;
+  }
+
+  .tool-cta::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: #ffd100;
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  .tool-cta > * {
+    position: relative;
+  }
+
+  .tool-cta__kicker {
+    margin: 0 0 0.375rem;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #ffd100;
+  }
+
+  .tool-cta__title {
+    margin: 0 0 0.5rem;
+    font-size: 1.1875rem;
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+  }
+
+  .tool-cta__text {
+    margin: 0 0 1rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: #d1d5db;
+  }
+
+  .tool-cta__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8125rem 1.375rem;
+    border-radius: 10px;
+    background: #ffd100;
+    color: #111827;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .tool-cta__btn:hover {
+    background: #e6bc00;
+    transform: translateY(-1px);
+  }
+
+  .tool-cta__badges {
+    margin: 0.625rem 0 0;
+    font-size: 0.75rem;
+    color: #9ca3af;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tool-cta__btn {
+      transition: none;
+    }
+    .tool-cta__btn:hover {
+      transform: none;
+    }
+  }
+</style>

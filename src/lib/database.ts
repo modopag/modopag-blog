@@ -164,8 +164,11 @@ export async function getFaqsByPostId(postId: string): Promise<PostFaq[]> {
  * Increment view count for a post (fire and forget)
  */
 export function incrementViews(postId: string): void {
+  // A função no banco chama-se record_post_view(p_post_id uuid). O nome antigo
+  // (increment_post_views/post_id) não existe e devolvia 404 em toda pageview,
+  // o que mantinha posts.views travado em 0 pra todos os posts.
   // Fire and forget - silently fail if RPC doesn't exist
-  supabase.rpc('increment_post_views', { post_id: postId }).then(() => {
+  supabase.rpc('record_post_view', { p_post_id: postId }).then(() => {
     // Success - do nothing
   });
 }
