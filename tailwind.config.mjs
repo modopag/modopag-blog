@@ -40,12 +40,27 @@ export default {
           200: '#f2ecd9',
           paper: '#ffffff', // pra cards que precisam de contraste
         },
-        // Gold: amarelo sofisticado (alternativa ao primary puro)
+        // Gold: alinhado aos tokens oficiais do site (ciclo 3)
+        // DEFAULT = amber brand #FFD700 · deep/dark = #8B6200 (texto gold
+        // em fundo claro, AA strict) · soft = amber-accent #FFEA70
         gold: {
-          DEFAULT: '#f5c842',
-          soft: '#ffe58a',
-          deep: '#e0b020',
-          dark: '#cc9b18',
+          DEFAULT: '#FFD700',
+          soft: '#FFEA70',
+          deep: '#8B6200',
+          dark: '#8B6200',
+        },
+        // Tokens oficiais do site modopag.com.br (globals.css @theme)
+        modopag: {
+          bg: '#FAFAFA',
+          'bg-2': '#F1ECDD',
+          surface: '#FFFFFF',
+          'surface-2': '#ECECEC',
+          amber: '#FFD700',
+          'amber-accent': '#FFEA70',
+          'amber-deep': '#8B6200',
+          text: '#111111',
+          muted: '#3F3F3F',
+          soft: '#595959',
         },
         // Onyx: pretos profundos (alternativa ao secondary escuro)
         onyx: {
@@ -78,7 +93,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'Segoe UI', 'system-ui', 'sans-serif'],
+        sans: ['Inter Variable', 'Inter', 'Segoe UI', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono Variable', 'JetBrains Mono', 'ui-monospace', 'monospace'],
       },
       typography: (theme) => ({
         DEFAULT: {

@@ -1,8 +1,10 @@
 ---
 import { ViewTransitions } from 'astro:transitions';
+// Fontes oficiais do site (ciclo 3): Inter Variable + JetBrains Mono Variable
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
-import CTABannerBottom from '@/components/CTABannerBottom.astro';
 import NavigationLoader from '@/components/NavigationLoader.astro';
 
 import WhatsAppLeadCapture from '@/components/WhatsAppLeadCapture';
@@ -80,49 +82,15 @@ const websiteSchema = {
     <!-- <link rel="dns-prefetch" href="https://pagamento.modopag.com.br" /> -->
     <!-- <link rel="preconnect" href="https://pagamento.modopag.com.br" /> -->
 
-    <!-- LOCAL FONTS - Preload for faster rendering -->
-    <link rel="preload" href="/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/inter-latin-600.woff2" as="font" type="font/woff2" crossorigin />
-
-    <!-- Fraunces (serif premium) — só pra títulos editoriais em /posts/. Google Fonts CDN -->
+    <!-- Inter Variable + JetBrains Mono Variable via @fontsource-variable
+         (importadas no frontmatter; o Astro bundla e serve os woff2 com hash).
+         Fraunces (serif editorial dos títulos de post) segue no Google Fonts. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,400;9..144,500;9..144,600;9..144,700&display=swap"
     />
-
-    <!-- Local Font Definitions -->
-    <style is:inline>
-      @font-face {
-        font-family: 'Inter';
-        font-style: normal;
-        font-weight: 400;
-        font-display: swap;
-        src: url('/fonts/inter-latin-400.woff2') format('woff2');
-      }
-      @font-face {
-        font-family: 'Inter';
-        font-style: normal;
-        font-weight: 500;
-        font-display: swap;
-        src: url('/fonts/inter-latin-500.woff2') format('woff2');
-      }
-      @font-face {
-        font-family: 'Inter';
-        font-style: normal;
-        font-weight: 600;
-        font-display: swap;
-        src: url('/fonts/inter-latin-600.woff2') format('woff2');
-      }
-      @font-face {
-        font-family: 'Inter';
-        font-style: normal;
-        font-weight: 700;
-        font-display: swap;
-        src: url('/fonts/inter-latin-700.woff2') format('woff2');
-      }
-    </style>
 
     <!-- Schema.org - Organization -->
     <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
@@ -141,7 +109,7 @@ const websiteSchema = {
     <main class:list={['flex-1', className]}>
       <slot />
     </main>
-    <CTABannerBottom />
+    <!-- Footer já inclui o CTA hero pré-footer (padrão do site) -->
     <Footer />
 
     <!-- Cookie Consent Banner (LGPD) - disabled while tracking is off -->
