@@ -1,401 +1,443 @@
 ---
-import Logo from './Logo.astro';
+/**
+ * Header do blog — mesmo padrão do Navbar do site modopag.com.br
+ * (referência: site-modopag/src/components/sections/Navbar.astro).
+ * Pill flutuante sticky, dropdowns Maquininhas/Soluções do site com URL
+ * absoluta + UTM, item "Blog" ativo com as categorias, CTA amber em pill.
+ * Sem ícone de busca: /busca não existe no blog (ANALISE-PROJETO).
+ */
 
-// UTM for external links
-const utmParams = '?utm_source=blog&utm_medium=header&utm_campaign=navigation';
+const SITE_URL = 'https://modopag.com.br';
+const utmNav = 'utm_source=blog&utm_medium=nav';
+const utmNavCta = 'utm_source=blog&utm_medium=nav_cta';
 
-// Maquininhas dropdown items — com imagens dos produtos sem fundo
-const maquininhasItems = [
-  {
-    label: 'modo MINI',
-    description: 'Portátil pra começar',
-    href: `https://modopag.com.br/maquininhas/modo-mini/${utmParams}`,
-    image: '/images/maquininhas/ModoMINI.png',
-  },
-  {
-    label: 'modo PRO',
-    description: 'Bateria de longa duração',
-    href: `https://modopag.com.br/maquininhas/modo-pro/${utmParams}`,
-    image: '/images/maquininhas/modoPRO3.webp',
-  },
-  {
-    label: 'modo SMART',
-    description: 'A premium com Android e apps',
-    href: `https://modopag.com.br/maquininhas/modo-smart/${utmParams}`,
-    image: '/images/maquininhas/modopag vendas.webp',
-  },
-];
+/** URL absoluta pro site com UTM de navegação. */
+const nav = (path: string) => `${SITE_URL}${path}?${utmNav}`;
 
-// Main nav items
-const navItems = [
-  { label: 'Blog', href: '/' },
-  { label: 'Calculadoras', href: '/calculadoras/' },
-  { label: 'modo LINK', href: `https://modopag.com.br/modolink/${utmParams}` },
-  { label: 'Planos e Taxas', href: `https://modopag.com.br/maquininhas/taxas/${utmParams}` },
-];
-
-// Pega o pathname atual pra marcar item ativo (server-side)
-const currentPath = Astro.url.pathname;
-function isActive(href: string): boolean {
-  if (href.startsWith('http')) return false;
-  if (href === '/') return currentPath === '/' || currentPath === '';
-  return currentPath.startsWith(href);
+interface DropdownSub {
+  label: string;
+  href: string;
+  desc?: string;
+  title?: string;
 }
+
+const maquininhaSubs: DropdownSub[] = [
+  { label: 'modo Mini', href: nav('/maquininhas/modo-mini/'), title: 'modo Mini — maquininha de cartão da modoPAG' },
+  { label: 'modo Pro', href: nav('/maquininhas/modo-pro/'), title: 'modo Pro — maquininha de cartão da modoPAG' },
+  { label: 'modo Smart', href: nav('/maquininhas/modo-smart/'), title: 'modo Smart — maquininha de cartão da modoPAG' },
+];
+
+const solucoesSubs: DropdownSub[] = [
+  { label: 'modo LINK', href: nav('/modolink/'), desc: 'Link de pagamento', title: 'modo LINK — link de pagamento da modoPAG, venda em até 18x' },
+  { label: 'modo TAP', href: nav('/modo-tap/'), desc: 'Aceite no celular', title: 'modo TAP — aceite cartão direto no celular' },
+  { label: 'modo VOUCHER', href: nav('/maquina-de-cartao-com-voucher/'), desc: 'Vale-refeição e alimentação', title: 'modo VOUCHER — aceite vale-refeição e alimentação na maquininha modoPAG' },
+  { label: 'modo TEF', href: nav('/maquina-de-cartao-tef/'), desc: 'Integrado ao seu sistema', title: 'modo TEF — Pin Pad integrado à automação comercial, sem mensalidade' },
+  { label: 'Recarga de celular', href: nav('/maquina-de-recarga-de-celular/'), desc: 'Venda na maquininha', title: 'Venda recarga de celular na maquininha modoPAG com 0% de taxa e comissão' },
+  { label: 'modo RECIBO', href: nav('/modo-recibo/'), desc: 'Recibo digital com assinatura', title: 'modo RECIBO — recibo digital com assinatura jurídica' },
+  { label: 'modo GESTOR', href: nav('/modo-gestor/'), desc: 'Sistema pra barbearia', title: 'modo GESTOR — sistema de gestão para barbearia' },
+];
+
+// Categorias do blog (links internos, sem UTM)
+const blogSubs: DropdownSub[] = [
+  { label: 'Pagamentos', href: '/pagamentos/' },
+  { label: 'Negócios', href: '/negocios/' },
+  { label: 'Guia do MEI', href: '/guia-do-mei/' },
+  { label: 'Finanças', href: '/financas/' },
+  { label: 'Calculadoras', href: '/calculadoras/' },
+  { label: 'Ferramentas', href: '/ferramentas/' },
+];
+
+interface NavItem {
+  label: string;
+  href: string;
+  title?: string;
+}
+
+const navItems: NavItem[] = [
+  { label: 'Planos e Taxas', href: nav('/planos-e-taxas/'), title: 'Planos e taxas da modoPAG' },
+  { label: 'Conta PJ', href: nav('/conta-digital-pj/'), title: 'Conta digital PJ da modoPAG' },
+];
+
+const ctaHref = `${SITE_URL}/maquininhas/?${utmNavCta}`;
 ---
 
-<header
-  id="site-header"
-  class="sticky top-0 z-50 transition-all duration-300 ease-out"
-  data-scrolled="false"
->
-  <!-- Background layer com glass effect — cream translúcido pra harmonizar com bg do body -->
-  <div
-    class="absolute inset-0 -z-10 bg-cream-100/70 backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300"
-    aria-hidden="true"
-  ></div>
+<header class="sticky top-0 z-40 flex justify-center px-4 pt-4 pb-2 sm:pt-5">
+  <nav
+    data-nav
+    aria-label="Navegação principal"
+    class="flex w-full max-w-5xl items-center justify-between gap-3 rounded-full bg-modopag-bg px-3 py-2 pl-5 shadow-[0_12px_32px_-16px_rgba(17,17,17,0.18)] sm:gap-4"
+  >
+    <a
+      href="/"
+      class="flex items-center gap-2 transition-opacity hover:opacity-90"
+      aria-label="Blog modoPAG — página inicial"
+    >
+      <picture>
+        <source type="image/avif" srcset="/images/brand/modopag-black-accent.avif" />
+        <source type="image/webp" srcset="/images/brand/modopag-black-accent.webp" />
+        <img
+          src="/images/brand/modopag-black-accent.png"
+          alt="modoPAG"
+          width="176"
+          height="44"
+          fetchpriority="high"
+          decoding="async"
+          class="h-8 w-auto sm:h-10"
+        />
+      </picture>
+      <span
+        class="hidden items-center rounded-md bg-modopag-text px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.1em] text-modopag-amber sm:inline-flex"
+        style="font-family: 'JetBrains Mono Variable', ui-monospace, monospace;"
+      >
+        Blog
+      </span>
+    </a>
 
-  <!-- Borda inferior gradient super sutil — só aparece após scroll -->
-  <div
-    class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-secondary-200/60 to-transparent opacity-0 transition-opacity duration-300"
-    data-scroll-border
-    aria-hidden="true"
-  ></div>
-
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16 lg:h-[72px]">
-      <div class="flex items-center gap-10">
-        <div class="flex items-center gap-2.5">
-          <Logo size="xl" class="transition-transform duration-300 hover:scale-[1.02]" />
-          <span class="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium tracking-[0.1em] uppercase rounded-md bg-secondary-500 text-primary-500" style="font-family: 'JetBrains Mono Variable', ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, monospace;">
-            Blog
-          </span>
-        </div>
-
-        <nav class="hidden md:flex items-center gap-1" aria-label="Navegação principal">
-          <!-- Maquininhas dropdown -->
-          <div class="relative group">
-            <button
-              type="button"
-              class="nav-item group/btn flex items-center gap-1.5"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <span>Maquininhas</span>
-              <svg
-                class="w-3.5 h-3.5 opacity-60 transition-transform duration-300 group-hover:rotate-180"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            <!-- Dropdown — slide down animado -->
-            <div
-              class="absolute left-0 top-full pt-3 opacity-0 invisible translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 ease-out"
-            >
-              <div
-                class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_20px_50px_-12px_rgba(26,26,46,0.18)] ring-1 ring-secondary-100 p-2 min-w-[280px]"
-              >
-                {maquininhasItems.map((item) => (
-                  <a
-                    href={item.href}
-                    class="dropdown-item group/item flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-primary-50 transition-colors duration-200"
-                  >
-                    <span class="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-secondary-50 to-white ring-1 ring-secondary-100 overflow-hidden transition-all duration-300 group-hover/item:from-primary-50 group-hover/item:to-primary-100 group-hover/item:ring-primary-200 group-hover/item:shadow-[0_4px_12px_-2px_rgba(255,215,0,0.3)]">
-                      <img
-                        src={item.image}
-                        alt={item.label}
-                        width="56"
-                        height="56"
-                        loading="lazy"
-                        decoding="async"
-                        class="h-12 w-12 object-contain transition-transform duration-300 group-hover/item:scale-110 group-hover/item:-rotate-3"
-                      />
-                    </span>
-                    <span class="flex-1 min-w-0">
-                      <span class="block text-sm font-semibold text-secondary-500 group-hover/item:text-secondary-600">
-                        {item.label}
-                      </span>
-                      <span class="block text-xs text-secondary-300 group-hover/item:text-secondary-400 mt-0.5">
-                        {item.description}
-                      </span>
-                    </span>
-                    <svg
-                      class="h-4 w-4 text-secondary-200 opacity-0 -translate-x-1 transition-all duration-200 group-hover/item:opacity-100 group-hover/item:translate-x-0 group-hover/item:text-primary-600"
-                      fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"
-                    >
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <!-- Nav items -->
-          {navItems.map((item) => (
-            <a
-              href={item.href}
-              class:list={['nav-item', isActive(item.href) && 'is-active']}
-            >
-              <span>{item.label}</span>
-            </a>
-          ))}
-        </nav>
-      </div>
-
-      <div class="flex items-center gap-2">
+    <div class="hidden items-center gap-1 lg:flex">
+      <!-- Blog (ativo) + categorias -->
+      <div class="group/dropdown relative">
         <a
-          href={`https://conta.modopag.com.br/${utmParams}`}
-          class="cta-login hidden sm:inline-flex items-center gap-2.5 pl-3 pr-4 py-2 text-sm font-semibold text-secondary-600 bg-primary-500 hover:bg-secondary-500 hover:text-primary-500 rounded-full transition-all duration-200"
-          data-no-instant
+          href="/"
+          aria-haspopup="true"
+          title="Blog modoPAG — todos os artigos"
+          class="flex items-center gap-1 whitespace-nowrap rounded-full bg-modopag-text/[0.05] px-2.5 py-2 text-[13px] font-semibold text-modopag-text transition-colors hover:bg-modopag-text/[0.08]"
         >
-          <span class="cta-login__dot" aria-hidden="true"></span>
-          <span>Fazer login</span>
-          <svg class="cta-login__arrow w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          Blog
+          <svg class="h-3.5 w-3.5 text-modopag-soft transition-transform duration-200 group-hover/dropdown:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
           </svg>
         </a>
 
-        <!-- Mobile menu button -->
+        <div class="pointer-events-none absolute left-1/2 top-full -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover/dropdown:pointer-events-auto group-hover/dropdown:opacity-100 group-focus-within/dropdown:pointer-events-auto group-focus-within/dropdown:opacity-100">
+          <div class="min-w-[200px] rounded-2xl border border-modopag-text/8 bg-modopag-surface/95 p-1.5 shadow-[0_16px_40px_-16px_rgba(0,0,0,0.18)] backdrop-blur-md">
+            {
+              blogSubs.map((sub) => (
+                <a
+                  href={sub.href}
+                  class="flex items-center justify-between rounded-xl px-3 py-2 text-[13px] font-medium text-modopag-text transition-colors hover:bg-modopag-text/[0.04]"
+                >
+                  <span>{sub.label}</span>
+                </a>
+              ))
+            }
+            <div class="my-1 h-px bg-modopag-text/5"></div>
+            <a
+              href="/ferramentas/"
+              class="flex items-center justify-between rounded-xl px-3 py-2 text-[12px] font-medium text-modopag-muted transition-colors hover:bg-modopag-text/[0.04] hover:text-modopag-text"
+            >
+              <span>Todas as ferramentas grátis</span>
+              <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M7 17 17 7M7 7h10v10" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Maquininhas -->
+      <div class="group/dropdown relative">
+        <a
+          href={nav('/maquininhas/')}
+          aria-haspopup="true"
+          title="Maquininhas de cartão da modoPAG"
+          class="flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 text-[13px] font-medium text-modopag-text transition-colors hover:bg-modopag-text/[0.04]"
+        >
+          Maquininhas
+          <svg class="h-3.5 w-3.5 text-modopag-soft transition-transform duration-200 group-hover/dropdown:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </a>
+
+        <div class="pointer-events-none absolute left-1/2 top-full -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover/dropdown:pointer-events-auto group-hover/dropdown:opacity-100 group-focus-within/dropdown:pointer-events-auto group-focus-within/dropdown:opacity-100">
+          <div class="min-w-[200px] rounded-2xl border border-modopag-text/8 bg-modopag-surface/95 p-1.5 shadow-[0_16px_40px_-16px_rgba(0,0,0,0.18)] backdrop-blur-md">
+            {
+              maquininhaSubs.map((sub) => (
+                <a
+                  href={sub.href}
+                  title={sub.title}
+                  class="flex items-center justify-between rounded-xl px-3 py-2 text-[13px] font-medium text-modopag-text transition-colors hover:bg-modopag-text/[0.04]"
+                >
+                  <span>{sub.label}</span>
+                </a>
+              ))
+            }
+            <div class="my-1 h-px bg-modopag-text/5"></div>
+            <a
+              href={nav('/maquininhas/')}
+              class="flex items-center justify-between rounded-xl px-3 py-2 text-[12px] font-medium text-modopag-muted transition-colors hover:bg-modopag-text/[0.04] hover:text-modopag-text"
+            >
+              <span>Ver todas</span>
+              <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M7 17 17 7M7 7h10v10" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Soluções -->
+      <div class="group/dropdown relative">
         <button
           type="button"
-          id="mobile-menu-button"
-          class="md:hidden p-2.5 rounded-xl text-secondary-500 hover:bg-secondary-50 hover:text-secondary-600 transition-colors"
-          aria-label="Abrir menu"
-          aria-expanded="false"
-          aria-controls="mobile-menu"
+          aria-haspopup="true"
+          aria-label="Soluções de pagamento da modoPAG"
+          class="flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 text-[13px] font-medium text-modopag-text transition-colors hover:bg-modopag-text/[0.04]"
         >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          Soluções
+          <svg class="h-3.5 w-3.5 text-modopag-soft transition-transform duration-200 group-hover/dropdown:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
           </svg>
         </button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Mobile menu -->
-  <div
-    id="mobile-menu"
-    class="hidden md:hidden border-t border-secondary-100/70 bg-white/95 backdrop-blur-xl"
-  >
-    <div class="px-4 py-4 space-y-1">
-      <!-- Maquininhas section -->
-      <div class="pb-3 mb-3 border-b border-secondary-100/70">
-        <p class="px-3 pb-2 text-[11px] font-semibold text-secondary-300 uppercase tracking-wider">
-          Maquininhas
-        </p>
-        {maquininhasItems.map((item) => (
+        <div class="pointer-events-none absolute left-1/2 top-full -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover/dropdown:pointer-events-auto group-hover/dropdown:opacity-100 group-focus-within/dropdown:pointer-events-auto group-focus-within/dropdown:opacity-100">
+          <div class="min-w-[240px] rounded-2xl border border-modopag-text/8 bg-modopag-surface/95 p-1.5 shadow-[0_16px_40px_-16px_rgba(0,0,0,0.18)] backdrop-blur-md">
+            {
+              solucoesSubs.map((sub) => (
+                <a
+                  href={sub.href}
+                  title={sub.title}
+                  class="flex flex-col items-start gap-0.5 rounded-xl px-3 py-2.5 transition-colors hover:bg-modopag-text/[0.04]"
+                >
+                  <span class="text-[13px] font-medium text-modopag-text">{sub.label}</span>
+                  <span class="text-[11px] text-modopag-muted">{sub.desc}</span>
+                </a>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      {
+        navItems.map((item) => (
           <a
             href={item.href}
-            class="flex items-center gap-3 px-2 py-2.5 hover:bg-primary-50 rounded-xl transition-colors"
+            title={item.title}
+            class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-2 text-[13px] font-medium text-modopag-text transition-colors hover:bg-modopag-text/[0.04]"
           >
-            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-secondary-50 to-white ring-1 ring-secondary-100 overflow-hidden">
-              <img
-                src={item.image}
-                alt={item.label}
-                width="48"
-                height="48"
-                loading="lazy"
-                decoding="async"
-                class="h-10 w-10 object-contain"
-              />
-            </span>
-            <span class="flex-1 min-w-0">
-              <span class="block text-sm font-semibold text-secondary-500">{item.label}</span>
-              <span class="block text-xs text-secondary-300 mt-0.5">{item.description}</span>
-            </span>
-            <svg class="w-4 h-4 text-secondary-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
+            {item.label}
           </a>
-        ))}
-      </div>
-
-      <!-- Nav items -->
-      {navItems.map((item) => (
-        <a
-          href={item.href}
-          class:list={[
-            'flex items-center justify-between px-3 py-3 text-sm font-medium rounded-xl transition-colors',
-            isActive(item.href)
-              ? 'bg-primary-100/60 text-secondary-600'
-              : 'text-secondary-500 hover:bg-secondary-50 hover:text-secondary-600',
-          ]}
-        >
-          <span>{item.label}</span>
-          {!item.href.startsWith('/') && (
-            <svg class="w-3.5 h-3.5 text-secondary-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          )}
-        </a>
-      ))}
-
-      <!-- Login CTA -->
-      <div class="pt-3 mt-3 border-t border-secondary-100/70">
-        <a
-          href={`https://conta.modopag.com.br/${utmParams}`}
-          class="flex items-center justify-center gap-1.5 px-4 py-3 text-sm font-semibold text-secondary-600 bg-primary-500 hover:bg-primary-400 rounded-xl shadow-[0_4px_14px_0_rgba(255,215,0,0.35)] transition-all"
-          data-no-instant
-        >
-          <span>Fazer login</span>
-          <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-          </svg>
-        </a>
-      </div>
+        ))
+      }
     </div>
+
+    <div class="flex items-center gap-1.5">
+      <a
+        href="https://conta.modopag.com.br/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hidden items-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-medium text-modopag-muted transition-colors hover:bg-modopag-text/[0.04] hover:text-modopag-text sm:flex"
+      >
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+          <path d="M10 17l5-5-5-5" />
+          <path d="M15 12H3" />
+        </svg>
+        Entrar
+      </a>
+      <a
+        href={ctaHref}
+        data-no-instant
+        class="btn-depth btn-depth-hover relative inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-full bg-modopag-amber px-5 py-2.5 text-[13px] font-medium text-modopag-text transition-colors duration-200 hover:bg-modopag-amber-accent"
+      >
+        Pedir maquininha
+      </a>
+
+      <!-- Botão hambúrguer mobile (< lg) -->
+      <button
+        type="button"
+        data-mobile-toggle
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Abrir menu"
+        class="inline-flex h-10 w-10 items-center justify-center rounded-full text-modopag-text transition-colors hover:bg-modopag-text/[0.04] lg:hidden"
+      >
+        <svg data-icon-open class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg data-icon-close class="hidden h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Menu mobile (drawer abaixo do pill) -->
+  <div
+    id="mobile-menu"
+    data-mobile-menu
+    class="pointer-events-none fixed inset-x-0 top-[84px] z-30 mx-4 max-h-[calc(100vh-110px)] max-w-5xl translate-y-2 overflow-y-auto rounded-3xl border border-modopag-text/8 bg-modopag-surface/95 p-2 opacity-0 shadow-[0_20px_50px_-16px_rgba(0,0,0,0.2)] backdrop-blur-md transition-all duration-200 sm:left-1/2 sm:mx-auto sm:top-[92px] sm:-translate-x-1/2 lg:hidden"
+  >
+    <nav class="flex flex-col p-2" aria-label="Menu mobile">
+      <p class="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-modopag-amber-deep">
+        Blog
+      </p>
+      {
+        blogSubs.map((sub) => (
+          <a
+            href={sub.href}
+            class="flex items-center justify-between rounded-xl px-3 py-2.5 text-[14px] font-medium text-modopag-text transition-colors hover:bg-modopag-text/[0.04]"
+          >
+            <span>{sub.label}</span>
+          </a>
+        ))
+      }
+      <a
+        href="/ferramentas/"
+        class="flex items-center justify-between rounded-xl px-3 py-2 text-[12px] font-medium text-modopag-muted transition-colors hover:bg-modopag-text/[0.04] hover:text-modopag-text"
+      >
+        <span>Todas as ferramentas grátis</span>
+      </a>
+
+      <div class="my-2 h-px bg-modopag-text/5"></div>
+
+      <p class="px-3 pb-1 pt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-modopag-amber-deep">
+        Maquininhas
+      </p>
+      {
+        maquininhaSubs.map((sub) => (
+          <a
+            href={sub.href}
+            title={sub.title}
+            class="flex items-center justify-between rounded-xl px-3 py-2.5 text-[14px] font-medium text-modopag-text transition-colors hover:bg-modopag-text/[0.04]"
+          >
+            <span>{sub.label}</span>
+          </a>
+        ))
+      }
+      <a
+        href={nav('/maquininhas/')}
+        class="flex items-center justify-between rounded-xl px-3 py-2 text-[12px] font-medium text-modopag-muted transition-colors hover:bg-modopag-text/[0.04] hover:text-modopag-text"
+      >
+        <span>Ver todas</span>
+      </a>
+
+      <div class="my-2 h-px bg-modopag-text/5"></div>
+
+      <p class="px-3 pb-1 pt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-modopag-amber-deep">
+        Soluções
+      </p>
+      {
+        solucoesSubs.map((sub) => (
+          <a
+            href={sub.href}
+            title={sub.title}
+            class="flex flex-col items-start rounded-xl px-3 py-2 transition-colors hover:bg-modopag-text/[0.04]"
+          >
+            <span class="text-[14px] font-medium text-modopag-text">{sub.label}</span>
+            <span class="text-[11px] text-modopag-muted">{sub.desc}</span>
+          </a>
+        ))
+      }
+
+      <div class="my-2 h-px bg-modopag-text/5"></div>
+
+      {
+        navItems.map((item) => (
+          <a
+            href={item.href}
+            title={item.title}
+            class="flex items-center gap-1.5 rounded-xl px-3 py-2.5 text-[14px] font-medium text-modopag-text transition-colors hover:bg-modopag-text/[0.04]"
+          >
+            {item.label}
+          </a>
+        ))
+      }
+
+      <div class="my-2 h-px bg-modopag-text/5"></div>
+
+      <a
+        href="https://conta.modopag.com.br/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-2 rounded-xl px-3 py-2.5 text-[14px] font-medium text-modopag-text transition-colors hover:bg-modopag-text/[0.04]"
+      >
+        <svg class="h-4 w-4 text-modopag-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+          <path d="M10 17l5-5-5-5" />
+          <path d="M15 12H3" />
+        </svg>
+        Entrar
+      </a>
+    </nav>
   </div>
 </header>
 
 <style>
-  /* Nav item base — underline animado + hover sutil */
-  .nav-item {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    padding: 0.5rem 0.875rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: theme('colors.secondary.400');
-    border-radius: 0.5rem;
-    transition: color 200ms ease, background-color 200ms ease;
-  }
-
-  .nav-item:hover {
-    color: theme('colors.secondary.600');
-  }
-
-  /* Underline animado — escala do centro pra fora */
-  .nav-item::after {
-    content: '';
-    position: absolute;
-    left: 0.875rem;
-    right: 0.875rem;
-    bottom: 0.35rem;
-    height: 2px;
-    background: linear-gradient(90deg, theme('colors.primary.400'), theme('colors.primary.600'));
-    border-radius: 1px;
-    transform: scaleX(0);
-    transform-origin: center;
-    transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
-    opacity: 0;
-  }
-
-  .nav-item:hover::after,
-  .nav-item.is-active::after {
-    transform: scaleX(1);
-    opacity: 1;
-  }
-
-  .nav-item.is-active {
-    color: theme('colors.secondary.600');
-    font-weight: 600;
-  }
-
-  /* Header scrolled state — bg mais opaco + shadow sutil */
-  #site-header[data-scrolled='true'] > div:first-child {
-    background-color: rgba(250, 246, 236, 0.88);
-    box-shadow: 0 1px 0 rgba(10, 10, 10, 0.04), 0 6px 20px -10px rgba(10, 10, 10, 0.12);
-  }
-
-  #site-header[data-scrolled='true'] [data-scroll-border] {
-    opacity: 1;
-  }
-
-  /* CTA login — dot pulsante + arrow que desliza no hover */
-  .cta-login {
-    box-shadow: var(--shadow-gold);
-  }
-  .cta-login:hover {
-    box-shadow: 0 12px 28px -8px rgba(26, 26, 46, 0.4);
-    transform: translateY(-1px);
-  }
-  .cta-login:active {
-    transform: translateY(0);
-  }
-  .cta-login__dot {
-    position: relative;
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background: theme('colors.secondary.600');
-    transition: background 220ms var(--ease);
-    flex-shrink: 0;
-  }
-  .cta-login:hover .cta-login__dot {
-    background: theme('colors.primary.500');
-  }
-  .cta-login__dot::before {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border-radius: 999px;
-    border: 1px solid currentColor;
-    opacity: 0.4;
-    animation: cta-pulse 1.8s ease-out infinite;
-  }
-  .cta-login__arrow {
-    transition: transform 220ms var(--ease);
-  }
-  .cta-login:hover .cta-login__arrow {
-    transform: translateX(3px);
+  /* Pill do nav — borda sutil, mesmo padrão do [data-nav] do site */
+  [data-nav] {
+    border: 1px solid rgba(17, 17, 17, 0.05);
   }
 </style>
 
 <script>
-  function initHeader() {
-    // Mobile menu toggle
-    const button = document.getElementById('mobile-menu-button');
-    const menu = document.getElementById('mobile-menu');
+  // Menu mobile — mesmo padrão do site: re-init em astro:page-load
+  // (ViewTransitions não re-executa módulos em navegação SPA) e
+  // AbortController pra limpar listeners da página anterior.
+  let menuAbortController: AbortController | null = null;
 
-    if (button && menu) {
-      button.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isHidden = menu.classList.contains('hidden');
-        menu.classList.toggle('hidden');
-        button.setAttribute('aria-expanded', String(isHidden));
-      });
+  const initMobileMenu = () => {
+    menuAbortController?.abort();
+    menuAbortController = new AbortController();
+    const signal = menuAbortController.signal;
 
-      document.addEventListener('click', (e) => {
-        const target = e.target as Node;
-        if (!button.contains(target) && !menu.contains(target)) {
-          menu.classList.add('hidden');
-          button.setAttribute('aria-expanded', 'false');
-        }
-      });
-    }
+    const toggle = document.querySelector<HTMLButtonElement>('[data-mobile-toggle]');
+    const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
+    if (!toggle || !menu) return;
 
-    // Scroll state pro glass effect mudar de opacidade
-    const header = document.getElementById('site-header');
-    if (!header) return;
-
-    let ticking = false;
-    const updateScrolled = () => {
-      const scrolled = window.scrollY > 8;
-      header.setAttribute('data-scrolled', String(scrolled));
-      ticking = false;
+    const open = () => {
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-label', 'Fechar menu');
+      toggle.querySelector<SVGElement>('[data-icon-open]')?.classList.add('hidden');
+      toggle.querySelector<SVGElement>('[data-icon-close]')?.classList.remove('hidden');
+      menu.classList.remove('pointer-events-none', 'opacity-0', 'translate-y-2');
+      menu.classList.add('opacity-100', 'translate-y-0');
     };
 
-    window.addEventListener(
-      'scroll',
+    const close = () => {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Abrir menu');
+      toggle.querySelector<SVGElement>('[data-icon-open]')?.classList.remove('hidden');
+      toggle.querySelector<SVGElement>('[data-icon-close]')?.classList.add('hidden');
+      menu.classList.add('pointer-events-none', 'opacity-0', 'translate-y-2');
+      menu.classList.remove('opacity-100', 'translate-y-0');
+    };
+
+    toggle.addEventListener(
+      'click',
       () => {
-        if (!ticking) {
-          requestAnimationFrame(updateScrolled);
-          ticking = true;
-        }
+        const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+        isOpen ? close() : open();
       },
-      { passive: true }
+      { signal }
     );
 
-    // Estado inicial
-    updateScrolled();
-  }
+    menu.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => close(), { signal });
+    });
 
-  initHeader();
-  document.addEventListener('astro:after-swap', initHeader);
+    document.addEventListener(
+      'click',
+      (e) => {
+        const target = e.target as Node;
+        if (
+          toggle.getAttribute('aria-expanded') === 'true' &&
+          !menu.contains(target) &&
+          !toggle.contains(target)
+        ) {
+          close();
+        }
+      },
+      { signal }
+    );
+
+    document.addEventListener(
+      'keydown',
+      (e) => {
+        if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') close();
+      },
+      { signal }
+    );
+  };
+
+  document.addEventListener('astro:page-load', initMobileMenu);
 </script>
