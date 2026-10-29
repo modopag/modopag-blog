@@ -11,7 +11,12 @@
 // `mpag_consent` do site (auto-consent quando ausente; `analytics:false`
 // desliga). Sem PII: nada de e-mail/nome/telefone nos parâmetros.
 //
-//   page_view        {pagina, origem}                — na carga e em cada astro:page-load
+//   page_view        automático do gtag (carga + pushState do ClientRouter, como no
+//                    site — plano §3 linha page_view). Medido em 29/10: parâmetro
+//                    custom não acompanha o page_view automático em navegação
+//                    (gtag('set'/'config' em pushState chega tarde), e page_view
+//                    manual duplicaria o automático. Tipo de página sai do pagePath
+//                    nos relatórios; `pagina`/`origem` vão nos eventos custom.
 //   cta_click        {cta_id, pagina, origem, destino} — clique em link para *.modopag.com.br
 //   secao_vista      {secao_id, pagina, origem, posicao} — blocos fixos do post ([data-secao])
 import { paginaDe, origemDe, ehLinkParaSite } from '../lib/origem';
@@ -63,9 +68,6 @@ function injetarGtag() {
   document.head.appendChild(s);
 }
 
-function pageView() {
-  gtag('event', 'page_view', { ...base(), page_location: location.href, page_title: document.title });
-}
 
 // ---------- cta_click (delegação) ----------
 function ctaId(a: HTMLAnchorElement): string {
@@ -128,14 +130,13 @@ function iniciar() {
   if (!window.__mpagGa4) {
     window.__mpagGa4 = { pronto: true };
     gtag('js', new Date());
-    gtag('config', ID, { send_page_view: false, cookie_domain: 'auto' });
+    gtag('config', ID, { cookie_domain: 'auto', transport_type: 'beacon' });
     document.addEventListener('click', aoClicar, true);
     const idle = window.requestIdleCallback;
     const carregar = () => injetarGtag();
     ['pointerdown', 'keydown', 'scroll'].forEach((ev) => document.addEventListener(ev, carregar, { once: true, passive: true }));
     if (idle) idle(carregar, { timeout: 2000 }); else setTimeout(carregar, 2000);
   }
-  pageView();
   observarSecoes();
 }
 document.addEventListener('astro:page-load', iniciar);
