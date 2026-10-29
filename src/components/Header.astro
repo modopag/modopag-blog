@@ -1,4 +1,7 @@
 ---
+import { linkParaSite, origemDe } from '@/lib/origem';
+// B1: rótulo `origem` vem do layout (a 404 manda blog_404); fallback = rota
+const origem: string = (Astro.props as { origem?: string }).origem || origemDe(Astro.url.pathname);
 /**
  * Header do blog — mesmo padrão do Navbar do site modopag.com.br
  * (referência: site-modopag/src/components/sections/Navbar.astro).
@@ -8,11 +11,9 @@
  */
 
 const SITE_URL = 'https://modopag.com.br';
-const utmNav = 'utm_source=blog&utm_medium=nav';
-const utmNavCta = 'utm_source=blog&utm_medium=nav_cta';
-
-/** URL absoluta pro site com UTM de navegação. */
-const nav = (path: string) => `${SITE_URL}${path}?${utmNav}`;
+// B1: links para o site SEM UTM — `?origem=blog_<slug>` (ver src/lib/origem.ts)
+/** URL absoluta pro site com `origem`. */
+const nav = (path: string) => linkParaSite(`${SITE_URL}${path}`, origem);
 
 interface DropdownSub {
   label: string;
@@ -58,10 +59,10 @@ const navItems: NavItem[] = [
   { label: 'Conta PJ', href: nav('/conta-digital-pj/'), title: 'Conta digital PJ da modoPAG' },
 ];
 
-const ctaHref = `${SITE_URL}/maquininhas/?${utmNavCta}`;
+const ctaHref = linkParaSite(`${SITE_URL}/maquininhas/`, origem);
 ---
 
-<header class="sticky top-0 z-40 flex justify-center px-4 pt-4 pb-2 sm:pt-5">
+<header class="sticky top-0 z-40 flex justify-center px-4 pt-4 pb-2 sm:pt-5" data-cta-area="header">
   <nav
     data-nav
     aria-label="Navegação principal"

@@ -1,4 +1,5 @@
 ---
+import { origemDe, reescreverLinksDoConteudo } from '@/lib/origem';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import SEOHead from '@/components/SEOHead.astro';
 import SchemaOrg from '@/components/SchemaOrg.astro';
@@ -70,7 +71,9 @@ const commentCount = await getCommentCount(post.id);
 
 // Process content: parse markdown to HTML, then add heading IDs
 const htmlContent = await parseMarkdown(post.content);
-const contentWithIds = addHeadingIds(htmlContent);
+// B1: links do conteúdo (painel) para o site saem sem UTM e com `origem=blog_<slug>`
+const origem = origemDe(Astro.url.pathname);
+const contentWithIds = reescreverLinksDoConteudo(addHeadingIds(htmlContent), origem);
 const toc = extractTableOfContents(contentWithIds);
 const readingTime = post.reading_time || calculateReadingTime(post.content);
 
@@ -262,6 +265,7 @@ const breadcrumbItems = [
         {/* Intro content */}
         <div
           class="prose prose-lg max-w-none prose-headings:scroll-mt-20"
+          data-cta-area="conteudo"
           set:html={introContent}
         />
 
@@ -273,19 +277,23 @@ const breadcrumbItems = [
               description={post.calculator_description}
               code={post.calculator_code}
             />
-            <ProductCTA variant="tool" product={toolCTA} />
+            <div data-secao="cta_meio">
+              <ProductCTA variant="tool" product={toolCTA} />
+            </div>
           </>
         )}
 
         {/* Remaining content */}
         <div
           class="prose prose-lg max-w-none prose-headings:scroll-mt-20"
+          data-cta-area="conteudo"
           set:html={remainingContent}
         />
       </>
     ) : (
       <div
         class="prose prose-lg max-w-none prose-headings:scroll-mt-20"
+          data-cta-area="conteudo"
         set:html={contentWithIds}
       />
     )}
@@ -317,10 +325,14 @@ const breadcrumbItems = [
     </div>
 
     <!-- Related Posts -->
-    <RelatedPosts posts={relatedPosts} category={post.category} />
+    <div data-secao="relacionados">
+      <RelatedPosts posts={relatedPosts} category={post.category} />
+    </div>
 
     <!-- CTA Box (ou card contextual quando o post tem produto mapeado) -->
-    {postCTA ? <ProductCTA variant="tool" product={postCTA} /> : <CTABox />}
+    <div data-secao="cta_final">
+      {postCTA ? <ProductCTA variant="tool" product={postCTA} /> : <CTABox />}
+    </div>
 
     <!-- Comment Section -->
     <CommentSection postId={post.id} comments={comments} commentCount={commentCount} />
