@@ -48,16 +48,24 @@ termos, contrato de afiliados, `ajuda.`, `pagamento.` no rodapé, "Entrar" em
 | antes (prod) | 92 (87/92/93) | 2,4 s | 0,000 | 0 ms | 1,7 s | 61 KB | 19 |
 | depois | _(medir no deploy — ver abaixo)_ | | | | | | |
 
-## Provas pendentes (só no host real, depois do merge)
+## Provas no host real (30/10/2026, publicado no Worker a partir da `infra/cloudflare-pages`)
 
-A Vercel não publicou preview desta branch pela integração do GitHub (último
-deployment registrado no GitHub é de 03/06). As provas que dependem do cookie em
-`.modopag.com.br` e da trava de host (`blog.modopag.com.br`) ficam para depois
-do deploy, como na S3:
-
-1. mesmo navegador, blog → site → checkout: `_ga` com o **mesmo** client_id nos
-   três hosts; sem `session_start` novo ao passar do blog para o site
-   (DebugView / Tempo real, `hostName = blog.modopag.com.br`);
-2. `page_view` com `pagina`/`origem`, `cta_click` com `destino` e `secao_vista`
-   no corpo do `/g/collect` (gravador no navegador, como na S3);
-3. Lighthouse mobile "depois" no mesmo post, mesma linha da tabela acima.
+- **Links sem UTM:** 38 URLs do sitemap + home + 404: **zero** `utm_source=blog`
+  em links para `*.modopag.com.br`. Os 10 que restam apontam para
+  `modogestor.com.br` (outro site, outra propriedade GA4), onde a UTM é o
+  comportamento certo. Todo link para o site leva `?origem=blog_<slug>`.
+- **CTABox** → `onboarding.modopag.com.br/criar-conta`.
+- **Mesmo client_id e mesma sessão** (cookies lidos no navegador, armazenamento
+  limpo antes): blog `_ga` …362426 / `_ga_GG2PPZTMCV` sessão …62425 nº 1 →
+  site `/maquina-de-cartao-tef/?origem=blog_…` → **iguais** → checkout
+  `pagamento.modopag.com.br/checkout/modo-tef-…?origem=blog_…` → **iguais**;
+  o GA4 do checkout configurado (`_ga4MeasurementId`) na mesma sessão.
+  O link de checkout gerado pelo site leva `origem=blog_…` e nenhuma UTM.
+- **Eventos no post de TEF** (gravador no navegador): `secao_vista`
+  `blog_post_relacionados` e `blog_post_cta_final` com `origem`;
+  `cta_click {cta_id: blog_cta_produto, pagina: blog_post, origem:
+  blog_diferenca-entre-pos-e-tef-integrado, destino: modopag.com.br/maquina-de-cartao-tef/}`;
+  os dois no corpo do `/g/collect`.
+- **Lighthouse mobile do mesmo post** (3 runs, mediana): antes da B1-c hoje 84 /
+  LCP 3,7 s / TBT 0 ms / 61 KB JS; com GA4 **83 / 3,7 s / TBT 73 ms / 276 KB JS**
+  (gtag.js ≈ 215 KB, carregado em idle). LCP igual; o custo é o próprio gtag.
