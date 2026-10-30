@@ -1,4 +1,6 @@
 ---
+import { linkParaSite, origemDe } from '@/lib/origem';
+const origem = origemDe(Astro.url.pathname);
 import type { BreadcrumbItem } from '@/lib/types';
 
 interface Props {
@@ -8,11 +10,12 @@ interface Props {
 const { items } = Astro.props;
 ---
 
-<nav aria-label="Breadcrumb" class="mb-6">
+<nav aria-label="Breadcrumb" class="mb-6" data-cta-area="breadcrumb">
   <ol class="flex flex-wrap items-center gap-2 text-sm">
     <li>
       <a
-        href="https://modopag.com.br/?utm_source=blog&utm_medium=breadcrumb&utm_campaign=navegacao"
+        href={linkParaSite('https://modopag.com.br/', origem)}
+        data-cta="blog_breadcrumb_site"
         class="text-secondary-400 hover:text-primary-600 transition-colors"
         target="_blank"
         rel="noopener noreferrer"

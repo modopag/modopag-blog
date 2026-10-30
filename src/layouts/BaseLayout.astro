@@ -12,11 +12,16 @@ import ExitModal from '@/components/ExitModal.astro';
 import { BRAND, SITE } from '@/lib/images';
 import '@/styles/global.css';
 
+import { origemDe, paginaDe } from '@/lib/origem';
+
 interface Props {
   class?: string;
+  /** B1: `pagina` do GA4 e rótulo `origem` dos links para o site; a 404 sobrescreve */
+  pagina?: string;
+  origem?: string;
 }
 
-const { class: className = '' } = Astro.props;
+const { class: className = '', pagina = paginaDe(Astro.url.pathname), origem = origemDe(Astro.url.pathname) } = Astro.props;
 
 // Schema.org data
 const organizationSchema = {
@@ -103,14 +108,14 @@ const websiteSchema = {
 
     <slot name="head" />
   </head>
-  <body class="min-h-screen flex flex-col bg-white text-secondary-500 font-sans">
+  <body class="min-h-screen flex flex-col bg-white text-secondary-500 font-sans" data-pagina={pagina} data-origem={origem}>
     <NavigationLoader />
-    <Header />
+    <Header origem={origem} />
     <main class:list={['flex-1', className]}>
       <slot />
     </main>
     <!-- Footer já inclui o CTA hero pré-footer (padrão do site) -->
-    <Footer />
+    <Footer origem={origem} />
 
     <!-- Cookie Consent Banner (LGPD) - disabled while tracking is off -->
     <!-- <CookieConsentBanner client:idle /> -->
@@ -139,6 +144,11 @@ const websiteSchema = {
 
     <!-- Exit Modal para links externos -->
     <ExitModal />
+
+    <!-- GA4 (B1): mesma propriedade do site, só GA4, carregamento em idle/1ª interação; page_view com `pagina`, cta_click e secao_vista. Ver src/scripts/ga4-blog.ts -->
+    <script>
+      import '../scripts/ga4-blog';
+    </script>
 
     <!-- modoPAG Tracker - disabled, tracking only on main site -->
     <!-- <script is:inline src="https://pagamento.modopag.com.br/tracking/modopag-tracker.js" defer></script> -->
