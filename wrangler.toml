@@ -1,15 +1,26 @@
-# Cloudflare Pages — configuração do projeto.
-# Usado por `wrangler pages dev` (local preview que simula Workers runtime)
-# e pelo deploy via CLI. O dashboard do Cloudflare Pages também respeita
-# essas configs quando conectado ao repo Git.
-
+# Cloudflare Workers (static assets + SSR) — blog.modopag.com.br
+#
+# 30/10/2026: a conta não consegue criar projetos Pages novos (API 8000030
+# "Subdomain is blocked" para qualquer nome; o wrangler 4 já delega "Pages"
+# para Workers). O blog roda então como Worker com assets: o Astro gera
+# dist/_worker.js (SSR) e o resto do dist é servido como estático. `_headers`
+# do dist continua valendo (Workers Assets suporta _headers/_redirects).
 name = "modopag-blog"
-# compatibility_date define o snapshot de features do runtime Workers.
+main = "./dist/_worker.js/index.js"
 compatibility_date = "2026-10-01"
-
-# nodejs_compat — habilita APIs de Node usadas pelo Astro SSR e por libs
-# (@supabase/supabase-js depende). Sem essa flag, imports de `node:*` quebram.
+# nodejs_compat — APIs de Node usadas pelo Astro SSR e pelo @supabase/supabase-js
 compatibility_flags = ["nodejs_compat"]
+workers_dev = true
 
-# Pasta de output que o `astro build` gera com o adapter Cloudflare em mode='directory'
-pages_build_output_dir = "./dist"
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
+[observability]
+enabled = true
+
+# Variáveis públicas (as sensíveis — SUPABASE_URL, SUPABASE_ANON_KEY, INDEXNOW_KEY —
+# vão por `wrangler secret put`)
+[vars]
+PUBLIC_SITE_URL = "https://blog.modopag.com.br"
+PUBLIC_SITE_NAME = "modoPAG Blog"
