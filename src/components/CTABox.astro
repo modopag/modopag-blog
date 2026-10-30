@@ -13,7 +13,8 @@ const {
   description = 'Cadastre-se no modoPAG e tenha as melhores taxas do mercado para seu negócio.',
   buttonText = 'Criar conta grátis',
   // B1: sem UTM — `origem=blog_<slug>` entra na renderização (linkParaSite)
-  buttonUrl = 'https://conta.modopag.com.br/register',
+  // 30/10: era conta.modopag.com.br/register (caía no /login; GA4 de outra propriedade)
+  buttonUrl = 'https://onboarding.modopag.com.br/criar-conta',
 } = Astro.props;
 const href = linkParaSite(buttonUrl, origem);
 ---
