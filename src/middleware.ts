@@ -62,7 +62,8 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
   if (pathname.startsWith('/img/') && ctx.request.method === 'GET') {
     return proxyImagem(ctx.request, pathname);
   }
-  if (pathname === '/api/cache-purge') {
+  // com trailingSlash 'always' o Astro redireciona /api/cache-purge → /api/cache-purge/ antes do middleware; aceitar os dois
+  if (pathname.replace(/\/$/, '') === '/api/cache-purge') {
     const alvo = ctx.url.searchParams.get('url') || '';
     const key = ctx.url.searchParams.get('key') || '';
     const esperada = (import.meta.env.INDEXNOW_KEY as string | undefined) || '';
