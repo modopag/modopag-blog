@@ -40,21 +40,61 @@ async function proxyImagem(request: Request, pathname: string): Promise<Response
   return response;
 }
 
+// Cache de HTML no edge (aprovado 30/10): rota de Worker não passa pelo cache da
+// CDN, então o cache é feito aqui com a Cache API (caches.default), TTL 60 s
+// (s-maxage). Chave = URL sem query (o HTML não depende de utm/origem). Só GET
+// 200 HTML. Navegador sempre revalida (max-age=0). Purge por URL em
+// /api/cache-purge?url=<caminho>&key=<INDEXNOW_KEY> (a chave do IndexNow é
+// pública por desenho — serve só para o painel invalidar ao publicar/editar).
+const TTL_HTML = 60;
+
+function chaveDeCache(url: URL): Request {
+  const limpa = new URL(url.toString());
+  limpa.search = '';
+  limpa.hash = '';
+  return new Request(limpa.toString(), { method: 'GET' });
+}
+
 export const onRequest = defineMiddleware(async (ctx, next) => {
   const { pathname } = ctx.url;
+  const cache = (globalThis as { caches?: { default: Cache } }).caches?.default;
+  const runtime = (ctx.locals as { runtime?: { ctx?: { waitUntil(p: Promise<unknown>): void } } }).runtime;
   if (pathname.startsWith('/img/') && ctx.request.method === 'GET') {
     return proxyImagem(ctx.request, pathname);
   }
+  if (pathname === '/api/cache-purge') {
+    const alvo = ctx.url.searchParams.get('url') || '';
+    const key = ctx.url.searchParams.get('key') || '';
+    const esperada = (import.meta.env.INDEXNOW_KEY as string | undefined) || '';
+    if (!esperada || key !== esperada) return new Response('forbidden', { status: 403 });
+    if (!cache || !alvo.startsWith('/')) return new Response('bad request', { status: 400 });
+    const ok = await cache.delete(chaveDeCache(new URL(alvo, ctx.url.origin)));
+    return new Response(JSON.stringify({ purged: ok, url: alvo }), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
+  }
+  const cacheavel = ctx.request.method === 'GET' && cache;
+  const chave = cacheavel ? chaveDeCache(ctx.url) : null;
+  if (chave) {
+    const hit = await cache.match(chave);
+    if (hit) {
+      const r = new Response(hit.body, hit);
+      r.headers.set('X-Blog-Cache', 'HIT');
+      return r;
+    }
+  }
   const res = await next();
   const tipo = res.headers.get('content-type') || '';
-  if (tipo.includes('text/html') || tipo.includes('application/xml') || tipo.includes('text/xml')) {
-    // Cache curto no EDGE (aprovado 30/10): 60 s + 30 s de stale-while-revalidate,
-    // só para 200. Navegador sempre revalida (max-age=0). A Cache Rule do host
-    // respeita estes headers; uma edição no painel aparece em ≤ 60 s. Purge por
-    // URL na publicação fica para quando a EF do painel tiver a chave da zona.
-    res.headers.set('Cache-Control', res.status === 200
-      ? 'public, max-age=0, s-maxage=60, stale-while-revalidate=30'
-      : 'no-store, max-age=0, must-revalidate');
+  const ehHtml = tipo.includes('text/html') || tipo.includes('application/xml') || tipo.includes('text/xml');
+  if (!ehHtml) return res;
+  if (res.status !== 200) {
+    res.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');
+    return res;
+  }
+  res.headers.set('Cache-Control', `public, max-age=0, s-maxage=${TTL_HTML}`);
+  res.headers.set('X-Blog-Cache', 'MISS');
+  if (chave) {
+    const copia = res.clone();
+    const put = cache.put(chave, copia).catch(() => {});
+    if (runtime?.ctx?.waitUntil) runtime.ctx.waitUntil(put); else await put;
   }
   return res;
 });
