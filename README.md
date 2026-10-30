@@ -7,7 +7,16 @@
   `npm ci` → `npm run build` → `npx wrangler deploy`. Não há deploy manual;
   para conferir o que está no ar, compare o commit do último build em
   Workers & Pages → `modopag-blog` → Deployments com `git log -1 origin/main`.
-- Entrada: Worker Route `blog.modopag.com.br/*` com o registro `blog` proxiado.
+- **Token do build:** "modopag-blog workers build" — token de API **de usuário**
+  (Cloudflare → My Profile → API Tokens, login contato@modopag.com.br),
+  selecionado em Workers & Pages → `modopag-blog` → Settings → Builds → API
+  token. Escopo: conta modoPAG inteira, só **Workers Scripts: Edit**, **Account
+  Settings: Read**, **Memberships: Read** e **User Details: Read**; sem
+  expiração. O valor fica só na Cloudflare (nunca no repo). Se o build falhar
+  com 401/403, é esse token (revogado, expirado ou com permissão retirada).
+- Entrada: Worker Route `blog.modopag.com.br/*` com o registro `blog` como
+  AAAA `100::` proxiado (sem origem — o Worker atende tudo; desde 30/10/2026,
+  antes era CNAME da Vercel).
 - A Vercel foi desligada depois da migração (30/10/2026); o histórico da
   migração está em `docs/migracao-cloudflare-investigacao.md`.
 - Variáveis: `PUBLIC_SITE_URL`/`PUBLIC_SITE_NAME` em `wrangler.toml`;
