@@ -1,0 +1,13 @@
+# Variáveis de ambiente lidas pelo `wrangler pages dev` (preview local).
+# Copia esse arquivo pra `.dev.vars` (sem o sufixo) e preenche os valores reais.
+#
+# Em produção (Cloudflare Pages), essas variáveis ficam no dashboard:
+# Pages → modopag-blog → Settings → Environment Variables → Production.
+#
+# IMPORTANTE: .dev.vars deve estar no .gitignore (nunca commitar credenciais).
+
+SUPABASE_URL=https://SEU_PROJETO.supabase.co
+SUPABASE_ANON_KEY=eyJ...sua_anon_key_aqui...
+PUBLIC_SITE_URL=http://localhost:8788
+PUBLIC_SITE_NAME=modoPAG Blog
+INDEXNOW_KEY=qualquer_chave_local

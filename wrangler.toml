@@ -1,0 +1,15 @@
+# Cloudflare Pages — configuração do projeto.
+# Usado por `wrangler pages dev` (local preview que simula Workers runtime)
+# e pelo deploy via CLI. O dashboard do Cloudflare Pages também respeita
+# essas configs quando conectado ao repo Git.
+
+name = "modopag-blog"
+# compatibility_date define o snapshot de features do runtime Workers.
+compatibility_date = "2026-10-01"
+
+# nodejs_compat — habilita APIs de Node usadas pelo Astro SSR e por libs
+# (@supabase/supabase-js depende). Sem essa flag, imports de `node:*` quebram.
+compatibility_flags = ["nodejs_compat"]
+
+# Pasta de output que o `astro build` gera com o adapter Cloudflare em mode='directory'
+pages_build_output_dir = "./dist"
