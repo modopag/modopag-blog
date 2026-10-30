@@ -1,4 +1,7 @@
 ---
+import { linkParaSite, origemDe } from '@/lib/origem';
+// B1: rótulo `origem` vem do layout (a 404 manda blog_404); fallback = rota
+const origem: string = (Astro.props as { origem?: string }).origem || origemDe(Astro.url.pathname);
 /**
  * Footer do blog — mesma identidade do footer do site modopag.com.br
  * (referência: site-modopag/src/components/sections/Footer.astro).
@@ -9,15 +12,12 @@ const currentYear = new Date().getFullYear();
 
 const SITE_URL = 'https://modopag.com.br';
 
-// UTM dos links do grid (padrão histórico do footer do blog)
-const utmFooter = 'utm_source=blog&utm_medium=footer&utm_campaign=blog_modopag';
-// UTM do CTA hero (ciclo 3)
-const utmCta = 'utm_source=blog&utm_medium=cta_footer';
-
-/** Monta URL absoluta pro site com UTM (respeitando âncoras). */
+// B1: links para o site SEM UTM — `?origem=blog_<slug>` (mesma propriedade GA4;
+// a UTM abria sessão nova e apagava a origem real do visitante).
+/** Monta URL absoluta pro site com `origem` (respeitando âncoras). */
 function siteUrl(path: string): string {
-  if (path.startsWith('#')) return `${SITE_URL}/?${utmFooter}${path}`;
-  return `${SITE_URL}${path}?${utmFooter}`;
+  if (path.startsWith('#')) return linkParaSite(`${SITE_URL}/${path}`, origem);
+  return linkParaSite(`${SITE_URL}${path}`, origem);
 }
 
 const appStoreHref = 'https://apps.apple.com/br/app/modopag/id6755493173';
@@ -98,7 +98,7 @@ const social = [
 ];
 ---
 
-<footer class="relative overflow-hidden bg-modopag-text text-modopag-bg">
+<footer class="relative overflow-hidden bg-modopag-text text-modopag-bg" data-cta-area="footer">
   <!-- Ambient glow amber no topo -->
   <div
     class="pointer-events-none absolute inset-x-0 top-0 h-[520px] opacity-70"
@@ -131,8 +131,8 @@ const social = [
 
         <div class="mt-9 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
           <a
-            href={`${SITE_URL}/maquininhas/?${utmCta}`}
-            data-cta="footer-comprar"
+            href={linkParaSite(`${SITE_URL}/maquininhas/`, origem)}
+            data-cta="blog_footer_cta"
             data-no-instant
             class="inline-flex items-center gap-2 rounded-full bg-modopag-amber px-7 py-3.5 text-[15px] font-semibold text-modopag-text shadow-[0_16px_40px_-12px_rgba(255,215,0,0.45)] transition hover:-translate-y-0.5 hover:bg-modopag-amber-deep hover:text-white hover:shadow-[0_20px_48px_-12px_rgba(196,138,0,0.55)]"
           >

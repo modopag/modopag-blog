@@ -1,3 +1,4 @@
+import { linkParaSite, origemDoPost } from '../lib/origem';
 /**
  * Mapa ferramenta -> produto modoPAG para o CTA contextual que aparece
  * logo depois do CalculatorEmbed (momento de maior atenção do usuário).
@@ -108,14 +109,14 @@ const POST_PRODUCT_BY_SLUG: Record<string, ProductKey> = {
 };
 
 export interface ResolvedToolCTA extends ToolProduct {
-  /** URL já com UTMs aplicadas */
+  /** URL já com `origem=blog_<slug>` aplicada */
   href: string;
 }
 
 function buildCTA(key: ProductKey, slug: string): ResolvedToolCTA {
   const product = { ...PRODUCTS[key], ...SLUG_COPY_OVERRIDES[slug] };
-  const utm = `utm_source=blog&utm_medium=cta_produto&utm_campaign=${encodeURIComponent(slug)}`;
-  const href = `${product.url}${product.url.includes('?') ? '&' : '?'}${utm}`;
+  // B1: sem UTM — `?origem=blog_<slug>` (o mesmo rótulo que a página do post usa)
+  const href = linkParaSite(product.url, origemDoPost(slug));
   return { ...product, href };
 }
 
