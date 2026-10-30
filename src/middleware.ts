@@ -7,10 +7,10 @@ import { defineMiddleware } from 'astro:middleware';
 //    `trailingSlash: 'always'` uma rota /img/[...path] não casa
 //    "/img/posts/foo.webp" (sem barra final) e cai na 404. Cache no edge
 //    (caches.default) + Cache-Control imutável, como antes.
-// 2) HTML/XML saem com no-store: hoje nada é cacheado (x-vercel-cache MISS em
-//    tudo) e a zona tem browser_cache_ttl de 4 h — sem isso o navegador
-//    guardaria página de post. Assets com hash (/_astro/*) seguem imutáveis
-//    pelo public/_headers.
+// 2) HTML/XML: edge 60 s (+30 s SWR) e navegador sempre revalidando; a zona
+//    tem browser_cache_ttl de 4 h e por isso existe a Cache Rule "respeitar a
+//    origem" para o host. Assets com hash (/_astro/*) seguem imutáveis pelo
+//    public/_headers.
 const SUPABASE_BUCKET_URL =
   'https://acxelejbtjjkttfwrdbi.supabase.co/storage/v1/object/public/blog-images';
 
@@ -48,7 +48,13 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
   const res = await next();
   const tipo = res.headers.get('content-type') || '';
   if (tipo.includes('text/html') || tipo.includes('application/xml') || tipo.includes('text/xml')) {
-    res.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');
+    // Cache curto no EDGE (aprovado 30/10): 60 s + 30 s de stale-while-revalidate,
+    // só para 200. Navegador sempre revalida (max-age=0). A Cache Rule do host
+    // respeita estes headers; uma edição no painel aparece em ≤ 60 s. Purge por
+    // URL na publicação fica para quando a EF do painel tiver a chave da zona.
+    res.headers.set('Cache-Control', res.status === 200
+      ? 'public, max-age=0, s-maxage=60, stale-while-revalidate=30'
+      : 'no-store, max-age=0, must-revalidate');
   }
   return res;
 });
