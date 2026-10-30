@@ -63,10 +63,14 @@ if (!post) {
 // Fire and forget view increment
 incrementViews(post.id);
 
-const faqs = await getFaqsByPostId(post.id);
-const relatedPosts = await getRelatedPosts(post.category_id, post.id, 3);
-const comments = await getCommentsByPostId(post.id);
-const commentCount = await getCommentCount(post.id);
+// Worker (30/10/2026): as 4 consultas dependem só de `post` — em paralelo
+// (cada ida ao Supabase custa ~120 ms a partir do colo do visitante).
+const [faqs, relatedPosts, comments, commentCount] = await Promise.all([
+  getFaqsByPostId(post.id),
+  getRelatedPosts(post.category_id, post.id, 3),
+  getCommentsByPostId(post.id),
+  getCommentCount(post.id),
+]);
 
 // Process content: parse markdown to HTML, then add heading IDs
 const htmlContent = await parseMarkdown(post.content);

@@ -19,6 +19,11 @@ binding = "ASSETS"
 [observability]
 enabled = true
 
+# Smart Placement: roda o Worker perto do backend (Supabase), não do visitante —
+# o SSR faz várias idas ao banco por página.
+[placement]
+mode = "smart"
+
 # Variáveis públicas (as sensíveis — SUPABASE_URL, SUPABASE_ANON_KEY, INDEXNOW_KEY —
 # vão por `wrangler secret put`)
 [vars]
