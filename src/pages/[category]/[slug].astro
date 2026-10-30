@@ -78,6 +78,8 @@ const htmlContent = await parseMarkdown(post.content);
 // B1: links do conteúdo (painel) para o site saem sem UTM e com `origem=blog_<slug>`
 const origem = origemDe(Astro.url.pathname);
 const contentWithIds = reescreverLinksDoConteudo(addHeadingIds(htmlContent), origem);
+// o HTML da calculadora/ferramenta também vem do painel e trazia utm_source=blog&utm_medium=cta_ferramenta
+const calculatorCode = post.calculator_code ? reescreverLinksDoConteudo(post.calculator_code, origem) : post.calculator_code;
 const toc = extractTableOfContents(contentWithIds);
 const readingTime = post.reading_time || calculateReadingTime(post.content);
 
@@ -249,7 +251,7 @@ const breadcrumbItems = [
         <CalculatorEmbed
           title={post.calculator_title}
           description={post.calculator_description}
-          code={post.calculator_code}
+          code={calculatorCode}
         />
         <ProductCTA variant="tool" product={toolCTA} />
       </>
@@ -279,7 +281,7 @@ const breadcrumbItems = [
             <CalculatorEmbed
               title={post.calculator_title}
               description={post.calculator_description}
-              code={post.calculator_code}
+              code={calculatorCode}
             />
             <div data-secao="cta_meio">
               <ProductCTA variant="tool" product={toolCTA} />
@@ -308,7 +310,7 @@ const breadcrumbItems = [
         <CalculatorEmbed
           title={post.calculator_title}
           description={post.calculator_description}
-          code={post.calculator_code}
+          code={calculatorCode}
         />
         <ProductCTA variant="tool" product={toolCTA} />
       </>
