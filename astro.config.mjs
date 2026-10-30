@@ -1,5 +1,5 @@
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel';
+import cloudflare from '@astrojs/cloudflare';
 import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
 
@@ -8,8 +8,10 @@ export default defineConfig({
   base: '/',
   trailingSlash: 'always',
   output: 'server',
-  adapter: vercel({
-    maxDuration: 30,
+  // Cloudflare Pages (SSR em Worker). Sem `functions/` na raiz: o adapter gera
+  // _worker.js e o proxy /img/* é rota Astro (src/pages/img/[...path].ts).
+  adapter: cloudflare({
+    platformProxy: { enabled: true },
   }),
   prefetch: {
     // Prefetch only on hover (reduces network requests)

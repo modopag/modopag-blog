@@ -1,0 +1,31 @@
+# Cloudflare Workers (static assets + SSR) — blog.modopag.com.br
+#
+# 30/10/2026: a conta não consegue criar projetos Pages novos (API 8000030
+# "Subdomain is blocked" para qualquer nome; o wrangler 4 já delega "Pages"
+# para Workers). O blog roda então como Worker com assets: o Astro gera
+# dist/_worker.js (SSR) e o resto do dist é servido como estático. `_headers`
+# do dist continua valendo (Workers Assets suporta _headers/_redirects).
+name = "modopag-blog"
+main = "./dist/_worker.js/index.js"
+compatibility_date = "2026-10-01"
+# nodejs_compat — APIs de Node usadas pelo Astro SSR e pelo @supabase/supabase-js
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
+[observability]
+enabled = true
+
+# Smart Placement: roda o Worker perto do backend (Supabase), não do visitante —
+# o SSR faz várias idas ao banco por página.
+[placement]
+mode = "smart"
+
+# Variáveis públicas (as sensíveis — SUPABASE_URL, SUPABASE_ANON_KEY, INDEXNOW_KEY —
+# vão por `wrangler secret put`)
+[vars]
+PUBLIC_SITE_URL = "https://blog.modopag.com.br"
+PUBLIC_SITE_NAME = "modoPAG Blog"
