@@ -2,6 +2,7 @@
 // WHATSAPP LEAD CAPTURE - MODOPAG v4.7
 // ============================================
 
+import { enviarLeadParaBase, type OrigemDoLead } from '@/lib/leadNaBase';
 import { useState, useEffect, useCallback } from "react"
 
 const CONFIG = {
@@ -245,7 +246,9 @@ export default function WhatsAppLeadCapture() {
     }, [tracker])
 
     const trackLeadEvent = useCallback((cat: string, data: typeof formData, extra: Record<string, unknown> = {}) => {
-        if (!tracker?.hasAdsConsent?.()) return
+        // Saída da Reportana, Fase 2: sem tracker ou sem consentimento de anúncios, o lead vai só à nossa
+        // base (nada à Meta/Google). Até aqui, nesse caso, o lead não ia a lugar nenhum.
+        if (!tracker?.hasAdsConsent?.()) { enviarLeadParaBase(cat, data, extra as OrigemDoLead); return }
         tracker.trackLead({
             content_name: "WhatsApp Lead Form", content_category: cat, value: 0, currency: "BRL",
             lead_name: data.name, lead_email: data.email, lead_phone: data.phone, ...extra,
