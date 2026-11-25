@@ -2,6 +2,7 @@
 // WHATSAPP LEAD CAPTURE - MODOPAG v4.7
 // ============================================
 
+import { ehLinkDoWhatsApp } from '@/lib/link-whatsapp';
 import { enviarLeadParaBase, type OrigemDoLead } from '@/lib/leadNaBase';
 import { useState, useEffect, useCallback } from "react"
 
@@ -262,7 +263,9 @@ export default function WhatsAppLeadCapture() {
         if (!isMounted || !CONFIG.interceptWhatsAppLinks) return
         const handleClick = (e: MouseEvent) => {
             const target = e.target as HTMLElement
-            const link = target.closest('a[href*="wa.me"], a[href*="whatsapp.com"], a[href*="whatsapp"]') as HTMLAnchorElement
+            // 25/11/2026: decide pelo HOST do destino (wa.me, api/web/chat.whatsapp.com), não por "whatsapp" no href.
+            const candidato = target.closest('a[href]') as HTMLAnchorElement | null
+            const link = candidato && ehLinkDoWhatsApp(candidato.getAttribute('href'), location.href) ? candidato : null
             if (link) {
                 e.preventDefault()
                 e.stopPropagation()
