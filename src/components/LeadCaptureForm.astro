@@ -114,6 +114,16 @@ const buttonClasses = isInline
   </div>
 </div>
 
+<script>
+  import { enviarLeadParaBase, origemDaUrl } from '@/lib/leadNaBase';
+  if (!(window as unknown as { __mpagLeadNewsletter?: boolean }).__mpagLeadNewsletter) {
+    (window as unknown as { __mpagLeadNewsletter?: boolean }).__mpagLeadNewsletter = true;
+    window.addEventListener('mpag:lead-newsletter', (ev) => {
+      const d = (ev as CustomEvent<{ name: string; email: string; phone: string }>).detail;
+      enviarLeadParaBase('newsletter', d, origemDaUrl(location.href, document.referrer));
+    });
+  }
+</script>
 <script define:vars={{ formId }}>
   function initLeadForm() {
     const wrapper = document.querySelector(`[data-form-wrapper="${formId}"]`);
@@ -125,7 +135,14 @@ const buttonClasses = isInline
     if (!form || !successMessage) return;
 
     form.addEventListener('submit', (e) => {
-      // Let Reportana handle the submission
+      // Saída da Reportana, Fase 2 (24/11/2026): o blog não carrega o script da Reportana, então este
+      // POST para "/" não gravava o lead em lugar nenhum. Agora o lead vai à nossa base (track-lead,
+      // sem nada à Meta/Google) e a página não navega.
+      e.preventDefault();
+      const dados = new FormData(form);
+      window.dispatchEvent(new CustomEvent('mpag:lead-newsletter', { detail: {
+        name: String(dados.get('name') || ''), email: String(dados.get('email') || ''), phone: String(dados.get('phone') || ''),
+      } }));
       // Show success message after a short delay
       setTimeout(() => {
         form.classList.add('hidden');
